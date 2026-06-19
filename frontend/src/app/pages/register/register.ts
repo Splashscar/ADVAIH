@@ -2,9 +2,6 @@ import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
-import { NavbarComponent } from '../../components/navbar/navbar';
-import { FooterComponent } from '../../components/footer/footer';
-
 import { EventosService } from '../../services/eventos';
 
 @Component({
@@ -26,7 +23,7 @@ export class RegisterComponent {
   constructor(
     private eventosService: EventosService,
     private router: Router
-  ) {}
+  ) { }
 
   registrar() {
 
@@ -35,15 +32,15 @@ export class RegisterComponent {
       email: this.email,
       password: this.password
     })
-    .subscribe({
-      next: (res) => {
-        console.log(res);
-        this.router.navigate(['/']);
-      },
-      error: (err) => {
-        console.error(err);
-      }
-    });
+      .subscribe({
+        next: (res: any) => {
+          console.log(res);
+          this.router.navigate(['/']);
+        },
+        error: (err: any) => {
+          console.error(err);
+        }
+      });
 
   }
 

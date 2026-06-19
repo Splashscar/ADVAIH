@@ -1,15 +1,88 @@
-<h1>PRUEBA DEFINITIVA</h1>
+<div class="home-container">
 
-<p>Total eventos: {{ eventos.length }}</p>
+    <!-- HERO -->
+    <header class="hero">
+        <h1>🎉 ADVAIH</h1>
+        <p>Descubre los mejores eventos cerca de ti</p>
+    </header>
 
-<hr>
+    <!-- EVENTOS DESTACADOS (estáticos o mock) -->
+    <section class="eventos-section">
 
-{{ eventos }}
+        <h2>Eventos Destacados</h2>
 
-<hr>
+        <div class="eventos-grid">
 
-{{ eventos[0]?.nombre }}
+            <div class="evento-card">
+                <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f" alt="Evento">
 
-<hr>
+                <div class="evento-info">
+                    <h3>Festival Electrónico</h3>
+                    <p>Bogotá • 20 Junio</p>
+                    <button>Ver más</button>
+                </div>
+            </div>
 
-{{ eventos[1]?.nombre }}
+            <div class="evento-card">
+                <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819" alt="Evento">
+
+                <div class="evento-info">
+                    <h3>Concierto Urbano</h3>
+                    <p>Medellín • 25 Junio</p>
+                    <button>Ver más</button>
+                </div>
+            </div>
+
+            <div class="evento-card">
+                <img src="https://images.unsplash.com/photo-1501386761578-eac5c94b800" alt="Evento">
+
+                <div class="evento-info">
+                    <h3>Summer Fest</h3>
+                    <p>Cali • 28 Junio</p>
+                    <button>Ver más</button>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- CRUD FORM -->
+    <section class="crud-section">
+
+        <h2>{{ editando ? 'Editar Evento' : 'Crear Evento' }}</h2>
+
+        <div class="form">
+            <input placeholder="Título" [(ngModel)]="nuevoEvento.titulo">
+            <input placeholder="Descripción" [(ngModel)]="nuevoEvento.descripcion">
+
+            <div class="buttons">
+                <button *ngIf="!editando" (click)="crearEvento()">Crear</button>
+                <button *ngIf="editando" (click)="actualizarEvento()">Actualizar</button>
+                <button *ngIf="editando" (click)="cancelar()">Cancelar</button>
+            </div>
+        </div>
+
+    </section>
+
+    <hr>
+
+    <!-- LISTA DINÁMICA -->
+    <section class="eventos-lista">
+
+        <h2>Mis Eventos</h2>
+
+        <div *ngFor="let evento of eventos" class="evento-item">
+
+            <h3>{{ evento.titulo }}</h3>
+            <p>{{ evento.descripcion }}</p>
+
+            <div class="acciones">
+                <button (click)="seleccionarEvento(evento)">Editar</button>
+                <button (click)="eliminarEvento(evento.id)">Eliminar</button>
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
