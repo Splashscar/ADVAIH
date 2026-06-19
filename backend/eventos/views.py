@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+import json
 
 
 def home(request):
@@ -7,31 +8,56 @@ def home(request):
     })
 
 
-def register(request):
-    return JsonResponse({
-        "mensaje": "Registro de usuario"
-    })
-
-
 def login(request):
+
+    if request.method == "POST":
+
+        data = json.loads(request.body)
+
+        email = data.get("email")
+        password = data.get("password")
+
+        return JsonResponse({
+            "success": True,
+            "message": "Login exitoso"
+        })
+
     return JsonResponse({
-        "mensaje": "Inicio de sesión"
-    })
+        "error": "Método no permitido"
+    }, status=405)
+
+
+def register(request):
+
+    if request.method == "POST":
+
+        data = json.loads(request.body)
+
+        nombre = data.get("nombre")
+        email = data.get("email")
+        password = data.get("password")
+
+        return JsonResponse({
+            "success": True,
+            "message": "Usuario registrado"
+        })
+
+    return JsonResponse({
+        "error": "Método no permitido"
+    }, status=405)
 
 
 def listar_eventos(request):
-    return JsonResponse({
-        "mensaje": "Lista de eventos"
-    })
 
+    eventos = [
+        {
+            "id": 1,
+            "nombre": "Concierto Rock"
+        },
+        {
+            "id": 2,
+            "nombre": "Torneo de Baloncesto"
+        }
+    ]
 
-def obtener_evento(request, evento_id):
-    return JsonResponse({
-        "mensaje": f"Evento {evento_id}"
-    })
-
-
-def listar_favoritos(request):
-    return JsonResponse({
-        "mensaje": "Favoritos del usuario"
-    })
+    return JsonResponse(eventos, safe=False)
