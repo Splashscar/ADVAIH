@@ -1,0 +1,91 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.home-container {
+    min-height: 100vh;
+    background: #050816;
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.hero {
+    text-align: center;
+    padding: 80px 20px;
+    background: linear-gradient(135deg,
+            #7c3aed,
+            #2563eb);
+}
+
+.hero h1 {
+    font-size: 4rem;
+    margin-bottom: 20px;
+}
+
+.hero p {
+    font-size: 1.3rem;
+}
+
+.eventos-section {
+    padding: 50px;
+}
+
+.eventos-section h2 {
+    margin-bottom: 30px;
+    font-size: 2rem;
+}
+
+.eventos-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fit, minmax(300px, 1fr));
+
+    gap: 30px;
+}
+
+.evento-card {
+    background: #10152d;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: .3s;
+}
+
+.evento-card:hover {
+    transform: translateY(-8px);
+}
+
+.evento-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+
+.evento-info {
+    padding: 20px;
+}
+
+.evento-info h3 {
+    margin-bottom: 10px;
+}
+
+.evento-info p {
+    color: #cfcfcf;
+    margin-bottom: 20px;
+}
+
+.evento-info button {
+    width: 100%;
+    padding: 12px;
+
+    border: none;
+    border-radius: 12px;
+
+    background: linear-gradient(90deg,
+            #7c3aed,
+            #2563eb);
+
+    color: white;
+    cursor: pointer;
+}
