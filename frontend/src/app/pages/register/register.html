@@ -35,22 +35,35 @@
 
         <div class="grid">
 
-            <input type="text" placeholder="Nombre completo">
+            <input
+                type="text"
+                placeholder="Nombre completo"
+                [(ngModel)]="nombre">
 
-            <input type="email" placeholder="Correo electrónico">
+            <input
+                type="email"
+                placeholder="Correo electrónico"
+                [(ngModel)]="email">
 
-            <input type="password" placeholder="Contraseña">
+            <input
+                type="password"
+                placeholder="Contraseña"
+                [(ngModel)]="password">
 
-            <input type="password" placeholder="Confirmar contraseña">
+            <input
+                type="password"
+                placeholder="Confirmar contraseña">
 
         </div>
 
-        <textarea placeholder="Descripción de tu organizador">
-    </textarea>
+        <textarea placeholder="Descripción de tu organizador"></textarea>
 
-        <button>
+        <button (click)="registrar()">
             Crear cuenta
         </button>
+        <p (click)="registrar()">   
+            HAZ CLICK AQUI
+        </p>
 
     </div>
 
