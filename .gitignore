@@ -1,8 +1,24 @@
-backend/config/ServiceAccountKey.json
-
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
 
+# Entorno virtual
+venv/
+.env
+
+# Base de datos local
 db.sqlite3
 
-venv/
+# Firebase
+backend/config/ServiceAccountKey.json
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
