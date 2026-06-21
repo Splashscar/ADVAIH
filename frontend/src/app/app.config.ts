@@ -7,6 +7,7 @@ import { provideAuth, getAuth } from '@angular/fire/auth';
 
 import { routes } from './app.routes';
 import { environment } from '../environments/environment';
+import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,6 +20,10 @@ export const appConfig: ApplicationConfig = {
 
     provideAuth(() =>
       getAuth()
+    ),
+
+    provideFirestore(() =>
+      getFirestore()
     )
   ]
 };

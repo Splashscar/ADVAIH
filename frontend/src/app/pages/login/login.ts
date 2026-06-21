@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
-import { AuthService } from '../../services/auth';
+import { AuthServices } from '../../services/auth';
 
 @Component({
   selector: 'app-login',
@@ -12,25 +12,40 @@ export class LoginComponent {
   loading = false;
 
   constructor(
-    private authService: AuthService,
+    private authService: AuthServices,
     private router: Router
-  ) { }
+  ) {
+    this.authService.procesarRedirect();
+  }
 
   async loginGoogle() {
 
-    if (this.loading) return; // 🔒 evita doble click
+    if (this.loading) return;
 
     this.loading = true;
 
     try {
-      await this.authService.loginGoogle();
-      this.router.navigate(['/home']);
+
+      const usuario = await this.authService.loginGoogle();
+
+      if (usuario) {
+
+        console.log("LOGIN EXITOSO");
+
+        this.router.navigate(['/home']);
+
+      }
 
     } catch (error) {
+
       console.error('Google login error:', error);
+
     } finally {
+
       this.loading = false;
+
     }
+
   }
 
 }
