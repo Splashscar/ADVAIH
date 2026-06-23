@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
 import { AuthServices } from '../../services/auth';
+import { FirebaseService } from '../../services/firebase';
 
 @Component({
   selector: 'app-login',
@@ -13,6 +14,7 @@ export class LoginComponent {
 
   constructor(
     private authService: AuthServices,
+    private firebaseServices: FirebaseService,
     private router: Router
   ) {
     this.authService.procesarRedirect();
@@ -29,6 +31,9 @@ export class LoginComponent {
       const usuario = await this.authService.loginGoogle();
 
       if (usuario) {
+        await this.firebaseServices.guardarUsuario(
+          usuario
+        )
 
         console.log("LOGIN EXITOSO");
 
