@@ -40,17 +40,24 @@
 
             <label>Correo electrónico</label>
 
-            <input type="email" placeholder="ejemplo@correo.com">
+            <input
+                type="email"
+                placeholder="ejemplo@correo.com"
+                [(ngModel)]="email">
+
 
             <label>Contraseña</label>
 
-            <input type="password" placeholder="••••••••">
+            <input
+                type="password"
+                placeholder="••••••••"
+                [(ngModel)]="password">
 
             <a class="forgot">
                 ¿Olvidaste tu contraseña?
             </a>
 
-            <button>
+            <button (click)="loginEmail()">
                 Iniciar sesión
             </button>
 

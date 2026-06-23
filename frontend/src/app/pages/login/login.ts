@@ -2,15 +2,18 @@ import { Component } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
 import { AuthServices } from '../../services/auth';
 import { FirebaseService } from '../../services/firebase';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
-  imports: [RouterLink],
+  imports: [RouterLink, FormsModule],
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
 export class LoginComponent {
   loading = false;
+  email = '';
+  password = '';
 
   constructor(
     private authService: AuthServices,
@@ -48,6 +51,34 @@ export class LoginComponent {
     } finally {
 
       this.loading = false;
+
+    }
+
+  }
+  async loginEmail() {
+
+    if (!this.email || !this.password) {
+
+      alert('Completa todos los campos');
+      return;
+
+    }
+
+    try {
+
+      await this.authService.loginConEmail(
+        this.email,
+        this.password
+      );
+
+      console.log('LOGIN EXITOSO');
+
+      this.router.navigate(['/home']);
+
+    } catch (error) {
+
+      console.error(error);
+      alert('Correo o contraseña incorrectos');
 
     }
 
