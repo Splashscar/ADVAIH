@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
-import { EventosService } from '../../services/eventos';
+import { AuthServices } from '../../services/auth';
+import { FirebaseService } from '../../services/firebase';
 
 @Component({
   selector: 'app-register',
@@ -19,28 +20,64 @@ export class RegisterComponent {
   nombre = '';
   email = '';
   password = '';
+  confirmarPassword = '';
 
   constructor(
-    private eventosService: EventosService,
+    private authService: AuthServices,
+    private firebaseService: FirebaseService,
     private router: Router
-  ) { }
+  ) {}
 
-  registrar() {
+  async registrar() {
 
-    this.eventosService.register({
-      nombre: this.nombre,
-      email: this.email,
-      password: this.password
-    })
-      .subscribe({
-        next: (res: any) => {
-          console.log(res);
-          this.router.navigate(['/']);
-        },
-        error: (err: any) => {
-          console.error(err);
-        }
-      });
+    try {
+
+      if (
+        !this.nombre ||
+        !this.email ||
+        !this.password
+      ) {
+
+        alert('Completa todos los campos');
+        return;
+
+      }
+
+      if (
+        this.password !==
+        this.confirmarPassword
+      ) {
+
+        alert('Las contraseñas no coinciden');
+        return;
+
+      }
+
+      const usuario =
+        await this.authService.registrarConEmail(
+          this.nombre,
+          this.email,
+          this.password
+        );
+
+      if (usuario) {
+
+        await this.firebaseService.guardarUsuario(
+          usuario
+        );
+
+        alert('Usuario registrado correctamente');
+
+        this.router.navigate(['/home']);
+
+      }
+
+    } catch (error) {
+
+      console.error(error);
+      alert('Error al registrar usuario');
+
+    }
 
   }
 
