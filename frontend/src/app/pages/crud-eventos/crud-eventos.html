@@ -6,27 +6,60 @@
 
     <h2>Crear Evento</h2>
 
-    <input type="text" placeholder="Nombre del evento">
+    <input
+  type="text"
+  placeholder="Nombre del evento"
+  [(ngModel)]="title">
 
-    <textarea placeholder="Descripción"></textarea>
+<textarea
+  placeholder="Descripción"
+  [(ngModel)]="description">
+</textarea>
 
-    <input type="date">
+<input
+  type="date"
+  [(ngModel)]="date">
 
-    <input type="time">
+<input
+  type="time"
+  [(ngModel)]="time">
 
-    <input type="text" placeholder="Ubicación">
+<input
+  type="text"
+  placeholder="Ubicación"
+  [(ngModel)]="location">
 
-    <select>
-      <option>Seleccionar categoría</option>
-      <option>Música</option>
-      <option>Tecnología</option>
-      <option>Deportes</option>
-      <option>Arte</option>
-    </select>
+<select [(ngModel)]="category">
 
-    <button class="btn-crear">
-      Crear Evento
-    </button>
+  <option value="">
+    Seleccionar categoría
+  </option>
+
+  <option value="Música">
+    Música
+  </option>
+
+  <option value="Tecnología">
+    Tecnología
+  </option>
+
+  <option value="Deportes">
+    Deportes
+  </option>
+
+  <option value="Arte">
+    Arte
+  </option>
+
+</select>
+
+<button
+  class="btn-crear"
+  (click)="eventoEditandoId ? actualizarEvento() : crearEvento()">
+
+  {{ eventoEditandoId ? 'Guardar Cambios' : 'Crear Evento' }}
+
+</button>
 
   </div>
 
@@ -38,33 +71,40 @@
 
       <thead>
         <tr>
-          <th>Evento</th>
-          <th>Fecha</th>
-          <th>Categoría</th>
-          <th>Ubicación</th>
-          <th>Acciones</th>
+          <th style="padding: 18px;color: white;font-size: 16px; letter-spacing: 0.5px;">Evento</th>
+          <th style="padding: 18px;color: white;font-size: 16px; letter-spacing: 0.5px;">Fecha</th>
+          <th style="padding: 18px;color: white;font-size: 16px; letter-spacing: 0.5px;">Categoría</th>
+          <th style="padding: 18px;color: white;font-size: 16px; letter-spacing: 0.5px;">Ubicación</th>
+          <th style="padding: 18px;color: white;font-size: 16px; letter-spacing: 0.5px;">Acciones</th>
         </tr>
       </thead>
 
       <tbody>
 
-        <tr>
-          <td>Festival ADVAIH</td>
-          <td>20/07/2026</td>
-          <td>Música</td>
-          <td>Bogotá</td>
+@for (evento of eventos; track evento.id) {
 
-          <td>
-            <button class="btn-editar">
-              Editar
-            </button>
+    <tr>
+      <td style="padding: 18px;color: white;font-size: 16px; letter-spacing: 0.5px;">{{ evento.title }}</td>
+      <td style="padding: 18px;color: white;font-size: 16px; letter-spacing: 0.5px;">{{ evento.date }}</td>
+      <td style="padding: 18px;color: white;font-size: 16px; letter-spacing: 0.5px;">{{ evento.category }}</td>
+      <td style="padding: 18px;color: white;font-size: 16px; letter-spacing: 0.5px;">{{ evento.location }}</td>
 
-            <button class="btn-eliminar">
-              Eliminar
-            </button>
-          </td>
+      <td>
+        <button
+          class="btn-editar"
+          (click)="editarEvento(evento)">
+          Editar
+        </button>
 
-        </tr>
+        <button
+          class="btn-eliminar"
+          (click)="eliminarEvento(evento.id)">
+          Eliminar
+        </button>
+      </td>
+    </tr>
+
+    }
 
       </tbody>
 
