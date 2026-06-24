@@ -21,5 +21,29 @@ export class EventosService {
   register(datos: any) {
     return this.http.post(`${this.apiUrl}/auth/register/`, datos);
   }
+  crearEvento(evento: any) {
+  return this.http.post(
+    'http://127.0.0.1:8000/api/eventos/',
+    evento
+  );
+}
+eliminarEvento(id: string) {
+
+  return this.http.delete(
+    `${this.apiUrl}/eventos/${id}/`
+  );
+
+}
+actualizarEvento(
+  id: string,
+  evento: any
+) {
+
+  return this.http.put(
+    `${this.apiUrl}/eventos/${id}/`,
+    evento
+  );
+
+}
 
 }
