@@ -1,9 +1,16 @@
 <div class="perfil-container">
 
     <header class="hero-perfil">
-        <div class="avatar-wrapper">
-            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500" alt="Foto de perfil" class="avatar-img">
+        <div class="avatar-wrapper" [class.editable]="editando" (click)="editando && fileInput.click()">
+            <img [src]="usuario.fotoUrl" alt="Foto de perfil" class="avatar-img">
+            
+            <div class="avatar-overlay" *ngIf="editando">
+                <span>📷 Cambiar</span>
+            </div>
         </div>
+
+        <input type="file" #fileInput style="display: none;" accept="image/*" (change)="onFotoSeleccionada($event)">
+
         <h1>{{ usuario.nombre || 'Nombre de Usuario' }}</h1>
         <p>{{ usuario.email || 'correo@ejemplo.com' }}</p>
         <span class="badge-rol">{{ usuario.rol || 'Usuario' }}</span>
@@ -31,23 +38,23 @@
 
                     <div class="form-group">
                         <label>Miembro Desde</label>
-                        <input type="text" [value]="usuario.fechaRegistro || '2026'" disabled class="input-disabled">
+                        <input type="text" [value]="usuario.fechaRegistro" disabled class="input-disabled">
                     </div>
 
                     <div class="perfil-actions">
-                        <button *ngIf="!editando" (click)="editando = true" class="btn-perfil">
-                            Editar Perfil
+                        <button *ngIf="!editando" (click)="editando = true" class="btn-editar-perfil">
+                            ✏️ Editar Perfil
                         </button>
                         
-                        <div *ngIf="editando" class="btn-group">
-                            <button (click)="guardarCambios()" class="btn-perfil btn-save">Guardar</button>
-                            <button (click)="editando = false" class="btn-perfil btn-cancel">Cancelar</button>
+                        <div *ngIf="editando" class="btn-group-acciones">
+                            <button (click)="guardarCambios()" class="btn-guardar">💾 Guardar Cambios</button>
+                            <button (click)="editando = false" class="btn-cancelar">❌ Cancelar</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="perfil-card summary-card">
+            <div class="perfil-card">
                 <div class="perfil-info-header">
                     <h3>Mis Estadísticas</h3>
                 </div>

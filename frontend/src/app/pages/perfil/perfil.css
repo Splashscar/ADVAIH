@@ -6,22 +6,23 @@
 
 .perfil-container {
     min-height: 100vh;
-    background: #050816; /* Mismo fondo del home */
+    background: #050816; /* Mismo fondo azul oscuro profundo de tu Home */
     color: white;
     font-family: 'Segoe UI', sans-serif;
 }
 
-/* HERO PERFIL (Adaptado del Hero original) */
+/* HERO PRINCIPAL (Mismo degradiente lineal de tu proyecto) */
 .hero-perfil {
     text-align: center;
     padding: 60px 20px;
-    background: linear-gradient(135deg, #7c3aed, #2563eb); /* Mismo gradiente del home */
+    background: linear-gradient(135deg, #7c3aed, #2563eb);
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 12px;
 }
 
+/* DISEÑO REDONDEADO DEL AVATAR */
 .avatar-wrapper {
     width: 130px;
     height: 130px;
@@ -29,6 +30,8 @@
     border: 4px solid #050816;
     overflow: hidden;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    position: relative;
+    transition: transform 0.3s ease, border-color 0.3s ease;
 }
 
 .avatar-img {
@@ -37,8 +40,43 @@
     object-fit: cover;
 }
 
+/* INTERACCIÓN CON LA FOTO EN MODO EDICIÓN */
+.avatar-wrapper.editable {
+    cursor: pointer;
+}
+
+.avatar-wrapper.editable:hover {
+    transform: scale(1.05);
+    border-color: #7c3aed;
+}
+
+/* CAPA OSCURA QUE MUESTRA LA CÁMARA */
+.avatar-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(5, 8, 22, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.avatar-wrapper.editable:hover .avatar-overlay {
+    opacity: 1;
+}
+
+.avatar-overlay span {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: white;
+}
+
 .hero-perfil h1 {
-    font-size: 2.8rem;
+    font-size: 2.5rem;
     font-weight: bold;
 }
 
@@ -52,13 +90,13 @@
     background: rgba(255, 255, 255, 0.2);
     padding: 6px 16px;
     border-radius: 20px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 600;
     text-transform: uppercase;
     backdrop-filter: blur(5px);
 }
 
-/* CONTENEDOR DE SECCIONES */
+/* CONTENEDORES DE LA SECCIÓN INFERIOR */
 .perfil-section {
     padding: 50px;
 }
@@ -71,17 +109,17 @@
     margin: 0 auto;
 }
 
-/* TARJETAS DEL PERFIL (Igual estilo visual que .evento-card) */
+/* TARJETAS DEL PERFIL (Estilo heredado de .evento-card) */
 .perfil-card {
-    background: #10152d; /* Mismo color de tarjeta del home */
+    background: #10152d; /* Mismo tono azul oscuro secundario del home */
     border-radius: 20px;
     overflow: hidden;
-    transition: .3s;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    transition: transform 0.3s;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 .perfil-card:hover {
-    transform: translateY(-5px); /* Suave animación idéntica al home */
+    transform: translateY(-5px);
 }
 
 .perfil-info-header {
@@ -94,7 +132,7 @@
     padding: 25px;
 }
 
-/* ELEMENTOS DE FORMULARIO */
+/* ESTILOS DE ELEMENTOS DE FORMULARIO */
 .form-group {
     margin-bottom: 20px;
 }
@@ -114,56 +152,88 @@
     border-radius: 12px;
     color: white;
     font-size: 1rem;
-    transition: 0.3s;
+    transition: border-color 0.3s;
 }
 
 .form-group input:focus:not(:disabled) {
     outline: none;
     border-color: #7c3aed;
-    box-shadow: 0 0 10px rgba(124, 58, 237, 0.3);
+    box-shadow: 0 0 10px rgba(124, 58, 237, 0.2);
 }
 
 .input-disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     cursor: not-allowed;
     background: #0d1227 !important;
 }
 
-/* BOTONES (Mismos gradientes del home) */
-.btn-perfil {
+/* BOTÓN DE ACCIÓN: EDITAR PERFIL */
+.btn-editar-perfil {
     width: 100%;
-    padding: 12px;
+    padding: 14px;
     border: none;
     border-radius: 12px;
     background: linear-gradient(90deg, #7c3aed, #2563eb);
     color: white;
+    font-size: 16px;
     font-weight: bold;
     cursor: pointer;
-    transition: .3s;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
 }
 
-.btn-perfil:hover {
-    opacity: 0.9;
+.btn-editar-perfil:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
 }
 
-.btn-group {
+/* GRUPO DE BOTONES AL EDITAR */
+.btn-group-acciones {
     display: flex;
     gap: 15px;
+    width: 100%;
 }
 
-.btn-save {
-    background: linear-gradient(90deg, #10b981, #059669); /* Verde para guardar */
+.btn-guardar {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(90deg, #10b981, #059669); /* Color éxito */
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
 }
 
-.btn-cancel {
+.btn-guardar:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+
+.btn-cancelar {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
     background: #242b4d;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
 }
 
-/* BOXES DE ESTADÍSTICAS */
+.btn-cancelar:hover {
+    background: #2c355e;
+}
+
+/* DISEÑO DE CAJAS DE ESTADÍSTICAS */
 .stats-flex {
     display: flex;
     gap: 20px;
-    height: 100%;
+    height: 80%;
     justify-content: space-around;
     align-items: center;
 }
@@ -180,7 +250,7 @@
     display: block;
     font-size: 2.5rem;
     font-weight: bold;
-    color: #3b82f6; /* Azul brillante */
+    color: #3b82f6; /* Color de realce estadístico */
 }
 
 .stat-label {
