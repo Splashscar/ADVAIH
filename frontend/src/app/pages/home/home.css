@@ -111,3 +111,24 @@
 .btn-crear-evento:hover{
     transform:translateY(-2px);
 }
+
+.btn-perfil-nav {
+    margin-top: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    border: 1px solid rgba(124, 58, 237, 0.4); /* Borde sutil morado */
+    padding: 12px 25px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: .3s;
+    margin-left: 15px; /* Separación del otro botón */
+}
+
+.btn-perfil-nav:hover {
+    background: linear-gradient(90deg, #7c3aed, #2563eb); /* Se ilumina al pasar el mouse */
+    border-color: transparent;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+}
