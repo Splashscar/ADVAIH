@@ -1,77 +1,82 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { getAuth, onAuthStateChanged } from 'firebase/auth'; // Integración nativa con Firebase Auth
+import { RouterLink } from '@angular/router';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './perfil.html', // Verifica que coincida exactamente con tu nombre de archivo HTML
-  styleUrls: ['./perfil.css']   // Verifica que coincida exactamente con tu nombre de archivo CSS
+  imports: [CommonModule, FormsModule, RouterLink],
+  templateUrl: './perfil.html',
+  styleUrls: ['./perfil.css']
 })
 export class PerfilComponent implements OnInit {
   
-  // Estructura de datos enlazada a la interfaz
-  usuario: any = {
-    nombre: '',
-    email: '',
-    fotoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500', // Foto por defecto
-    rol: 'Usuario',
-    fechaRegistro: ''
-  };
+  // Variables estáticas modificables idénticas al tratamiento de tarjetas
+  nombre: string = 'Usuario ADVAIH';
+  email: string = 'usuario@advaih.com';
+  fotoUrl: string = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500';
+  rol: string = 'Organizador';
+  fechaRegistro: string = '26/06/2026';
+  
+  telefono: string = '+57 312 456 7890';
+  ciudad: string = 'Bogotá';
+  biografia: string = 'Amante de los festivales de música y los eventos culturales al aire libre.';
+  sitioWeb: string = 'https://misite.com';
 
-  editando: boolean = false;        // Controla el estado de edición global (inputs y botones)
-  fotoArchivo: File | null = null;  // Almacena el archivo de la imagen en memoria para el backend
-
-  constructor() {}
+  // Estados de control nativos
+  editando: boolean = false;
+  estaLogueado: boolean = false; 
+  fotoArchivo: File | null = null;
 
   ngOnInit(): void {
-    this.obtenerUsuarioFirebase();
+    this.verificarSesionNavegador();
   }
 
-  // Detecta en tiempo real si hay una sesión activa de Google / Email en Firebase
-  obtenerUsuarioFirebase() {
+  verificarSesionNavegador() {
     const auth = getAuth();
+    
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        this.usuario = {
-          nombre: user.displayName || 'Usuario de ADVAIH',
-          email: user.email || '',
-          fotoUrl: user.photoURL || this.usuario.fotoUrl, // Usa la foto real de la cuenta de Google
-          rol: 'Usuario', // Vinculación futura a la lógica de roles en Django
-          fechaRegistro: user.metadata.creationTime 
-            ? new Date(user.metadata.creationTime).toLocaleDateString() 
-            : 'Reciente'
-        };
-        console.log('Usuario conectado desde Firebase:', user);
+        this.estaLogueado = true; // Permite abrir el editor
+        this.nombre = user.displayName || this.nombre;
+        this.email = user.email || this.email;
+        this.fotoUrl = user.photoURL || this.fotoUrl;
       } else {
-        console.log('No hay ningún usuario activo en Firebase.');
+        this.estaLogueado = false; // Bloquea el botón completamente
+        this.editando = false;     
+
+        // Datos limpios de Invitado
+        this.nombre = 'Invitado ADVAIH';
+        this.email = 'Inicia sesión para ver tu correo';
+        this.rol = 'Invitado';
       }
     });
   }
 
-  // Captura el archivo del selector e implementa la vista previa instantánea
   onFotoSeleccionada(event: any) {
+    if (!this.estaLogueado) return;
     const file = event.target.files[0];
-    
     if (file) {
       this.fotoArchivo = file;
-
-      // FileReader genera un string Base64 para renderizar la imagen al instante en pantalla
       const reader = new FileReader();
       reader.onload = () => {
-        this.usuario.fotoUrl = reader.result as string; 
+        this.fotoUrl = reader.result as string; 
       };
       reader.readAsDataURL(file);
     }
   }
 
-  // Guarda el estado de la edición
   guardarCambios() {
+    if (!this.estaLogueado) return;
     this.editando = false;
-    console.log('Datos de perfil actualizados:', this.usuario);
-    console.log('Archivo de imagen listo para subir a Django/Storage:', this.fotoArchivo);
-    // NOTA: Aquí se inyectará tu servicio HTTP para mandar los cambios con FormData a Django
+    console.log('Cambios manuales del perfil guardados:', {
+      nombre: this.nombre,
+      telefono: this.telefono,
+      ciudad: this.ciudad,
+      biografia: this.biografia,
+      sitioWeb: this.sitioWeb
+    });
   }
 }
