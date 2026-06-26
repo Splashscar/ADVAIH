@@ -90,6 +90,7 @@
     cursor: pointer;
 }
 .btn-crear-evento{
+    margin-top: 15px;
     background:linear-gradient(
         90deg,
         #7c3aed,
