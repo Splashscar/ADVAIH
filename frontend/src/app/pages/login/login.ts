@@ -27,6 +27,9 @@ export class LoginComponent {
     private router: Router
   ) {
     this.authService.procesarRedirect();
+    this.authService.usuario$.subscribe(usuario => {
+      console.log('USUARIO ACTUAL:', usuario);
+    });
   }
 
   async loginGoogle() {
