@@ -1,15 +1,62 @@
-<h1>PRUEBA DEFINITIVA</h1>
+<div class="home-container">
 
-<p>Total eventos: {{ eventos.length }}</p>
+    
 
-<hr>
+    <!-- HERO -->
+    <header class="hero">
+        <h1>ADVAIH</h1>
+        <p>Descubre los mejores eventos cerca de ti</p>
+    </header>
+    
+    <!-- BOTÓN CREAR EVENTO -->
+    <div class="top-actions">
+        <button routerLink="/crud-eventos" class="btn-crear-evento">
+            + Crear Evento
+        </button>
+    </div>
 
-{{ eventos }}
+    <!-- EVENTOS DESTACADOS -->
+    <section class="eventos-section">
 
-<hr>
+        <h2>Eventos Destacados</h2>
 
-{{ eventos[0]?.nombre }}
+        <div class="eventos-grid">
 
-<hr>
+            <div class="evento-card">
+                <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f"
+                    alt="Evento">
 
-{{ eventos[1]?.nombre }}
+                <div class="evento-info">
+                    <h3>Festival Electrónico</h3>
+                    <p>Bogotá • 20 Junio</p>
+                    <button>Ver más</button>
+                </div>
+            </div>
+
+            <div class="evento-card">
+                <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819"
+                    alt="Evento">
+
+                <div class="evento-info">
+                    <h3>Concierto Urbano</h3>
+                    <p>Medellín • 25 Junio</p>
+                    <button>Ver más</button>
+                </div>
+            </div>
+
+            <div class="evento-card">
+                <img src="https://s3.summerfest.com/assets/images/stages/2024/generac/Generac-hero2000x1333.jpg"
+                    alt="Evento">
+
+                <div class="evento-info">
+                    <h3>Summer Fest</h3>
+                    <p>Cali • 28 Junio</p>
+                    <button>Ver más</button>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+</div>

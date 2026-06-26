@@ -1,25 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
-import { NavbarComponent } from '../../components/navbar/navbar';
-import { FooterComponent } from '../../components/footer/footer';
-import { EventosService } from '../../services/eventos';
-import { JsonPipe } from '@angular/common';
-
-imports: [
-  CommonModule,
-  JsonPipe,
-  NavbarComponent,
-  FooterComponent
-]
-
+import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [
+  imports: [RouterLink,
     CommonModule,
-    NavbarComponent,
-    FooterComponent
+    FormsModule,
   ],
   templateUrl: './home.html',
   styleUrl: './home.css'
@@ -28,25 +17,61 @@ export class HomeComponent implements OnInit {
 
   eventos: any[] = [];
 
-  constructor(private eventosService: EventosService) {}
+  nuevoEvento = {
+    id: '',
+    titulo: '',
+    descripcion: ''
+  };
+
+  editando = false;
 
   ngOnInit(): void {
-
     console.log("HOME INICIADO");
 
-    this.eventosService.obtenerEventos()
-      .subscribe({
-        next: (data: any) => {
-          console.log("EVENTOS:", data);
-          this.eventos = data;
-        },
-        error: (error) => {
-          console.error("ERROR:", error);
-        }
-      });
-
+    // 🔥 datos iniciales (simulación BD)
+    this.eventos = [
+      { id: '1', titulo: 'Concierto', descripcion: 'Música en vivo' },
+      { id: '2', titulo: 'Feria', descripcion: 'Emprendimiento local' }
+    ];
   }
-  
 
+  // ➕ CREATE
+  crearEvento() {
+    if (!this.nuevoEvento.titulo) return;
+
+    const nuevo = {
+      ...this.nuevoEvento,
+      id: Date.now().toString()
+    };
+
+    this.eventos.push(nuevo);
+
+    this.nuevoEvento = { id: '', titulo: '', descripcion: '' };
+  }
+
+  // ✏️ SELECT (editar)
+  seleccionarEvento(evento: any) {
+    this.nuevoEvento = { ...evento };
+    this.editando = true;
+  }
+
+  // 💾 UPDATE
+  actualizarEvento() {
+    this.eventos = this.eventos.map(ev =>
+      ev.id === this.nuevoEvento.id ? this.nuevoEvento : ev
+    );
+
+    this.cancelar();
+  }
+
+  // 🗑️ DELETE
+  eliminarEvento(id: string) {
+    this.eventos = this.eventos.filter(ev => ev.id !== id);
+  }
+
+  // ❌ CANCELAR
+  cancelar() {
+    this.nuevoEvento = { id: '', titulo: '', descripcion: '' };
+    this.editando = false;
+  }
 }
-
