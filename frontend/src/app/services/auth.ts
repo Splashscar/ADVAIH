@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
-import { Auth, user, User } from '@angular/fire/auth';
+import { Auth, user, User, authState } from '@angular/fire/auth';
 import { map } from 'rxjs';
 import { Usuario } from '../models/usuario';
-import { getRedirectResult } from 'firebase/auth';
+import { getRedirectResult, } from 'firebase/auth';
 
 import {
   GoogleAuthProvider,
@@ -10,7 +10,7 @@ import {
   signInWithPopup,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  updateProfile
+  updateProfile,
 } from 'firebase/auth';
 
 @Injectable({
@@ -20,7 +20,8 @@ export class AuthServices {
 
   private auth = inject(Auth);
 
-  usuario$ = user(this.auth);
+  usuario$ = authState(this.auth);
+
 
   estaAutenticado$ = this.usuario$.pipe(
     map(usuario => !!usuario)
@@ -198,5 +199,5 @@ export class AuthServices {
     }
 
   }
-
+ 
 }
