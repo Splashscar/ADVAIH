@@ -3,10 +3,29 @@ import { LoginComponent } from './pages/login/login';
 import { RegisterComponent } from './pages/register/register';
 import { HomeComponent } from './pages/home/home';
 import { CrudEventos } from "./pages/crud-eventos/crud-eventos"
+import { PerfilComponent } from './pages/perfil/perfil';
+import { authGuard } from './guard/auth-guard.ts-guard';
 
 export const routes: Routes = [
-    { path: '', component: LoginComponent },
-    { path: 'register', component: RegisterComponent },
-    { path: 'home', component: HomeComponent },
-    {path: 'crud-eventos', component: CrudEventos}
+  { path: '', component: LoginComponent },
+
+  { path: 'register', component: RegisterComponent },
+
+  {
+    path: 'home',
+    component: HomeComponent,
+    canActivate: [authGuard]
+  },
+
+  {
+    path: 'crud-eventos',
+    component: CrudEventos,
+    canActivate: [authGuard]
+  },
+
+  {
+    path: 'perfil',
+    component: PerfilComponent,
+    canActivate: [authGuard]
+  }
 ];

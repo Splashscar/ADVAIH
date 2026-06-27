@@ -8,13 +8,20 @@
         <p>Descubre los mejores eventos cerca de ti</p>
     </header>
     
-    <!-- BOTÓN CREAR EVENTO -->
     <div class="top-actions">
-        <button routerLink="/crud-eventos" class="btn-crear-evento">
-            + Crear Evento
-        </button>
-    </div>
-
+    <button routerLink="/crud-eventos" class="btn-crear-evento">
+        + Crear Evento
+    </button>
+    
+    <button routerLink="/perfil" class="btn-perfil-nav">
+        👤 Mi Perfil
+    </button>
+    <button
+        class="btn-logout"
+        (click)="cerrarSesion()">
+         Cerrar Sesión
+    </button>
+</div>
     <!-- EVENTOS DESTACADOS -->
     <section class="eventos-section">
 

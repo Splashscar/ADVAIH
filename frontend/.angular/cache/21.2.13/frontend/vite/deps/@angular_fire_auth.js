@@ -60,7 +60,7 @@ import {
   validatePassword,
   verifyBeforeUpdateEmail,
   verifyPasswordResetCode
-} from "./chunk-RE7MWKI5.js";
+} from "./chunk-QLY6FV4I.js";
 import {
   AUTH_ERROR_CODES_MAP_DO_NOT_USE_INTERNALLY,
   ActionCodeOperation,
@@ -94,13 +94,15 @@ import {
   indexedDBLocalPersistence,
   multiFactor,
   prodErrorMap
-} from "./chunk-OAT2WZKL.js";
-import "./chunk-ZTFUMVIL.js";
-import "./chunk-ZYARPNUN.js";
-import "./chunk-4TLN2LGP.js";
-import "./chunk-MYZYDI5T.js";
-import "./chunk-K4AVKIUM.js";
-import "./chunk-LK3ZUZB4.js";
+} from "./chunk-MD36XC56.js";
+import "./chunk-RZNF7M4Z.js";
+import "./chunk-QHIQNPYS.js";
+import "./chunk-JO2F5UHO.js";
+import "./chunk-DVROZNBP.js";
+import "./chunk-WFYZK4WZ.js";
+import "./chunk-SBSMVQ5Z.js";
+import "./chunk-NBVITAEE.js";
+import "./chunk-RMWPIV7X.js";
 import "./chunk-IALUSGKI.js";
 export {
   ActionCodeOperation,
