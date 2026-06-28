@@ -3,11 +3,12 @@ import { FormsModule } from '@angular/forms';
 import { EventosService } from '../../services/eventos';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef } from '@angular/core';
+import { Navbar } from '../../components/navbar/navbar';
 
 @Component({
   selector: 'app-crud-eventos',
   standalone: true,
-  imports: [FormsModule,CommonModule],
+  imports: [FormsModule,CommonModule,Navbar],
   templateUrl: './crud-eventos.html',
   styleUrl: './crud-eventos.css',
 })
@@ -198,4 +199,9 @@ limpiarFormulario() {
 
 }
 
+  nombreUsuario = 'David';
+
+  cerrarSesion() {
+    console.log('Cerrar sesión');
+  }
 }

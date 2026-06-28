@@ -4,14 +4,15 @@ import { RouterLink, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
 import { AuthServices } from '../../services/auth';
-
+import { Navbar } from '../../components/navbar/navbar';
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [
     RouterLink,
     CommonModule,
-    FormsModule
+    FormsModule,
+    Navbar
   ],
   templateUrl: './home.html',
   styleUrl: './home.css'
@@ -21,6 +22,8 @@ export class HomeComponent implements OnInit {
   // Usuario autenticado
   usuario: any = null;
   nombreUsuario = '';
+  fotoPerfil: string = '';
+
 
   eventos: any[] = [];
 
