@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-
+import { ChangeDetectorRef } from '@angular/core';
 import { AuthServices } from '../../services/auth';
 
 @Component({
@@ -18,7 +18,9 @@ import { AuthServices } from '../../services/auth';
 })
 export class HomeComponent implements OnInit {
 
+  // Usuario autenticado
   usuario: any = null;
+  nombreUsuario = '';
 
   eventos: any[] = [];
 
@@ -32,22 +34,38 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private authService: AuthServices,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
 
-    console.log("HOME INICIADO");
+    console.log("🏠 HOME INICIADO");
 
+    // Escucha permanente del usuario autenticado
     this.authService.usuario$
       .subscribe(usuario => {
 
         this.usuario = usuario;
 
-        console.log(
-          'USUARIO LOGUEADO:',
-          usuario
-        );
+        if (usuario) {
+
+          this.nombreUsuario =
+            usuario.displayName ||
+            usuario.email ||
+            'Usuario';
+
+          console.log('✅ Usuario autenticado');
+          console.log(usuario);
+
+        } else {
+
+          console.log('❌ No hay usuario autenticado');
+
+          this.router.navigate(['/']);
+
+        }
+        this.cdr.detectChanges();
 
       });
 
@@ -67,7 +85,9 @@ export class HomeComponent implements OnInit {
 
   }
 
-  // ➕ CREATE
+  // =========================
+  // CREATE
+  // =========================
   crearEvento() {
 
     if (!this.nuevoEvento.titulo) return;
@@ -79,26 +99,24 @@ export class HomeComponent implements OnInit {
 
     this.eventos.push(nuevo);
 
-    this.nuevoEvento = {
-      id: '',
-      titulo: '',
-      descripcion: ''
-    };
+    this.cancelar();
 
   }
 
-  // ✏️ SELECT
+  // =========================
+  // SELECT
+  // =========================
   seleccionarEvento(evento: any) {
 
-    this.nuevoEvento = {
-      ...evento
-    };
+    this.nuevoEvento = { ...evento };
 
     this.editando = true;
 
   }
 
-  // 💾 UPDATE
+  // =========================
+  // UPDATE
+  // =========================
   actualizarEvento() {
 
     this.eventos = this.eventos.map(ev =>
@@ -111,7 +129,9 @@ export class HomeComponent implements OnInit {
 
   }
 
-  // 🗑️ DELETE
+  // =========================
+  // DELETE
+  // =========================
   eliminarEvento(id: string) {
 
     this.eventos =
@@ -121,7 +141,9 @@ export class HomeComponent implements OnInit {
 
   }
 
-  // ❌ CANCELAR
+  // =========================
+  // CANCELAR
+  // =========================
   cancelar() {
 
     this.nuevoEvento = {
@@ -133,20 +155,23 @@ export class HomeComponent implements OnInit {
     this.editando = false;
 
   }
+
+  // =========================
+  // LOGOUT
+  // =========================
   async cerrarSesion() {
 
     try {
 
       await this.authService.cerrarSesion();
 
+      console.log("👋 Sesión cerrada");
+
       this.router.navigate(['/']);
 
     } catch (error) {
 
-      console.error(
-        'Error cerrando sesión',
-        error
-      );
+      console.error(error);
 
     }
 

@@ -148,3 +148,40 @@
     transform: translateY(-2px);
     opacity: .9;
 }
+
+.bienvenida {
+    width: 90%;
+    max-width: 1200px;
+
+    margin: 30px auto;
+
+    padding: 25px;
+
+    border-radius: 16px;
+
+    background: rgba(255,255,255,0.05);
+
+    border: 1px solid rgba(124,58,237,.3);
+
+    text-align: center;
+
+    backdrop-filter: blur(10px);
+}
+
+.bienvenida h2 {
+    color: white;
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.bienvenida p {
+    color: #cfcfcf;
+}
+
+.top-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 25px 0;
+    flex-wrap: wrap;
+}
