@@ -186,3 +186,15 @@ tr:nth-child(even){
 .btn-logout:hover{
     background:#dc2626;
 }
+.preview-container {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.preview-image {
+  width: 200px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 2px solid #ddd;
+}
