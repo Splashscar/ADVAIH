@@ -1,17 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { ChangeDetectorRef } from '@angular/core';
-import { AuthServices } from '../../services/auth';
+
 import { Navbar } from '../../components/navbar/navbar';
+import { AuthServices } from '../../services/auth';
+import { EventosService } from '../../services/eventos';
+
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [
-    RouterLink,
     CommonModule,
-    FormsModule,
+    RouterLink,
     Navbar
   ],
   templateUrl: './home.html',
@@ -19,33 +20,27 @@ import { Navbar } from '../../components/navbar/navbar';
 })
 export class HomeComponent implements OnInit {
 
-  // Usuario autenticado
   usuario: any = null;
-  nombreUsuario = '';
-  fotoPerfil: string = '';
 
+  nombreUsuario = '';
+
+  fotoPerfil = '';
 
   eventos: any[] = [];
 
-  nuevoEvento = {
-    id: '',
-    titulo: '',
-    descripcion: ''
-  };
-
-  editando = false;
-
   constructor(
+
     private authService: AuthServices,
+    private eventosService: EventosService,
     private router: Router,
     private cdr: ChangeDetectorRef
+
   ) {}
 
   ngOnInit(): void {
 
-    console.log("🏠 HOME INICIADO");
+    console.log('🏠 HOME INICIADO');
 
-    // Escucha permanente del usuario autenticado
     this.authService.usuario$
       .subscribe(usuario => {
 
@@ -58,121 +53,59 @@ export class HomeComponent implements OnInit {
             usuario.email ||
             'Usuario';
 
-          console.log('✅ Usuario autenticado');
-          console.log(usuario);
-
         } else {
-
-          console.log('❌ No hay usuario autenticado');
 
           this.router.navigate(['/']);
 
+          return;
+
         }
+
         this.cdr.detectChanges();
 
       });
 
-    // Datos temporales
-    this.eventos = [
-      {
-        id: '1',
-        titulo: 'Concierto',
-        descripcion: 'Música en vivo'
-      },
-      {
-        id: '2',
-        titulo: 'Feria',
-        descripcion: 'Emprendimiento local'
-      }
-    ];
+    this.cargarEventos();
 
   }
 
-  // =========================
-  // CREATE
-  // =========================
-  crearEvento() {
+  cargarEventos() {
 
-    if (!this.nuevoEvento.titulo) return;
+    this.eventosService
+      .obtenerEventos()
+      .subscribe({
 
-    const nuevo = {
-      ...this.nuevoEvento,
-      id: Date.now().toString()
-    };
+        next: (data: any) => {
 
-    this.eventos.push(nuevo);
+          this.eventos = data;
 
-    this.cancelar();
+          console.log('Eventos:', this.eventos);
 
-  }
+          this.cdr.detectChanges();
 
-  // =========================
-  // SELECT
-  // =========================
-  seleccionarEvento(evento: any) {
+        },
 
-    this.nuevoEvento = { ...evento };
+        error: (err) => {
 
-    this.editando = true;
+          console.error(err);
+
+        }
+
+      });
 
   }
 
-  // =========================
-  // UPDATE
-  // =========================
-  actualizarEvento() {
-
-    this.eventos = this.eventos.map(ev =>
-      ev.id === this.nuevoEvento.id
-        ? this.nuevoEvento
-        : ev
-    );
-
-    this.cancelar();
-
-  }
-
-  // =========================
-  // DELETE
-  // =========================
-  eliminarEvento(id: string) {
-
-    this.eventos =
-      this.eventos.filter(
-        ev => ev.id !== id
-      );
-
-  }
-
-  // =========================
-  // CANCELAR
-  // =========================
-  cancelar() {
-
-    this.nuevoEvento = {
-      id: '',
-      titulo: '',
-      descripcion: ''
-    };
-
-    this.editando = false;
-
-  }
-
-  // =========================
-  // LOGOUT
-  // =========================
   async cerrarSesion() {
 
     try {
 
       await this.authService.cerrarSesion();
 
-      console.log("👋 Sesión cerrada");
-
       this.router.navigate(['/']);
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
       console.error(error);
 

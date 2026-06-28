@@ -53,6 +53,20 @@
   </option>
 
 </select>
+<!-- Imagen -->
+<input
+  type="file"
+  accept="image/*"
+  (change)="onFileSelected($event)">
+
+<!-- Vista previa -->
+<div *ngIf="previewImage" class="preview-container">
+  <img
+    [src]="previewImage"
+    alt="Vista previa"
+    class="preview-image">
+</div>
+
 
 <button
   class="btn-crear"
