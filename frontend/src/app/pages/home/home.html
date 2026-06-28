@@ -2,12 +2,7 @@
 
     
 
-    <!-- HERO -->
-    <header class="hero">
-        <h1>ADVAIH</h1>
-        <p>Descubre los mejores eventos cerca de ti</p>
-    </header>
-
+<app-navbar></app-navbar>
     <div class="bienvenida" *ngIf="nombreUsuario">
 
         <h2>
@@ -21,20 +16,7 @@
 
     </div>
     
-    <div class="top-actions">
-    <button routerLink="/crud-eventos" class="btn-crear-evento">
-        + Crear Evento
-    </button>
-    
-    <button routerLink="/perfil" class="btn-perfil-nav">
-        👤 Mi Perfil
-    </button>
-    <button
-        class="btn-logout"
-        (click)="cerrarSesion()">
-         Cerrar Sesión
-    </button>
-</div>
+
     <!-- EVENTOS DESTACADOS -->
     <section class="eventos-section">
 
