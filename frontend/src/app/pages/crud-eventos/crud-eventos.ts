@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { EventosService } from '../../services/eventos';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-crud-eventos',
@@ -19,7 +20,8 @@ export class CrudEventos implements OnInit {
   category = '';
 
   constructor(
-    private eventosService: EventosService
+    private eventosService: EventosService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   crearEvento() {
@@ -46,6 +48,10 @@ export class CrudEventos implements OnInit {
           this.location = '';
           this.category = '';
 
+          this.cargarEventos();
+          this.limpiarFormulario();
+          this.cdr.detectChanges();
+
         },
 
         error: (err) => {
@@ -66,6 +72,9 @@ ngOnInit() {
       next: (data: any) => {
 
         this.eventos = data;
+        this.cdr.detectChanges();
+        this.cargarEventos();
+        
 
         console.log(data);
 
@@ -88,12 +97,8 @@ ngOnInit() {
       .eliminarEvento(id)
       .subscribe({
         next: () => {
-
-          this.eventos =
-            this.eventos.filter(
-              evento => evento.id !== id
-            );
-
+          
+          this.cargarEventos();
         },
 
         error: (err) => {
@@ -116,6 +121,8 @@ editarEvento(evento: any) {
   this.location = evento.location;
   this.category = evento.category;
 
+  this.cargarEventos();
+
 }
 actualizarEvento() {
 
@@ -126,6 +133,8 @@ actualizarEvento() {
     time: this.time,
     location: this.location,
     category: this.category
+
+    
   };
 
   this.eventosService
@@ -162,6 +171,7 @@ cargarEventos() {
       next: (data: any) => {
 
         this.eventos = data;
+        this.cdr.detectChanges();
 
       },
 

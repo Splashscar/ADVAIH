@@ -7,6 +7,19 @@
         <h1>ADVAIH</h1>
         <p>Descubre los mejores eventos cerca de ti</p>
     </header>
+
+    <div class="bienvenida" *ngIf="nombreUsuario">
+
+        <h2>
+             Bienvenido,
+            {{ nombreUsuario }}
+        </h2>
+
+        <p>
+            Nos alegra tenerte nuevamente en ADVAIH.
+        </p>
+
+    </div>
     
     <div class="top-actions">
     <button routerLink="/crud-eventos" class="btn-crear-evento">
