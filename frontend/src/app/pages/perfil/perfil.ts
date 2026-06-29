@@ -85,7 +85,7 @@ export class PerfilComponent implements OnInit {
     });
   }
 
-  onFotoSeleccionada(event: any) {
+onFotoSeleccionada(event: any) {
     if (!this.estaLogueado) return;
     const file = event.target.files[0];
     if (file) {
@@ -93,12 +93,16 @@ export class PerfilComponent implements OnInit {
       const reader = new FileReader();
       
       reader.onload = () => {
+        // 1. Cambiamos la variable en tiempo real
         this.foto_perfil = reader.result as string; 
+        
+        // 2. TRUCO CLAVE: La guardamos de inmediato en el caché temporal de la sesión
+        // Así, Angular redibuja la etiqueta <img> en el mismísimo milisegundo en que se lee el archivo
+        localStorage.setItem(`foto_perfil_${this.id_usuario}`, this.foto_perfil);
       };
       reader.readAsDataURL(file);
     }
   }
-
   guardarCambios() {
     if (!this.estaLogueado) return;
     this.editando = false;
