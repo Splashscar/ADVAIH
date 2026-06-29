@@ -12,7 +12,7 @@ import { EventosService } from '../../services/eventos';
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink,
+  
     Navbar
   ],
   templateUrl: './home.html',
