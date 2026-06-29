@@ -1,3 +1,36 @@
-<nav>
-    <h2>ADVAIH</h2>
+<nav class="navbar">
+
+    <div class="navbar-logo">
+        <a routerLink="/home">ADVAIH</a>
+    </div>
+
+    <ul class="navbar-links">
+
+        <li>
+            <a routerLink="/home">Inicio</a>
+        </li>
+
+        <li>
+            <a routerLink="/crud-eventos">Crear Evento</a>
+        </li>
+        <li>
+            <a routerLink="/perfil">Mi Perfil</a>
+        </li>
+
+    </ul>
+
+    <div class="navbar-user">
+
+        <span>{{ nombreUsuario }}</span>
+
+        <button
+            class="btn-logout"
+            (click)="cerrarSesion()">
+
+            Cerrar Sesión
+
+        </button>
+
+    </div>
+
 </nav>

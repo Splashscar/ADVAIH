@@ -2,11 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { EventosService } from '../../services/eventos';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectorRef } from '@angular/core';
+import { Navbar } from '../../components/navbar/navbar';
 
 @Component({
   selector: 'app-crud-eventos',
   standalone: true,
-  imports: [FormsModule,CommonModule],
+  imports: [FormsModule,CommonModule,Navbar],
   templateUrl: './crud-eventos.html',
   styleUrl: './crud-eventos.css',
 })
@@ -17,42 +19,81 @@ export class CrudEventos implements OnInit {
   time = '';
   location = '';
   category = '';
-
+selectedFile: File | null = null;
+previewImage: string | null = null; 
   constructor(
-    private eventosService: EventosService
+    private eventosService: EventosService,
+    private cdr: ChangeDetectorRef
   ) {}
 
-  crearEvento() {
+crearEvento() {
 
-    const evento = {
-      title: this.title,
-      description: this.description,
-      date: this.date,
-      time: this.time,
-      location: this.location,
-      category: this.category
-    };
+  if (!this.selectedFile) {
 
-    this.eventosService.crearEvento(evento)
-      .subscribe({
-        next: (res) => {
+    alert('Selecciona una imagen');
 
-          console.log('Evento creado', res);
+    return;
 
-          this.title = '';
-          this.description = '';
-          this.date = '';
-          this.time = '';
-          this.location = '';
-          this.category = '';
-
-        },
-
-        error: (err) => {
-          console.error(err);
-        }
-      });
   }
+
+  const formData = new FormData();
+
+  formData.append('image', this.selectedFile);
+
+  this.eventosService
+    .subirImagen(formData)
+    .subscribe({
+
+      next: (respuesta: any) => {
+
+        console.log('URL Cloudinary:', respuesta.url);
+
+        const evento = {
+
+          title: this.title,
+          description: this.description,
+          date: this.date,
+          time: this.time,
+          location: this.location,
+          category: this.category,
+
+          imageUrl: respuesta.url
+
+        };
+
+        this.eventosService
+          .crearEvento(evento)
+          .subscribe({
+
+            next: (res) => {
+
+              console.log('Evento creado', res);
+
+              this.cargarEventos();
+
+              this.limpiarFormulario();
+
+            },
+
+            error: (err) => {
+
+              console.error(err);
+
+            }
+
+          });
+
+      },
+
+      error: (err) => {
+
+        console.error(err);
+
+      }
+
+    });
+
+}
 eventos: any[] = [];
 
 ngOnInit() {
@@ -66,6 +107,9 @@ ngOnInit() {
       next: (data: any) => {
 
         this.eventos = data;
+        this.cdr.detectChanges();
+        this.cargarEventos();
+        
 
         console.log(data);
 
@@ -88,12 +132,8 @@ ngOnInit() {
       .eliminarEvento(id)
       .subscribe({
         next: () => {
-
-          this.eventos =
-            this.eventos.filter(
-              evento => evento.id !== id
-            );
-
+          
+          this.cargarEventos();
         },
 
         error: (err) => {
@@ -116,6 +156,8 @@ editarEvento(evento: any) {
   this.location = evento.location;
   this.category = evento.category;
 
+  this.cargarEventos();
+
 }
 actualizarEvento() {
 
@@ -126,6 +168,8 @@ actualizarEvento() {
     time: this.time,
     location: this.location,
     category: this.category
+
+    
   };
 
   this.eventosService
@@ -162,6 +206,7 @@ cargarEventos() {
       next: (data: any) => {
 
         this.eventos = data;
+        this.cdr.detectChanges();
 
       },
 
@@ -186,6 +231,31 @@ limpiarFormulario() {
   this.location = '';
   this.category = '';
 
+  this.selectedFile = null;
+  this.previewImage = null;
+
 }
 
+  nombreUsuario = 'David';
+
+  cerrarSesion() {
+    console.log('Cerrar sesión');
+  }
+  onFileSelected(event: any) {
+
+  const file = event.target.files[0];
+
+  if (!file) return;
+
+  this.selectedFile = file;
+
+  const reader = new FileReader();
+
+  reader.onload = () => {
+    this.previewImage = reader.result as string;
+  };
+
+  reader.readAsDataURL(file);
+
+}
 }

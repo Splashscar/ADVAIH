@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import upload_image
 
 urlpatterns = [
 
@@ -12,5 +13,11 @@ urlpatterns = [
         'eventos/<str:evento_id>/',
         views.detalle_evento
     ),
+        path(
+        'upload-image/',
+        upload_image,
+        name='upload_image'
+    ),
+
 
 ]
