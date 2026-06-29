@@ -1,68 +1,68 @@
 <div class="home-container">
 
+    <app-navbar></app-navbar>
     
-
-<app-navbar></app-navbar>
     <div class="bienvenida" *ngIf="nombreUsuario">
-
-        <h2>
-             Bienvenido,
-            {{ nombreUsuario }}
-        </h2>
-
-        <p>
-            Nos alegra tenerte nuevamente en ADVAIH.
-        </p>
-
+        <h2>Bienvenido, {{ nombreUsuario }}</h2>
+        <p>Nos alegra tenerte nuevamente en ADVAIH.</p>
     </div>
     
+    <!-- 🔍 SECCIÓN DE BUSCADOR Y FILTROS -->
+    <div class="filtros-container" style="max-width: 1200px; margin: 20px auto; padding: 0 20px; display: flex; gap: 15px; flex-wrap: wrap;">
+        
+        <!-- Barra de Búsqueda por Texto -->
+        <div style="flex: 1; min-width: 280px;">
+            <input type="text" 
+                   [(ngModel)]="filtroTexto" 
+                   (input)="aplicarFiltros()" 
+                   placeholder="🔍 Buscar evento por título..." 
+                   style="width: 100%; padding: 12px; background: #1a203e; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; font-size: 14px;">
+        </div>
+
+        <!-- Selector por Categorías -->
+        <div style="min-width: 200px;">
+            <select [(ngModel)]="filtroCategoria" 
+                    (change)="aplicarFiltros()" 
+                    style="width: 100%; padding: 12px; background: #1a203e; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; font-size: 14px; cursor: pointer;">
+                <option value="">📁 Todas las Categorías</option>
+                <option value="Concierto">Concierto</option>
+                <option value="Conferencia">Conferencia</option>
+                <option value="Teatro">Teatro</option>
+                <option value="Deportes">Deportes</option>
+                <option value="Festival">Festival</option>
+            </select>
+        </div>
+    </div>
 
     <!-- EVENTOS DESTACADOS -->
     <section class="eventos-section">
-
         <h2>Eventos Destacados</h2>
 
-        <div class="eventos-grid">
+        <!-- Mensaje por si no hay resultados -->
+        <div *ngIf="eventosFiltrados.length === 0" style="text-align: center; padding: 40px; color: #a0aec0;">
+            ❌ No se encontraron eventos que coincidan con tu búsqueda.
+        </div>
 
-  @for (evento of eventos; track evento.id) {
-
-    <div class="evento-card">
-
-      <img
-        [src]="evento.imageUrl"
-        alt="Evento">
-
-      <div class="evento-info">
-
-        <h3>{{ evento.title }}</h3>
-
-        <p>
-          📍 {{ evento.location }}
-        </p>
-
-        <p>
-          📅 {{ evento.date }}
-        </p>
-
-        <p>
-          {{ evento.category }}
-        </p>
-        <p class="autor">
-          Creado por: {{ evento.authorName }}
-        </p>
-
-        <button>
-          Ver más
-        </button>
-
-      </div>
-
-    </div>
-
-  }
-
-</div>
-
+        <div class="eventos-grid" *ngIf="eventosFiltrados.length > 0">
+            <!-- 👈 Cambiado a eventosFiltrados para que reaccione dinámicamente -->
+            @for (evento of eventosFiltrados; track evento.id) {
+                <div class="evento-card">
+                    <img [src]="evento.imageUrl" alt="Evento">
+                    <div class="evento-info">
+                        <h3>{{ evento.title }}</h3>
+                        <p>📍 {{ evento.location }}</p>
+                        <p>📅 {{ evento.date }}</p>
+                        <p style="display: inline-block; background: rgba(124, 58, 237, 0.2); color: #c084fc; padding: 2px 8px; border-radius: 4px; font-size: 12px;">
+                            {{ evento.category }}
+                        </p>
+                        <p class="autor" style="margin-top: 8px;">
+                            Creado por: {{ evento.authorName }}
+                        </p>
+                        <button>Ver más</button>
+                    </div>
+                </div>
+            }
+        </div>
     </section>
 
 </div>
