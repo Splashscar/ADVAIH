@@ -14,36 +14,30 @@ export class EventosService {
     return this.http.get(`${this.apiUrl}/eventos/`);
   }
 
-  login(datos: any) {
-    return this.http.post(`${this.apiUrl}/auth/login/`, datos);
-  }
-
-  register(datos: any) {
-    return this.http.post(`${this.apiUrl}/auth/register/`, datos);
-  }
   crearEvento(evento: any) {
-  return this.http.post(
-    'http://127.0.0.1:8000/api/eventos/',
-    evento
-  );
-}
-eliminarEvento(id: string) {
+    return this.http.post(
+      `${this.apiUrl}/eventos/`,
+      evento
+    );
+  }
 
-  return this.http.delete(
-    `${this.apiUrl}/eventos/${id}/`
-  );
+  eliminarEvento(id: string) {
+    return this.http.delete(
+      `${this.apiUrl}/eventos/${id}/`
+    );
+  }
 
-}
-actualizarEvento(
-  id: string,
-  evento: any
-) {
+  actualizarEvento(id: string, evento: any) {
+    return this.http.put(
+      `${this.apiUrl}/eventos/${id}/`,
+      evento
+    );
+  }
 
-  return this.http.put(
-    `${this.apiUrl}/eventos/${id}/`,
-    evento
-  );
-
-}
-
+  subirImagen(formData: FormData) {
+    return this.http.post(
+      `${this.apiUrl}/upload-image/`,
+      formData
+    );
+  }
 }

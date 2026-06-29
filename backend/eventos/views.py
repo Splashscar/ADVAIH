@@ -2,6 +2,8 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from config.firebase_config import initialize_firebase
 import json
+import cloudinary
+import cloudinary.uploader
 
 db = initialize_firebase()
 
@@ -33,12 +35,18 @@ def listar_eventos(request):
             data = json.loads(request.body)
 
             nuevo_evento = {
-                "title": data.get("title"),
-                "location": data.get("location"),
-                "date": data.get("date"),
-                "description": data.get("description"),
-                "category": data.get("category")
-            }
+    "title": data.get("title"),
+    "location": data.get("location"),
+    "date": data.get("date"),
+    "description": data.get("description"),
+    "category": data.get("category"),
+    "imageUrl": data.get("imageUrl"),
+
+    "authorId": data.get("authorId"),
+    "authorName": data.get("authorName"),
+    "authorEmail": data.get("authorEmail"),
+    "authorPhoto": data.get("authorPhoto")
+}
 
             doc_ref = db.collection('events').document()
 
@@ -88,3 +96,19 @@ def detalle_evento(request, evento_id):
             {"error": str(e)},
             status=500
         )
+@csrf_exempt
+def upload_image(request):
+
+    if request.method == 'POST':
+
+        image = request.FILES.get('image')
+
+        result = cloudinary.uploader.upload(image)
+
+        return JsonResponse({
+            'url': result['secure_url']
+        })
+
+    return JsonResponse({
+        'error': 'Método no permitido'
+    }, status=405)

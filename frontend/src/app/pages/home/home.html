@@ -2,26 +2,21 @@
 
     
 
-    <!-- HERO -->
-    <header class="hero">
-        <h1>ADVAIH</h1>
-        <p>Descubre los mejores eventos cerca de ti</p>
-    </header>
+<app-navbar></app-navbar>
+    <div class="bienvenida" *ngIf="nombreUsuario">
+
+        <h2>
+             Bienvenido,
+            {{ nombreUsuario }}
+        </h2>
+
+        <p>
+            Nos alegra tenerte nuevamente en ADVAIH.
+        </p>
+
+    </div>
     
-    <div class="top-actions">
-    <button routerLink="/crud-eventos" class="btn-crear-evento">
-        + Crear Evento
-    </button>
-    
-    <button routerLink="/perfil" class="btn-perfil-nav">
-        👤 Mi Perfil
-    </button>
-    <button
-        class="btn-logout"
-        (click)="cerrarSesion()">
-         Cerrar Sesión
-    </button>
-</div>
+
     <!-- EVENTOS DESTACADOS -->
     <section class="eventos-section">
 
@@ -29,40 +24,44 @@
 
         <div class="eventos-grid">
 
-            <div class="evento-card">
-                <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f"
-                    alt="Evento">
+  @for (evento of eventos; track evento.id) {
 
-                <div class="evento-info">
-                    <h3>Festival Electrónico</h3>
-                    <p>Bogotá • 20 Junio</p>
-                    <button>Ver más</button>
-                </div>
-            </div>
+    <div class="evento-card">
 
-            <div class="evento-card">
-                <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819"
-                    alt="Evento">
+      <img
+        [src]="evento.imageUrl"
+        alt="Evento">
 
-                <div class="evento-info">
-                    <h3>Concierto Urbano</h3>
-                    <p>Medellín • 25 Junio</p>
-                    <button>Ver más</button>
-                </div>
-            </div>
+      <div class="evento-info">
 
-            <div class="evento-card">
-                <img src="https://s3.summerfest.com/assets/images/stages/2024/generac/Generac-hero2000x1333.jpg"
-                    alt="Evento">
+        <h3>{{ evento.title }}</h3>
 
-                <div class="evento-info">
-                    <h3>Summer Fest</h3>
-                    <p>Cali • 28 Junio</p>
-                    <button>Ver más</button>
-                </div>
-            </div>
+        <p>
+          📍 {{ evento.location }}
+        </p>
 
-        </div>
+        <p>
+          📅 {{ evento.date }}
+        </p>
+
+        <p>
+          {{ evento.category }}
+        </p>
+        <p class="autor">
+          Creado por: {{ evento.authorName }}
+        </p>
+
+        <button>
+          Ver más
+        </button>
+
+      </div>
+
+    </div>
+
+  }
+
+</div>
 
     </section>
 
