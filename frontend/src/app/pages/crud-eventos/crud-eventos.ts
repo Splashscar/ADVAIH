@@ -4,7 +4,7 @@ import { EventosService } from '../../services/eventos';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef } from '@angular/core';
 import { Navbar } from '../../components/navbar/navbar';
-
+import { AuthServices } from '../../services/auth';
 @Component({
   selector: 'app-crud-eventos',
   standalone: true,
@@ -19,11 +19,13 @@ export class CrudEventos implements OnInit {
   time = '';
   location = '';
   category = '';
+  usuario: any = null;
 selectedFile: File | null = null;
 previewImage: string | null = null; 
   constructor(
     private eventosService: EventosService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private authService: AuthServices
   ) {}
 
 crearEvento() {
@@ -49,7 +51,6 @@ crearEvento() {
         console.log('URL Cloudinary:', respuesta.url);
 
         const evento = {
-
           title: this.title,
           description: this.description,
           date: this.date,
@@ -57,8 +58,12 @@ crearEvento() {
           location: this.location,
           category: this.category,
 
-          imageUrl: respuesta.url
+          imageUrl: respuesta.url,
 
+          authorId: this.usuario?.uid,
+          authorName: this.usuario?.displayName,
+          authorEmail: this.usuario?.email,
+          authorPhoto: this.usuario?.photoURL
         };
 
         this.eventosService
@@ -98,28 +103,16 @@ eventos: any[] = [];
 
 ngOnInit() {
 
+  this.authService.usuario$
+  .subscribe(usuario => {
+
+    this.usuario = usuario;
+
+    console.log('Usuario:', usuario);
+
+  });
+
   this.cargarEventos();
-
-
-
-  this.eventosService.obtenerEventos()
-    .subscribe({
-      next: (data: any) => {
-
-        this.eventos = data;
-        this.cdr.detectChanges();
-        this.cargarEventos();
-        
-
-        console.log(data);
-
-      },
-      error: (err) => {
-
-        console.error(err);
-
-      }
-    });
 
 }
   eliminarEvento(id: string) {

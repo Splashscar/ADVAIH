@@ -36,12 +36,16 @@ def listar_eventos(request):
 
             nuevo_evento = {
     "title": data.get("title"),
-    "description": data.get("description"),
-    "date": data.get("date"),
-    "time": data.get("time"),
     "location": data.get("location"),
+    "date": data.get("date"),
+    "description": data.get("description"),
     "category": data.get("category"),
-    "imageUrl": data.get("imageUrl")
+    "imageUrl": data.get("imageUrl"),
+
+    "authorId": data.get("authorId"),
+    "authorName": data.get("authorName"),
+    "authorEmail": data.get("authorEmail"),
+    "authorPhoto": data.get("authorPhoto")
 }
 
             doc_ref = db.collection('events').document()
