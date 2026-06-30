@@ -35,18 +35,26 @@ def listar_eventos(request):
             data = json.loads(request.body)
 
             nuevo_evento = {
-    "title": data.get("title"),
-    "location": data.get("location"),
-    "date": data.get("date"),
-    "description": data.get("description"),
-    "category": data.get("category"),
-    "imageUrl": data.get("imageUrl"),
+                "title": data.get("title"),
+                "location": data.get("location"),
+                "date": data.get("date"),
+                "description": data.get("description"),
+                "category": data.get("category"),
+                "imageUrl": data.get("imageUrl"),
 
-    "authorId": data.get("authorId"),
-    "authorName": data.get("authorName"),
-    "authorEmail": data.get("authorEmail"),
-    "authorPhoto": data.get("authorPhoto")
-}
+                "authorId": data.get("authorId"),
+                "authorName": data.get("authorName"),
+                "authorEmail": data.get("authorEmail"),
+                "authorPhoto": data.get("authorPhoto"),
+
+                # ❤️ Likes
+                "likes": 0,
+                "usuariosLike": [],
+
+                # ⭐ Favoritos
+                "favoritos": 0,
+                "usuariosFavoritos": []
+            }
 
             doc_ref = db.collection('events').document()
 
@@ -94,6 +102,168 @@ def detalle_evento(request, evento_id):
 
         return JsonResponse(
             {"error": str(e)},
+            status=500
+        )
+    
+@csrf_exempt
+def toggle_like(request, evento_id):
+
+    try:
+
+        if request.method != 'POST':
+
+            return JsonResponse(
+                {
+                    "error": "Método no permitido"
+                },
+                status=405
+            )
+
+        data = json.loads(request.body)
+
+        uid = data.get("uid")
+
+        if not uid:
+
+            return JsonResponse(
+                {
+                    "error": "UID requerido"
+                },
+                status=400
+            )
+
+        evento_ref = db.collection("events").document(evento_id)
+
+        evento = evento_ref.get()
+
+        if not evento.exists:
+
+            return JsonResponse(
+                {
+                    "error": "Evento no encontrado"
+                },
+                status=404
+            )
+
+        datos = evento.to_dict()
+
+        usuarios_like = datos.get("usuariosLike", [])
+
+        likes = datos.get("likes", 0)
+
+        if uid in usuarios_like:
+
+            usuarios_like.remove(uid)
+
+            likes -= 1
+
+            dio_like = False
+
+        else:
+
+            usuarios_like.append(uid)
+
+            likes += 1
+
+            dio_like = True
+
+        evento_ref.update({
+
+            "usuariosLike": usuarios_like,
+
+            "likes": likes
+
+        })
+
+        return JsonResponse({
+
+            "likes": likes,
+
+            "usuariosLike": usuarios_like,
+
+            "dioLike": dio_like
+
+        })
+
+    except Exception as e:
+
+        return JsonResponse(
+            {
+                "error": str(e)
+            },
+            status=500
+        )
+@csrf_exempt
+def toggle_favorito(request, evento_id):
+
+    try:
+
+        if request.method != "POST":
+
+            return JsonResponse(
+                {"error":"Método no permitido"},
+                status=405
+            )
+
+        data = json.loads(request.body)
+
+        uid = data.get("uid")
+
+        evento_ref = db.collection("events").document(evento_id)
+
+        evento = evento_ref.get()
+
+        if not evento.exists:
+
+            return JsonResponse(
+                {"error":"Evento no encontrado"},
+                status=404
+            )
+
+        datos = evento.to_dict()
+
+        usuarios = datos.get("usuariosFavoritos", [])
+
+        favoritos = datos.get("favoritos", 0)
+
+        if uid in usuarios:
+
+            usuarios.remove(uid)
+
+            favoritos -= 1
+
+            activo = False
+
+        else:
+
+            usuarios.append(uid)
+
+            favoritos += 1
+
+            activo = True
+
+        evento_ref.update({
+
+            "usuariosFavoritos": usuarios,
+
+            "favoritos": favoritos
+
+        })
+
+        return JsonResponse({
+
+            "favoritos": favoritos,
+
+            "usuariosFavoritos": usuarios,
+
+            "activo": activo
+
+        })
+
+    except Exception as e:
+
+        return JsonResponse(
+            {"error":str(e)},
             status=500
         )
 @csrf_exempt

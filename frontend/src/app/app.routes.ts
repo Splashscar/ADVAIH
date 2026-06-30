@@ -2,14 +2,15 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login';
 import { RegisterComponent } from './pages/register/register';
 import { HomeComponent } from './pages/home/home';
-import { CrudEventos } from "./pages/crud-eventos/crud-eventos"
+import { CrudEventos } from "./pages/crud-eventos/crud-eventos";
 import { PerfilComponent } from './pages/perfil/perfil';
 import { authGuard } from './guard/auth-guard.ts-guard';
+import { FavoritosComponent } from './pages/favoritos/favoritos';
 import { ChatsComponent } from './pages/chats/chats';
 import { ChatConversacion } from './pages/chat-conversacion/chat-conversacion';
+
 export const routes: Routes = [
   { path: '', component: LoginComponent },
-
   { path: 'register', component: RegisterComponent },
 
   {
@@ -29,15 +30,22 @@ export const routes: Routes = [
     component: PerfilComponent,
     canActivate: [authGuard]
   },
-  {
-  path: 'chats',
-  component: ChatsComponent
-},
-{
-  path: 'chats/:chatId',
-  loadComponent: () =>
-    import('./pages/chat-conversacion/chat-conversacion')
-      .then(m => m.ChatConversacion)
-}
 
+  {
+    path: 'favoritos',
+    component: FavoritosComponent,
+    canActivate: [authGuard]
+  },
+
+  {
+    path: 'chats',
+    component: ChatsComponent,
+    canActivate: [authGuard]
+  },
+
+  {
+    path: 'chats/:chatId',
+    loadComponent: () => import('./pages/chat-conversacion/chat-conversacion').then(m => m.ChatConversacion),
+    canActivate: [authGuard]
+  }
 ];

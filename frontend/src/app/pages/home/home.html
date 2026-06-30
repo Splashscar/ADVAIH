@@ -58,6 +58,32 @@
                         <p class="autor" style="margin-top: 8px;">
                             Creado por: {{ evento.authorName }}
                         </p>
+                        <div class="acciones-evento">
+
+                            <button
+                                class="btn-like"
+                                (click)="darLike(evento)">
+
+                                <span *ngIf="usuarioDioLike(evento)">
+                                    ❤️
+                                </span>
+
+                                <span *ngIf="!usuarioDioLike(evento)">
+                                    🤍
+                                </span>
+
+                                {{ evento.likes || 0 }}
+
+                            </button>
+                            <button
+                                class="btn-favorito"
+                                (click)="darFavorito(evento)">
+
+                                {{ usuarioTieneFavorito(evento) ? '⭐' : '☆' }}
+
+                            </button>
+
+                        </div>
                         <button>Ver más</button>
                     </div>
                 </div>

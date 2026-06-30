@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms'; // 👈 CLAVE: Para los inputs de 
 import { Navbar } from '../../components/navbar/navbar';
 import { AuthServices } from '../../services/auth';
 import { EventosService } from '../../services/eventos';
+import { FirebaseService } from '../../services/firebase';
 
 @Component({
   selector: 'app-home',
@@ -25,20 +26,22 @@ export class HomeComponent implements OnInit {
   usuario: any = null;
   nombreUsuario = '';
   fotoPerfil = '';
-  
+
   eventos: any[] = [];          // Lista maestra original de la base de datos
   eventosFiltrados: any[] = []; // 👈 CLAVE: La lista que muta en pantalla
 
   // Variables para capturar los filtros elegidos por el usuario
   filtroTexto: string = '';
   filtroCategoria: string = '';
+  favoritos: string[] = [];
 
   constructor(
     private authService: AuthServices,
     private eventosService: EventosService,
+    private firebaseService: FirebaseService,
     private router: Router,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     console.log('🏠 HOME INICIADO');
@@ -51,10 +54,30 @@ export class HomeComponent implements OnInit {
             usuario.displayName ||
             usuario.email ||
             'Usuario';
+
+          this.firebaseService
+            .obtenerFavoritos(usuario.uid)
+            .subscribe((data: any) => {
+
+              this.favoritos =
+                data.map((f: any) => f.id);
+
+              this.cdr.detectChanges();
+
+            });
         } else {
           this.router.navigate(['/']);
           return;
         }
+        this.firebaseService
+        .obtenerFavoritos(usuario.uid)
+        .subscribe((data:any)=>{
+
+          this.favoritos =
+            data.map((f:any)=>f.id);
+
+        });
+
         this.cdr.detectChanges();
       });
 
@@ -81,15 +104,65 @@ export class HomeComponent implements OnInit {
   aplicarFiltros() {
     this.eventosFiltrados = this.eventos.filter(evento => {
       // 1. Filtrar por texto (coincidencia en título ignorando mayúsculas/minúsculas)
-      const cumpleTexto = !this.filtroTexto || 
+      const cumpleTexto = !this.filtroTexto ||
         evento.title?.toLowerCase().includes(this.filtroTexto.toLowerCase());
 
       // 2. Filtrar por categoría seleccionada
-      const cumpleCategoria = !this.filtroCategoria || 
+      const cumpleCategoria = !this.filtroCategoria ||
         evento.category === this.filtroCategoria;
 
       return cumpleTexto && cumpleCategoria;
     });
+  }
+  // ===============================
+  // ¿El usuario ya dio like?
+  // ===============================
+
+  usuarioDioLike(evento: any): boolean {
+
+    if (!this.usuario) return false;
+
+    return (
+      evento.usuariosLike &&
+      evento.usuariosLike.includes(this.usuario.uid)
+    );
+
+  }
+
+  // ===============================
+  // Dar / quitar Like
+  // ===============================
+
+  async darLike(evento: any) {
+
+    if (!this.usuario) return;
+
+    this.eventosService
+      .toggleLike(
+        evento.id,
+        this.usuario.uid
+      )
+      .subscribe({
+
+        next: (respuesta: any) => {
+
+          evento.likes = respuesta.likes;
+
+          evento.usuariosLike =
+            respuesta.usuariosLike;
+
+          this.cdr.detectChanges();
+
+        },
+
+        error: (err) => {
+
+          console.error(err);
+
+        }
+
+      });
+
   }
 
   async cerrarSesion() {
@@ -100,5 +173,56 @@ export class HomeComponent implements OnInit {
     catch (error) {
       console.error(error);
     }
+  }
+  usuarioTieneFavorito(evento: any): boolean {
+
+    return this.favoritos.includes(
+      evento.id
+    );
+
+  }
+
+  async darFavorito(evento: any) {
+
+    if (!this.usuario) return;
+
+    const esFavorito =
+      this.usuarioTieneFavorito(evento);
+
+    try {
+
+      await this.firebaseService.toggleFavorito(
+
+        evento.id,
+
+        this.usuario.uid,
+
+        esFavorito
+
+      );
+
+      if (esFavorito) {
+
+        this.favoritos =
+          this.favoritos.filter(
+            id => id !== evento.id
+          );
+
+      } else {
+
+        this.favoritos.push(
+          evento.id
+        );
+
+      }
+
+      this.cdr.detectChanges();
+
+    } catch (error) {
+
+      console.error(error);
+
+    }
+
   }
 }

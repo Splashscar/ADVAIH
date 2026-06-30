@@ -18,6 +18,14 @@ urlpatterns = [
         upload_image,
         name='upload_image'
     ),
+    path(
+        'eventos/<str:evento_id>/like/',
+        views.toggle_like
+    ),
+    path(
+        'eventos/<str:evento_id>/favorito/',
+        views.toggle_favorito
+    ),
 
 
 ]
