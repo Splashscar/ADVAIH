@@ -1,0 +1,59 @@
+.chat-container{
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.chat-container h1{
+    color:white;
+    margin-bottom:20px;
+}
+
+.chat-container input{
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:none;
+    margin-bottom:20px;
+}
+
+.usuario-card{
+    display:flex;
+    align-items:center;
+    gap:15px;
+
+    background:#111827;
+
+    padding:15px;
+    border-radius:12px;
+
+    margin-bottom:10px;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.usuario-card:hover{
+    transform:translateY(-2px);
+}
+
+.usuario-card img{
+    width:55px;
+    height:55px;
+    border-radius:50%;
+    object-fit:cover;
+}
+
+.info h3{
+    color:white;
+    margin:0;
+}
+
+.info p{
+    color:#9ca3af;
+    margin:0;
+}
+h1{
+    color: blanchedalmond;
+}
