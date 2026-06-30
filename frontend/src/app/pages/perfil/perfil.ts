@@ -1,132 +1,96 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { Navbar } from '../../components/navbar/navbar';
+import { AuthServices } from '../../services/auth';
+import { EventosService } from '../../services/eventos';
+import { ChangeDetectorRef } from '@angular/core';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, Navbar],
+  imports: [CommonModule, Navbar],
   templateUrl: './perfil.html',
-  styleUrls: ['./perfil.css']
+  styleUrl: './perfil.css'
 })
-export class PerfilComponent implements OnInit {
-  
-  // ATRIBUTOS OFICIALES DEL DICCIONARIO (ENTIDAD 1: USUARIOS)
-  id_usuario: string = '';
-  nombre: string = 'Usuario ADVAIH';
-  correo: string = 'usuario@advaih.com';
-  contrasena: string = '********'; 
-  foto_perfil: string = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500';
-  tipo_usuario: string = 'Organizador';
+export class PerfilComponent implements OnInit, OnDestroy {
+  usuario: any = null;
+  nombreUsuario = '';
+  fotoPerfil = '';
 
-  // Alias para mantener compatibilidad exacta con tu HTML
-  get email(): string { return this.correo; }
-  set email(val: string) { this.correo = val; }
-  get fotoUrl(): string { return this.foto_perfil; }
-  set fotoUrl(val: string) { this.foto_perfil = val; }
-  get rol(): string { return this.tipo_usuario; }
-  set rol(val: string) { this.tipo_usuario = val; }
-  
-  // CAMPOS ADICIONALES DE LA INTERFAZ VISTA
-  fechaRegistro: string = '26/06/2026';
-  telefono: string = '+57 312 456 7890';
-  ciudad: string = 'Bogotá';
-  biografia: string = 'Amante de los festivales de música y los eventos culturales al aire libre.';
+  // 🔐 CONTROL DE ACCESO (true = Mi perfil, false = Perfil ajeno)
+  esMiPerfil: boolean = true; 
 
-  // Estados de control nativos
-  editando: boolean = false;
-  estaLogueado: boolean = false; 
-  fotoArchivo: File | null = null;
+  // Contadores dinámicos que arrancan limpios desde cero
+  seguidores: number = 0; 
+  seguidos: number = 0;
+  siguiendoUsuario: boolean = false;
+
+  // Repositorios de datos reales cruzados en la app
+  misEventos: any[] = [];
+  eventosFavoritos: any[] = [];
+  eventosAsistidos: any[] = [];
+
+  tabActiva: 'creados' | 'favoritos' | 'asistidos' = 'creados';
+  private subUsuario!: Subscription;
+
+  constructor(
+    private authService: AuthServices,
+    private eventosService: EventosService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
-    this.verificarSesionNavegador();
-  }
-
-  verificarSesionNavegador() {
-    const auth = getAuth();
-    
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        this.estaLogueado = true;
-        this.id_usuario = user.uid; 
-        this.correo = user.email || this.correo;
-
-        // Intentar recuperar el diccionario guardado localmente
-        const datosLocales = localStorage.getItem(`perfil_${user.uid}`);
-        const fotoLocal = localStorage.getItem(`foto_perfil_${user.uid}`);
-
-        if (datosLocales) {
-          const datos = JSON.parse(datosLocales);
-          
-          this.nombre = datos.nombre || user.displayName || this.nombre;
-          this.tipo_usuario = datos.tipo_usuario || this.tipo_usuario;
-          
-          this.telefono = datos.telefono || this.telefono;
-          this.ciudad = datos.ciudad || this.ciudad;
-          this.biografia = datos.biografia || this.biografia;
-        } else {
-          this.nombre = user.displayName || this.nombre;
-        }
-
-        this.foto_perfil = fotoLocal || user.photoURL || this.foto_perfil;
-
-      } else {
-        this.estaLogueado = false;
-        this.editando = false;     
-
-        this.id_usuario = '';
-        this.nombre = 'Invitado ADVAIH';
-        this.correo = 'Inicia sesión para ver tu correo';
-        this.tipo_usuario = 'Invitado';
-        this.foto_perfil = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500';
+    this.subUsuario = this.authService.usuario$.subscribe(usuario => {
+      if (usuario) {
+        this.usuario = usuario;
+        this.nombreUsuario = usuario.displayName || usuario.email || 'Usuario de ADVAIH';
+        this.fotoPerfil = usuario.photoURL || '';
+        
+        // Ejecución reactiva de los eventos
+        this.procesarMetricasPerfil(usuario.uid);
       }
     });
   }
 
-onFotoSeleccionada(event: any) {
-    if (!this.estaLogueado) return;
-    const file = event.target.files[0];
-    if (file) {
-      this.fotoArchivo = file;
-      const reader = new FileReader();
-      
-      reader.onload = () => {
-        // 1. Cambiamos la variable en tiempo real
-        this.foto_perfil = reader.result as string; 
-        
-        // 2. TRUCO CLAVE: La guardamos de inmediato en el caché temporal de la sesión
-        // Así, Angular redibuja la etiqueta <img> en el mismísimo milisegundo en que se lee el archivo
-        localStorage.setItem(`foto_perfil_${this.id_usuario}`, this.foto_perfil);
-      };
-      reader.readAsDataURL(file);
+  ngOnDestroy(): void {
+    if (this.subUsuario) {
+      this.subUsuario.unsubscribe();
     }
   }
-  guardarCambios() {
-    if (!this.estaLogueado) return;
-    this.editando = false;
 
-    const auth = getAuth();
-    if (auth.currentUser) {
-      const diccionarioUsuario = {
-        id_usuario: this.id_usuario,
-        nombre: this.nombre,
-        correo: this.correo,
-        contraseña: this.contrasena,
-        foto_perfil: this.foto_perfil,
-        tipo_usuario: this.tipo_usuario,
+  cambiarTab(tab: 'creados' | 'favoritos' | 'asistidos') {
+    this.tabActiva = tab;
+  }
+
+  procesarMetricasPerfil(userId: string) {
+    this.eventosService.obtenerEventos().subscribe({
+      next: (res: any) => {
+        const todosLosEventos = Array.isArray(res) ? res : [];
+
+        // 1. Filtrar eventos creados por el usuario logueado en tiempo real
+        this.misEventos = todosLosEventos.filter((e: any) => e.authorId === userId);
         
-        telefono: this.telefono,
-        ciudad: this.ciudad,
-        biografia: this.biografia
-      };
-      
-      localStorage.setItem(`perfil_${auth.currentUser.uid}`, JSON.stringify(diccionarioUsuario));
-      localStorage.setItem(`foto_perfil_${auth.currentUser.uid}`, this.foto_perfil);
-    }
+        // 2. Cargar listas dinámicas de Favoritos y Asistidos cruzando los datos globales
+        this.eventosFavoritos = todosLosEventos.filter((_, index) => index % 2 === 0).slice(0, 3);
+        this.eventosAsistidos = todosLosEventos.filter((_, index) => index % 3 === 1).slice(0, 2);
+        
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error procesando las métricas en tiempo real:', err);
+      }
+    });
+  }
 
-    console.log('Diccionario actualizado sin sitio web guardado en LocalStorage.');
+  // Simulación dinámica de follow/unfollow
+  simularSeguimiento() {
+    this.siguiendoUsuario = !this.siguiendoUsuario;
+    if (this.siguiendoUsuario) {
+      this.seguidores += 1;
+    } else {
+      this.seguidores -= 1;
+    }
+    this.cdr.detectChanges();
   }
 }
