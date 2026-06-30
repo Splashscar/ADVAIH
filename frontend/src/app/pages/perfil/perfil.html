@@ -19,30 +19,16 @@
       </div>
       
       <div style="display: flex; gap: 10px;">
-        @if (esMiPerfil) {
-          <button (click)="alternarEdicion()" style="background: #7c3aed; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; box-shadow: 0 4px 12px rgba(124,58,237,0.3);">
-            {{ editando ? '❌ Cancelar Edición' : '✏️ Editar Perfil' }}
-          </button>
-        } @else {
-          <button (click)="simularSeguimiento()" style="background: #7c3aed; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; box-shadow: 0 4px 12px rgba(124,58,237,0.3);">
-            ➕ {{ siguiendoUsuario ? 'Dejar de seguir' : 'Seguir' }}
-          </button>
-        }
+        <button (click)="alternarEdicion()" style="background: #7c3aed; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; box-shadow: 0 4px 12px rgba(124,58,237,0.3);">
+          {{ editando ? '❌ Cancelar Edición' : '✏️ Editar Perfil' }}
+        </button>
       </div>
     </div>
 
     <div class="profile-stats" style="display: flex; gap: 25px; background: rgba(15, 19, 34, 0.6); padding: 20px 30px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.03);">
-      <div style="text-align: center; min-width: 70px;">
-        <span style="display: block; font-size: 28px; font-weight: 800; color: #c084fc; text-shadow: 0 0 10px rgba(192,132,252,0.2);">{{ misEventos.length }}</span>
-        <span style="color: #718096; font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">Creados</span>
-      </div>
-      <div style="text-align: center; min-width: 70px;">
-        <span style="display: block; font-size: 28px; font-weight: 800; color: #c084fc; text-shadow: 0 0 10px rgba(192,132,252,0.2);">{{ followers }}</span>
-        <span style="color: #718096; font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">Seguidores</span>
-      </div>
-      <div style="text-align: center; min-width: 70px;">
-        <span style="display: block; font-size: 28px; font-weight: 800; color: #c084fc; text-shadow: 0 0 10px rgba(192,132,252,0.2);">{{ seguidos }}</span>
-        <span style="color: #718096; font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">Seguidos</span>
+      <div style="text-align: center; min-width: 90px;">
+        <span style="display: block; font-size: 28px; font-weight: 800; color: #c084fc; text-shadow: 0 0 10px rgba(192,132,252,0.2);">{{ misEventEventosLength }}</span>
+        <span style="color: #718096; font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">Eventos Creados</span>
       </div>
     </div>
   </div>
@@ -74,13 +60,13 @@
           <input type="file" #fileInput (change)="onFotoSeleccionada($event)" accept="image/*" style="display: none;">
           
           <button type="button" (click)="fileInput.click()" style="background: rgba(124, 58, 237, 0.2); color: #c084fc; border: 1px solid #7c3aed; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;">
-            📁 Seleccionar Imagen
+            📁 Seleccionar Nueva Foto
           </button>
         </div>
       </div>
 
       <button (click)="guardarCambiosPerfil()" style="background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
-        💾 Guardar Cambios
+        💾 Guardar Cambios Permanentes
       </button>
     </div>
   }
@@ -132,7 +118,7 @@
     } @empty {
       <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; background: #1a203e; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1); color: #a0aec0;">
         <span style="font-size: 40px; display: block; margin-bottom: 10px;">📭</span>
-        <p style="margin: 0; font-size: 16px; font-weight: 500;">No tienes eventos registrados en esta sección todavía.</p>
+        <p style="margin: 0; font-size: 16px; font-weight: 500;">No tienes eventos en esta sección todavía.</p>
       </div>
     }
 
