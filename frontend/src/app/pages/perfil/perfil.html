@@ -12,17 +12,18 @@
     
     <div class="profile-info" style="flex: 1; min-width: 250px;">
       <h2 style="margin: 0 0 5px 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">{{ nombreUsuario }}</h2>
-      <p style="margin: 0 0 20px 0; color: #a0aec0; font-size: 15px; display: flex; align-items: center; gap: 5px;">
-        📧 {{ usuario?.email || 'usuario@advaih.com' }}
-      </p>
+      
+      <div style="margin: 0 0 20px 0; display: flex; flex-direction: column; gap: 5px; color: #a0aec0; font-size: 15px;">
+        <span>📧 {{ correoUsuario }}</span>
+        <span>📞 {{ telefonoUsuario }}</span>
+      </div>
       
       <div style="display: flex; gap: 10px;">
         @if (esMiPerfil) {
-          <button style="background: #7c3aed; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; box-shadow: 0 4px 12px rgba(124,58,237,0.3);">
-            ✏️ Editar Perfil
+          <button (click)="alternarEdicion()" style="background: #7c3aed; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; box-shadow: 0 4px 12px rgba(124,58,237,0.3);">
+            {{ editando ? '❌ Cancelar Edición' : '✏️ Editar Perfil' }}
           </button>
-        } 
-        @else {
+        } @else {
           <button (click)="simularSeguimiento()" style="background: #7c3aed; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; box-shadow: 0 4px 12px rgba(124,58,237,0.3);">
             ➕ {{ siguiendoUsuario ? 'Dejar de seguir' : 'Seguir' }}
           </button>
@@ -36,7 +37,7 @@
         <span style="color: #718096; font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">Creados</span>
       </div>
       <div style="text-align: center; min-width: 70px;">
-        <span style="display: block; font-size: 28px; font-weight: 800; color: #c084fc; text-shadow: 0 0 10px rgba(192,132,252,0.2);">{{ seguidores }}</span>
+        <span style="display: block; font-size: 28px; font-weight: 800; color: #c084fc; text-shadow: 0 0 10px rgba(192,132,252,0.2);">{{ followers }}</span>
         <span style="color: #718096; font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">Seguidores</span>
       </div>
       <div style="text-align: center; min-width: 70px;">
@@ -45,6 +46,44 @@
       </div>
     </div>
   </div>
+
+  @if (editando) {
+    <div style="background: #161b33; padding: 25px; border-radius: 12px; border: 1px solid rgba(124, 58, 237, 0.3); margin-bottom: 30px; max-width: 600px;">
+      <h3 style="margin-top: 0; color: #c084fc; font-size: 20px;">✏️ Actualizar mis Datos</h3>
+      
+      <div style="margin-bottom: 15px;">
+        <label style="display: block; margin-bottom: 5px; color: #a0aec0; font-size: 14px;">Nombre de Usuario:</label>
+        <input type="text" [(ngModel)]="editNombre" style="width: 100%; padding: 10px; background: #1a203e; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: white;">
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <label style="display: block; margin-bottom: 5px; color: #a0aec0; font-size: 14px;">Correo Electrónico:</label>
+        <input type="email" [(ngModel)]="editCorreo" style="width: 100%; padding: 10px; background: #1a203e; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: white;">
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <label style="display: block; margin-bottom: 5px; color: #a0aec0; font-size: 14px;">Teléfono:</label>
+        <input type="text" [(ngModel)]="editTelefono" placeholder="Ej: +57 300 123 4567" style="width: 100%; padding: 10px; background: #1a203e; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: white;">
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; margin-bottom: 5px; color: #a0aec0; font-size: 14px;">Foto de Perfil:</label>
+        <div style="display: flex; align-items: center; gap: 15px;">
+          <img [src]="editFoto || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80'" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid #7c3aed;">
+          
+          <input type="file" #fileInput (change)="onFotoSeleccionada($event)" accept="image/*" style="display: none;">
+          
+          <button type="button" (click)="fileInput.click()" style="background: rgba(124, 58, 237, 0.2); color: #c084fc; border: 1px solid #7c3aed; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;">
+            📁 Seleccionar Imagen
+          </button>
+        </div>
+      </div>
+
+      <button (click)="guardarCambiosPerfil()" style="background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+        💾 Guardar Cambios
+      </button>
+    </div>
+  }
 
   <div class="tabs-buttons" style="display: flex; gap: 5px; border-bottom: 2px solid #1a203e; margin-bottom: 25px;">
     <button (click)="cambiarTab('creados')" 

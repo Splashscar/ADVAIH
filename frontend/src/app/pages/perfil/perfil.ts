@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms'; 
 import { Navbar } from '../../components/navbar/navbar';
 import { AuthServices } from '../../services/auth';
 import { EventosService } from '../../services/eventos';
@@ -9,7 +10,7 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, Navbar],
+  imports: [CommonModule, FormsModule, Navbar], 
   templateUrl: './perfil.html',
   styleUrl: './perfil.css'
 })
@@ -17,16 +18,25 @@ export class PerfilComponent implements OnInit, OnDestroy {
   usuario: any = null;
   nombreUsuario = '';
   fotoPerfil = '';
+  correoUsuario = '';
+  telefonoUsuario = '';
 
   // 🔐 CONTROL DE ACCESO (true = Mi perfil, false = Perfil ajeno)
   esMiPerfil: boolean = true; 
 
-  // Contadores dinámicos que arrancan limpios desde cero
-  seguidores: number = 0; 
+  // Estado e inputs del formulario de edición
+  editando: boolean = false;
+  editNombre: string = '';
+  editFoto: string = '';
+  editCorreo: string = '';
+  editTelefono: string = '';
+
+  // Contadores dinámicos
+  followers: number = 0; 
   seguidos: number = 0;
   siguiendoUsuario: boolean = false;
 
-  // Repositorios de datos reales cruzados en la app
+  // Repositorios de datos reales
   misEventos: any[] = [];
   eventosFavoritos: any[] = [];
   eventosAsistidos: any[] = [];
@@ -46,8 +56,14 @@ export class PerfilComponent implements OnInit, OnDestroy {
         this.usuario = usuario;
         this.nombreUsuario = usuario.displayName || usuario.email || 'Usuario de ADVAIH';
         this.fotoPerfil = usuario.photoURL || '';
+        this.correoUsuario = usuario.email || 'usuario@advaih.com';
+        this.telefonoUsuario = usuario.phoneNumber || 'Sin teléfono registrado';
         
-        // Ejecución reactiva de los eventos
+        this.editNombre = this.nombreUsuario;
+        this.editFoto = this.fotoPerfil;
+        this.editCorreo = this.correoUsuario;
+        this.editTelefono = this.telefonoUsuario;
+
         this.procesarMetricasPerfil(usuario.uid);
       }
     });
@@ -67,30 +83,52 @@ export class PerfilComponent implements OnInit, OnDestroy {
     this.eventosService.obtenerEventos().subscribe({
       next: (res: any) => {
         const todosLosEventos = Array.isArray(res) ? res : [];
-
-        // 1. Filtrar eventos creados por el usuario logueado en tiempo real
         this.misEventos = todosLosEventos.filter((e: any) => e.authorId === userId);
-        
-        // 2. Cargar listas dinámicas de Favoritos y Asistidos cruzando los datos globales
         this.eventosFavoritos = todosLosEventos.filter((_, index) => index % 2 === 0).slice(0, 3);
         this.eventosAsistidos = todosLosEventos.filter((_, index) => index % 3 === 1).slice(0, 2);
-        
         this.cdr.detectChanges();
       },
-      error: (err) => {
-        console.error('Error procesando las métricas en tiempo real:', err);
-      }
+      error: (err) => console.error('Error procesando métricas:', err)
     });
   }
 
-  // Simulación dinámica de follow/unfollow
   simularSeguimiento() {
     this.siguiendoUsuario = !this.siguiendoUsuario;
-    if (this.siguiendoUsuario) {
-      this.seguidores += 1;
-    } else {
-      this.seguidores -= 1;
-    }
+    this.followers += this.siguiendoUsuario ? 1 : -1;
     this.cdr.detectChanges();
+  }
+
+  alternarEdicion() {
+    this.editando = !this.editando;
+    if (this.editando) {
+      this.editNombre = this.nombreUsuario;
+      this.editFoto = this.fotoPerfil;
+      this.editCorreo = this.correoUsuario;
+      this.editTelefono = this.telefonoUsuario;
+    }
+  }
+
+  // 📸 LÓGICA PARA LEER EL ARCHIVO SELECCIONADO LOCALMENTE
+  onFotoSeleccionada(event: any) {
+    const archivo = event.target.files[0];
+    if (archivo) {
+      // Crea una URL virtual y temporal del archivo seleccionado de la máquina del usuario
+      this.editFoto = URL.createObjectURL(archivo);
+      this.cdr.detectChanges();
+    }
+  }
+
+  guardarCambiosPerfil() {
+    if (!this.editNombre.trim() || !this.editCorreo.trim()) {
+      alert('El nombre y el correo no pueden estar vacíos');
+      return;
+    }
+    
+    this.nombreUsuario = this.editNombre;
+    this.fotoPerfil = this.editFoto;
+    this.correoUsuario = this.editCorreo;
+    this.telefonoUsuario = this.editTelefono;
+    this.editando = false; 
+    this.cdr.detectChanges(); 
   }
 }
