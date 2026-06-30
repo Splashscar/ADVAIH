@@ -1,149 +1,101 @@
-<div class="home-container">
-<app-navbar></app-navbar>
-    <!-- HERO AL ESTILO HOME -->
-    <header class="hero">
-        <h1>MI PERFIL</h1>
-        <p>Gestiona tus datos de ADVAIH</p>
-    </header>
+<div class="perfil-container" style="max-width: 1200px; margin: 0 auto; padding: 20px; color: white; font-family: 'Segoe UI', Roboto, sans-serif; min-height: 100vh; background: #0f1322;">
+  
+  <app-navbar></app-navbar>
+
+  <div class="profile-header" style="background: linear-gradient(135deg, #161b33 0%, #1a203e 100%); padding: 35px; border-radius: 16px; display: flex; align-items: center; gap: 30px; margin-top: 30px; margin-bottom: 30px; flex-wrap: wrap; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
     
-    <!-- ACCIÓN DE VOLVER AL INICIO -->
-    <div class="top-actions">
-        <button routerLink="/home" class="btn-crear-evento">
-            ⬅️ Volver al Inicio
-        </button>
+    <div class="avatar-wrapper" style="position: relative;">
+      <img [src]="fotoPerfil || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80'" 
+           alt="Foto de perfil" 
+           style="width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 4px solid #7c3aed; box-shadow: 0 0 15px rgba(124, 58, 237, 0.5);">
+    </div>
+    
+    <div class="profile-info" style="flex: 1; min-width: 250px;">
+      <h2 style="margin: 0 0 5px 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">{{ nombreUsuario }}</h2>
+      <p style="margin: 0 0 20px 0; color: #a0aec0; font-size: 15px; display: flex; align-items: center; gap: 5px;">
+        📧 {{ usuario?.email || 'usuario@advaih.com' }}
+      </p>
+      
+      <div style="display: flex; gap: 10px;">
+        @if (esMiPerfil) {
+          <button style="background: #7c3aed; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; box-shadow: 0 4px 12px rgba(124,58,237,0.3);">
+            ✏️ Editar Perfil
+          </button>
+        } 
+        @else {
+          <button (click)="simularSeguimiento()" style="background: #7c3aed; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; box-shadow: 0 4px 12px rgba(124,58,237,0.3);">
+            ➕ {{ siguiendoUsuario ? 'Dejar de seguir' : 'Seguir' }}
+          </button>
+        }
+      </div>
     </div>
 
-    <!-- SECCIÓN PRINCIPAL CONFIGURADA COMO EL GRID DEL HOME -->
-    <section class="eventos-section">
-        <div class="perfil-layout">
+    <div class="profile-stats" style="display: flex; gap: 25px; background: rgba(15, 19, 34, 0.6); padding: 20px 30px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.03);">
+      <div style="text-align: center; min-width: 70px;">
+        <span style="display: block; font-size: 28px; font-weight: 800; color: #c084fc; text-shadow: 0 0 10px rgba(192,132,252,0.2);">{{ misEventos.length }}</span>
+        <span style="color: #718096; font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">Creados</span>
+      </div>
+      <div style="text-align: center; min-width: 70px;">
+        <span style="display: block; font-size: 28px; font-weight: 800; color: #c084fc; text-shadow: 0 0 10px rgba(192,132,252,0.2);">{{ seguidores }}</span>
+        <span style="color: #718096; font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">Seguidores</span>
+      </div>
+      <div style="text-align: center; min-width: 70px;">
+        <span style="display: block; font-size: 28px; font-weight: 800; color: #c084fc; text-shadow: 0 0 10px rgba(192,132,252,0.2);">{{ seguidos }}</span>
+        <span style="color: #718096; font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">Seguidos</span>
+      </div>
+    </div>
+  </div>
 
-            <!-- REUTILIZAMOS LA ESTRUCTURA DE TARJETA 'EVENTO-CARD' -->
-            <div class="evento-card">
-                
-                <!-- AVATAR / FOTO DE PERFIL -->
-                <div style="position: relative; text-align: center; padding: 20px 0; background: rgba(255,255,255,0.02);">
-                    <img [src]="fotoUrl" alt="Foto de perfil" 
-                         style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 2px solid #7c3aed; margin: 0 auto; cursor: pointer;"
-                         (click)="editando && estaLogueado && fileInput.click()">
-                    
-                    <input type="file" #fileInput style="display: none;" accept="image/*" (change)="onFotoSeleccionada($event)">
-                    
-                    <h3 style="margin: 10px 0 2px 0; color: white;">{{ nombre }}</h3>
-                    <p style="margin: 0; font-size: 14px; color: #a0aec0;">{{ email }} • <strong>{{ rol }}</strong></p>
-                </div>
+  <div class="tabs-buttons" style="display: flex; gap: 5px; border-bottom: 2px solid #1a203e; margin-bottom: 25px;">
+    <button (click)="cambiarTab('creados')" 
+            [style.border-bottom]="tabActiva === 'creados' ? '3px solid #7c3aed' : '3px solid transparent'"
+            [style.color]="tabActiva === 'creados' ? '#c084fc' : '#a0aec0'"
+            style="background: none; border: none; padding: 12px 24px; cursor: pointer; font-size: 16px; font-weight: 600;">
+      ✍️ Creados por mí ({{ misEventos.length }})
+    </button>
+    <button (click)="cambiarTab('favoritos')" 
+            [style.border-bottom]="tabActiva === 'favoritos' ? '3px solid #7c3aed' : '3px solid transparent'"
+            [style.color]="tabActiva === 'favoritos' ? '#c084fc' : '#a0aec0'"
+            style="background: none; border: none; padding: 12px 24px; cursor: pointer; font-size: 16px; font-weight: 600;">
+      ⭐ Favoritos ({{ eventosFavoritos.length }})
+    </button>
+    <button (click)="cambiarTab('asistidos')" 
+            [style.border-bottom]="tabActiva === 'asistidos' ? '3px solid #7c3aed' : '3px solid transparent'"
+            [style.color]="tabActiva === 'asistidos' ? '#c084fc' : '#a0aec0'"
+            style="background: none; border: none; padding: 12px 24px; cursor: pointer; font-size: 16px; font-weight: 600;">
+      ✅ Asistidos ({{ eventosAsistidos.length }})
+    </button>
+  </div>
 
-                <!-- CONTENEDOR DE CAMPOS (ESTILO EVENTO-INFO) -->
-                <div class="evento-info" style="text-align: left; display: flex; flex-direction: column; gap: 15px;">
-                    
-                    <!-- Campo Nombre -->
-                    <div>
-                        <label style="display:block; font-size: 12px; color: #a0aec0; margin-bottom: 4px;">Nombre Completo</label>
-                        <input type="text" [(ngModel)]="nombre" [disabled]="!editando" 
-                               style="width: 100%; background: #1a203e; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; padding: 10px; color: white;">
-                    </div>
+  <div class="eventos-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px;">
+    
+    @let listaActual = tabActiva === 'creados' ? misEventos : (tabActiva === 'favoritos' ? eventosFavoritos : eventosAsistidos);
 
-                    <!-- Fila de Teléfono y Ciudad -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                        <div>
-                            <label style="display:block; font-size: 12px; color: #a0aec0; margin-bottom: 4px;">Teléfono</label>
-                            <input type="text" [(ngModel)]="telefono" [disabled]="!editando" placeholder="Ej: +57 300..."
-                                   style="width: 100%; background: #1a203e; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; padding: 10px; color: white;">
-                        </div>
-                        <div>
-                            <label style="display:block; font-size: 12px; color: #a0aec0; margin-bottom: 4px;">Ciudad</label>
-                            <input type="text" [(ngModel)]="ciudad" [disabled]="!editando" placeholder="Ej: Bogotá"
-                                   style="width: 100%; background: #1a203e; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; padding: 10px; color: white;">
-                        </div>
-                    </div>
-
-                    <!-- Campo Biografía -->
-                    <div>
-                        <label style="display:block; font-size: 12px; color: #a0aec0; margin-bottom: 4px;">Biografía Breve</label>
-                        <textarea [(ngModel)]="biografia" [disabled]="!editando" placeholder="Cuéntanos sobre ti..." rows="3"
-                                  style="width: 100%; background: #1a203e; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; padding: 10px; color: white; font-family: inherit; resize: none;"></textarea>
-                    </div>
-
-                    <!-- Miembro Desde (Informativo) -->
-                    <div>
-                        <label style="display:block; font-size: 12px; color: #64748b; margin-bottom: 4px;">Miembro Desde</label>
-                        <input type="text" [value]="fechaRegistro" disabled 
-                               style="width: 100%; background: rgba(0,0,0,0.2); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 6px; padding: 10px; color: #64748b; cursor: not-allowed;">
-                    </div>
-                    
-
-                    <!-- 🔒 CONTROL DE BLOQUEO DE EDICIÓN NATIVO -->
-                    <div style="margin-top: 10px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.08);">
-                        
-                        <!-- CASO: NO REGISTRADO / OTRO NAVEGADOR -->
-                        <div *ngIf="!estaLogueado" style="color: #ef4444; font-size: 13px; text-align: center; font-weight: 500;">
-                            🔒 Regístrate o inicia sesión en este navegador para modificar estos campos.
-                        </div>
-
-                        <!-- CASO: LOGUEADO EXPOSITOR DE BOTÓN VER MÁS -->
-                        <div *ngIf="estaLogueado">
-                            <button *ngIf="!editando" (click)="editando = true" class="btn-ver-mas">
-                                ✏️ Editar Perfil
-                            </button>
-                            
-                            <div *ngIf="editando" style="display: flex; gap: 10px;">
-                                <button (click)="guardarCambios()" class="btn-ver-mas" style="background: linear-gradient(90deg, #10b981, #059669);">
-                                    💾 Guardar
-                                </button>
-                                <button (click)="editando = false" class="btn-ver-mas" style="background: #374151;">
-                                    ❌ Cancelar
-                                </button>
-                            </div>
-                        </div>
-
-                    </div>
-
-                </div>
-            </div>
-            <!-- PANEL DE ACCIONES -->
-
-            <div class="acciones-card">
-
-                <h3>⚡ Acciones</h3>
-
-                <div
-                    class="acceso-card"
-                    routerLink="/favoritos">
-
-                    <span>⭐</span>
-
-                    <div>
-
-                        <h4>Mis Favoritos</h4>
-
-                        <p>
-                            Eventos que has guardado.
-                        </p>
-
-                    </div>
-
-                </div>
-
-                <div
-                    class="acceso-card"
-                    routerLink="/mis-eventos">
-
-                    <span>📅</span>
-
-                    <div>
-
-                        <h4>Mis Eventos</h4>
-
-                        <p>
-                            Eventos creados por ti.
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
+    @for (evento of listaActual; track evento.id) {
+      <div class="evento-card" style="background: #1a203e; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+        <div style="position: relative;">
+          <img [src]="evento.imageUrl || 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&w=500&q=80'" alt="Evento" style="width: 100%; height: 180px; object-fit: cover;">
+          <span style="position: absolute; top: 12px; right: 12px; background: #7c3aed; color: white; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase;">
+            {{ evento.category }}
+          </span>
         </div>
-    </section>
+        <div class="evento-info" style="padding: 20px;">
+          <h3 style="margin: 0 0 12px 0; font-size: 19px; font-weight: 600; line-height: 1.4; color: #fff;">{{ evento.title }}</h3>
+          <p style="margin: 6px 0; color: #a0aec0; font-size: 14px;">📍 {{ evento.location }}</p>
+          <p style="margin: 6px 0; color: #a0aec0; font-size: 14px;">📅 {{ evento.date }}</p>
+          
+          <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 12px; color: #718096;">Por: {{ evento.authorName || 'Organizador' }}</span>
+            <button style="background: rgba(124, 58, 237, 0.1); color: #c084fc; border: 1px solid rgba(124, 58, 237, 0.3); padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer;">Ver detalles</button>
+          </div>
+        </div>
+      </div>
+    } @empty {
+      <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; background: #1a203e; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1); color: #a0aec0;">
+        <span style="font-size: 40px; display: block; margin-bottom: 10px;">📭</span>
+        <p style="margin: 0; font-size: 16px; font-weight: 500;">No tienes eventos registrados en esta sección todavía.</p>
+      </div>
+    }
 
+  </div>
 </div>
