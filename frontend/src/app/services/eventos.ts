@@ -40,4 +40,31 @@ export class EventosService {
       formData
     );
   }
+
+  toggleLike(eventoId: string, uid: string) {
+
+    return this.http.post(
+
+      `${this.apiUrl}/eventos/${eventoId}/like/`,
+
+      {
+        uid: uid
+      }
+
+    );
+
+  }
+  toggleFavorito(eventoId: string, uid: string) {
+
+    return this.http.post(
+
+      `${this.apiUrl}/eventos/${eventoId}/favorito/`,
+
+      {
+        uid
+      }
+
+    );
+
+  }
 }

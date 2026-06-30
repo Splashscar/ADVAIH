@@ -15,7 +15,7 @@
 
     <!-- SECCIÓN PRINCIPAL CONFIGURADA COMO EL GRID DEL HOME -->
     <section class="eventos-section">
-        <div class="eventos-grid" style="grid-template-columns: 1fr; max-width: 600px; margin: 0 auto;">
+        <div class="perfil-layout">
 
             <!-- REUTILIZAMOS LA ESTRUCTURA DE TARJETA 'EVENTO-CARD' -->
             <div class="evento-card">
@@ -69,6 +69,7 @@
                         <input type="text" [value]="fechaRegistro" disabled 
                                style="width: 100%; background: rgba(0,0,0,0.2); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 6px; padding: 10px; color: #64748b; cursor: not-allowed;">
                     </div>
+                    
 
                     <!-- 🔒 CONTROL DE BLOQUEO DE EDICIÓN NATIVO -->
                     <div style="margin-top: 10px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.08);">
@@ -97,6 +98,49 @@
                     </div>
 
                 </div>
+            </div>
+            <!-- PANEL DE ACCIONES -->
+
+            <div class="acciones-card">
+
+                <h3>⚡ Acciones</h3>
+
+                <div
+                    class="acceso-card"
+                    routerLink="/favoritos">
+
+                    <span>⭐</span>
+
+                    <div>
+
+                        <h4>Mis Favoritos</h4>
+
+                        <p>
+                            Eventos que has guardado.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div
+                    class="acceso-card"
+                    routerLink="/mis-eventos">
+
+                    <span>📅</span>
+
+                    <div>
+
+                        <h4>Mis Eventos</h4>
+
+                        <p>
+                            Eventos creados por ti.
+                        </p>
+
+                    </div>
+
+                </div>
+
             </div>
 
         </div>

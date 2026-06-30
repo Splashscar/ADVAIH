@@ -1,0 +1,53 @@
+<div class="home-container">
+
+    <app-navbar></app-navbar>
+
+    <header class="hero">
+
+        <h1>⭐ Mis Favoritos</h1>
+
+        <p>Eventos que has guardado.</p>
+
+    </header>
+
+    <section class="eventos-section">
+
+        @if (favoritos.length > 0) {
+
+<div class="eventos-grid">
+
+    @for (evento of favoritos; track $index) {
+
+            <div class="evento-card">
+
+                <img [src]="evento.imageUrl">
+
+                <div class="evento-info">
+
+                    <h3>{{evento.title}}</h3>
+
+                    <p>{{evento.location}}</p>
+
+                </div>
+
+            </div>
+
+        }
+
+    </div>
+
+    } @else {
+
+    <div
+    style="text-align:center;padding:40px;">
+
+    ⭐ No tienes eventos favoritos.
+
+    </div>
+
+    }
+
+
+    </section>
+
+</div>

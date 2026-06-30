@@ -63,7 +63,11 @@ crearEvento() {
           authorId: this.usuario?.uid,
           authorName: this.usuario?.displayName,
           authorEmail: this.usuario?.email,
-          authorPhoto: this.usuario?.photoURL
+          authorPhoto: this.usuario?.photoURL,
+
+          // ❤️ Likes
+          likes: 0,
+          usuariosLike: []
         };
 
         this.eventosService
