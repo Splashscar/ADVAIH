@@ -1,0 +1,49 @@
+<app-navbar></app-navbar>
+
+<div class="chat-container">
+
+  <div class="chat-header">
+
+  <img
+    [src]="usuarioDestino?.fotoURL || 'https://static.vecteezy.com/system/resources/previews/018/765/757/non_2x/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg'">
+
+  <div>
+
+    <h3>{{ usuarioDestino?.nombre }}</h3>
+
+    <p>{{ usuarioDestino?.email }}</p>
+
+  </div>
+
+</div>
+
+  <div class="chat-messages">
+
+    <div
+      *ngFor="let mensaje of mensajes"
+      [class.mensaje-propio]="mensaje.emisor === usuarioActual?.uid"
+      [class.mensaje-ajeno]="mensaje.emisor !== usuarioActual?.uid">
+
+      {{ mensaje.texto }}
+
+    </div>
+
+  </div>
+
+  <div class="chat-input">
+
+    <input
+      type="text"
+      [(ngModel)]="mensaje"
+      placeholder="Escribe un mensaje...">
+
+    <button
+      (click)="enviar()">
+
+      Enviar
+
+    </button>
+
+  </div>
+
+</div>

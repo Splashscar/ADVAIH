@@ -9,7 +9,10 @@ doc,
 deleteDoc,
 setDoc,
 getDoc,
-docData
+docData,
+serverTimestamp,
+query,
+orderBy
 } from '@angular/fire/firestore';
 
 import { Observable } from 'rxjs';
@@ -143,6 +146,77 @@ return docData(
     idField: 'id'
   }
 );
+
+}
+async crearChat(
+  chatId: string,
+  participantes: string[]
+) {
+
+  const chatRef =
+    doc(this.firestore, `chats/${chatId}`);
+
+  const chatExistente =
+    await getDoc(chatRef);
+
+  if (!chatExistente.exists()) {
+
+    await setDoc(
+      chatRef,
+      {
+        participantes,
+        creado: new Date()
+      }
+    );
+
+    console.log('✅ Chat creado');
+
+  } else {
+
+    console.log('✅ El chat ya existe');
+
+  }
+
+}
+async enviarMensaje(
+  chatId: string,
+  texto: string,
+  emisor: string
+) {
+
+  const mensajesRef = collection(
+    this.firestore,
+    `chats/${chatId}/mensajes`
+  );
+
+  return await addDoc(
+    mensajesRef,
+    {
+      texto,
+      emisor,
+      fecha: serverTimestamp()
+    }
+  );
+
+}
+obtenerMensajes(chatId: string) {
+
+  const mensajesRef = collection(
+    this.firestore,
+    `chats/${chatId}/mensajes`
+  );
+
+  const q = query(
+    mensajesRef,
+    orderBy('fecha')
+  );
+
+  return collectionData(
+    q,
+    {
+      idField: 'id'
+    }
+  );
 
 }
 

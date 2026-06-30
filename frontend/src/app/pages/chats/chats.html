@@ -1,0 +1,26 @@
+<app-navbar></app-navbar>
+
+<h1>Chats</h1>
+
+<div
+  class="usuario-card"
+  *ngFor="let usuario of usuarios">
+
+  <img
+  [src]="usuario.fotoURL || 'https://static.vecteezy.com/system/resources/previews/018/765/757/non_2x/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg'"
+  alt="Foto de perfil">
+
+  <div class="info">
+
+    <h3>{{ usuario.nombre }}</h3>
+
+    <p>{{ usuario.email }}</p>
+
+    <button
+      (click)="crearChat(usuario)">
+      Mensaje
+    </button>
+
+  </div>
+
+</div>
