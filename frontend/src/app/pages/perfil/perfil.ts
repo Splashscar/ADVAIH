@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -10,9 +10,9 @@ import { ChangeDetectorRef } from '@angular/core';
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, Navbar],
+  imports: [CommonModule, FormsModule, Navbar], 
   templateUrl: './perfil.html',
-  styleUrls: ['./perfil.css']
+  styleUrl: './perfil.css'
 })
 export class PerfilComponent implements OnInit {
   
@@ -45,11 +45,50 @@ export class PerfilComponent implements OnInit {
 
   // Estados de control nativos
   editando: boolean = false;
-  estaLogueado: boolean = false; 
-  fotoArchivo: File | null = null;
+  editNombre: string = '';
+  editFoto: string = '';
+  editCorreo: string = '';
+  editTelefono: string = '';
+
+  // Repositorios de datos
+  misEventos: any[] = [];
+  misEventEventosLength: number = 0;
+  eventosFavoritos: any[] = [];
+  eventosAsistidos: any[] = []; // Se mantiene vacio como pediste
+
+  tabActiva: 'creados' | 'favoritos' | 'asistidos' = 'creados';
+  private subUsuario!: Subscription;
+constructor(
+  private authService: AuthServices,
+  private eventosService: EventosService,
+  private firebaseService: FirebaseService,
+  private cdr: ChangeDetectorRef
+) {}
 
   ngOnInit(): void {
-    this.verificarSesionNavegador();
+    this.subUsuario = this.authService.usuario$.subscribe(usuario => {
+      if (usuario) {
+        this.usuario = usuario;
+        
+        // 🔄 LEER DE LOCALSTORAGE (Persistencia de datos)
+        const guardadoNombre = localStorage.getItem('perfil_nombre');
+        const guardadoFoto = localStorage.getItem('perfil_foto');
+        const guardadoCorreo = localStorage.getItem('perfil_correo');
+        const guardadoTelefono = localStorage.getItem('perfil_telefono');
+
+        this.nombreUsuario = guardadoNombre || usuario.displayName || usuario.email || 'SEBASTIAN CAMILO MURCIA MATEUS';
+        this.fotoPerfil = guardadoFoto || usuario.photoURL || '';
+        this.correoUsuario = guardadoCorreo || usuario.email || 'murciamateussebastiancamilo@gmail.com';
+        this.telefonoUsuario = guardadoTelefono || usuario.phoneNumber || '+57 312 456 7890';
+        
+        this.editNombre = this.nombreUsuario;
+        this.editFoto = this.fotoPerfil;
+        this.editCorreo = this.correoUsuario;
+        this.editTelefono = this.telefonoUsuario;
+
+        this.procesarMetricasPerfil(usuario.uid);
+      }
+    });
   }
 
   verificarSesionNavegador() {
@@ -95,31 +134,43 @@ export class PerfilComponent implements OnInit {
         this.estaLogueado = false;
         this.editando = false;     
 
-        this.id_usuario = '';
-        this.nombre = 'Invitado ADVAIH';
-        this.correo = 'Inicia sesión para ver tu correo';
-        this.tipo_usuario = 'Invitado';
-        this.foto_perfil = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500';
-      }
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Error procesando métricas:', err)
     });
   }
 
-onFotoSeleccionada(event: any) {
-    if (!this.estaLogueado) return;
-    const file = event.target.files[0];
-    if (file) {
-      this.fotoArchivo = file;
+  alternarEdicion() {
+    this.editando = !this.editando;
+    if (this.editando) {
+      this.editNombre = this.nombreUsuario;
+      this.editFoto = this.fotoPerfil;
+      this.editCorreo = this.correoUsuario;
+      this.editTelefono = this.telefonoUsuario;
+    }
+  }
+
+  onFotoSeleccionada(event: any) {
+    const archivo = event.target.files[0];
+    if (archivo) {
       const reader = new FileReader();
-      
-      reader.onload = () => {
-        // 1. Cambiamos la variable en tiempo real
-        this.foto_perfil = reader.result as string; 
-        
-        // 2. TRUCO CLAVE: La guardamos de inmediato en el caché temporal de la sesión
-        // Así, Angular redibuja la etiqueta <img> en el mismísimo milisegundo en que se lee el archivo
-        localStorage.setItem(`foto_perfil_${this.id_usuario}`, this.foto_perfil);
+      reader.onload = (e: any) => {
+        const img = new Image();
+        img.src = e.target.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = 150;
+          canvas.height = 150;
+          
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, 150, 150);
+            this.editFoto = canvas.toDataURL('image/jpeg', 0.7);
+            this.cdr.detectChanges();
+          }
+        };
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(archivo);
     }
   }
   async guardarCambios() {
