@@ -110,6 +110,18 @@ export class FirebaseService {
     return docData(usuarioRef, { idField: 'id' });
   }
 
+  async actualizarPerfil(uid: string, datos: any) {
+
+    const usuarioRef =
+      doc(this.firestore, `usuarios/${uid}`);
+
+    return await updateDoc(
+      usuarioRef,
+      datos
+    );
+
+  }
+
   // =========================
   // CHAT (Nuevas funcionalidades)
   // =========================

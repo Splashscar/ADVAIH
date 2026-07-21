@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, onAuthStateChanged,  } from 'firebase/auth';
 import { Navbar } from '../../components/navbar/navbar';
+import { FirebaseService } from '../../services/firebase';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-perfil',
@@ -29,6 +31,11 @@ export class PerfilComponent implements OnInit {
   set fotoUrl(val: string) { this.foto_perfil = val; }
   get rol(): string { return this.tipo_usuario; }
   set rol(val: string) { this.tipo_usuario = val; }
+
+  constructor(
+    private firebaseService: FirebaseService,
+    private cdr: ChangeDetectorRef
+  ) {}
   
   // CAMPOS ADICIONALES DE LA INTERFAZ VISTA
   fechaRegistro: string = '26/06/2026';
@@ -54,24 +61,35 @@ export class PerfilComponent implements OnInit {
         this.id_usuario = user.uid; 
         this.correo = user.email || this.correo;
 
-        // Intentar recuperar el diccionario guardado localmente
-        const datosLocales = localStorage.getItem(`perfil_${user.uid}`);
-        const fotoLocal = localStorage.getItem(`foto_perfil_${user.uid}`);
+        this.firebaseService          
+          .obtenerUsuario(user.uid)
+          .subscribe((datos: any) => {
 
-        if (datosLocales) {
-          const datos = JSON.parse(datosLocales);
-          
-          this.nombre = datos.nombre || user.displayName || this.nombre;
-          this.tipo_usuario = datos.tipo_usuario || this.tipo_usuario;
-          
-          this.telefono = datos.telefono || this.telefono;
-          this.ciudad = datos.ciudad || this.ciudad;
-          this.biografia = datos.biografia || this.biografia;
-        } else {
-          this.nombre = user.displayName || this.nombre;
-        }
+            if (!datos) return;
 
-        this.foto_perfil = fotoLocal || user.photoURL || this.foto_perfil;
+            this.nombre =
+              datos.nombre || user.displayName || this.nombre;
+
+            this.correo =
+              datos.correo || user.email || this.correo;
+
+            this.tipo_usuario =
+              datos.tipo_usuario || this.tipo_usuario;
+
+            this.telefono =
+              datos.telefono || this.telefono;
+
+            this.ciudad =
+              datos.ciudad || this.ciudad;
+
+            this.biografia =
+              datos.biografia || this.biografia;
+
+            this.foto_perfil =
+            datos.foto_perfil || user.photoURL || this.foto_perfil;
+
+            this.cdr.detectChanges();
+          });
 
       } else {
         this.estaLogueado = false;
@@ -104,29 +122,52 @@ onFotoSeleccionada(event: any) {
       reader.readAsDataURL(file);
     }
   }
-  guardarCambios() {
+  async guardarCambios() {
+
     if (!this.estaLogueado) return;
+
     this.editando = false;
 
-    const auth = getAuth();
-    if (auth.currentUser) {
-      const diccionarioUsuario = {
-        id_usuario: this.id_usuario,
-        nombre: this.nombre,
-        correo: this.correo,
-        contraseña: this.contrasena,
-        foto_perfil: this.foto_perfil,
-        tipo_usuario: this.tipo_usuario,
-        
-        telefono: this.telefono,
-        ciudad: this.ciudad,
-        biografia: this.biografia
-      };
-      
-      localStorage.setItem(`perfil_${auth.currentUser.uid}`, JSON.stringify(diccionarioUsuario));
-      localStorage.setItem(`foto_perfil_${auth.currentUser.uid}`, this.foto_perfil);
+    const diccionarioUsuario = {
+
+      nombre: this.nombre,
+
+      correo: this.correo,
+
+      tipo_usuario: this.tipo_usuario,
+
+      telefono: this.telefono,
+
+      ciudad: this.ciudad,
+
+      biografia: this.biografia,
+
+      foto_perfil: this.foto_perfil
+
+    };
+
+    console.log("🆔 UID:", this.id_usuario);
+    console.log("📦 Datos a guardar:", diccionarioUsuario);
+
+    try {
+
+      await this.firebaseService.actualizarPerfil(
+
+        this.id_usuario,
+
+        diccionarioUsuario
+
+      );
+
+      console.log("✅ Perfil actualizado");
+
     }
 
-    console.log('Diccionario actualizado sin sitio web guardado en LocalStorage.');
+    catch(error){
+
+      console.error(error);
+
+    }
+
   }
 }
