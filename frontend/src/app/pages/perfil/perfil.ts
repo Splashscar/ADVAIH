@@ -1,12 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; 
+import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { getAuth, onAuthStateChanged,  } from 'firebase/auth';
 import { Navbar } from '../../components/navbar/navbar';
-import { AuthServices } from '../../services/auth';
-import { EventosService } from '../../services/eventos';
-import { ChangeDetectorRef } from '@angular/core';
-import { Subscription } from 'rxjs';
 import { FirebaseService } from '../../services/firebase';
+import { ChangeDetectorRef } from '@angular/core';
+
 @Component({
   selector: 'app-perfil',
   standalone: true,
@@ -14,16 +14,36 @@ import { FirebaseService } from '../../services/firebase';
   templateUrl: './perfil.html',
   styleUrl: './perfil.css'
 })
-export class PerfilComponent implements OnInit, OnDestroy {
-  usuario: any = null;
-  nombreUsuario = '';
-  fotoPerfil = '';
-  correoUsuario = '';
-  telefonoUsuario = '';
+export class PerfilComponent implements OnInit {
+  
+  // ATRIBUTOS OFICIALES DEL DICCIONARIO (ENTIDAD 1: USUARIOS)
+  id_usuario: string = '';
+  nombre: string = 'Usuario ADVAIH';
+  correo: string = 'usuario@advaih.com';
+  contrasena: string = '********'; 
+  foto_perfil: string = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500';
+  tipo_usuario: string = 'Organizador';
 
-  esMiPerfil: boolean = true; 
+  // Alias para mantener compatibilidad exacta con tu HTML
+  get email(): string { return this.correo; }
+  set email(val: string) { this.correo = val; }
+  get fotoUrl(): string { return this.foto_perfil; }
+  set fotoUrl(val: string) { this.foto_perfil = val; }
+  get rol(): string { return this.tipo_usuario; }
+  set rol(val: string) { this.tipo_usuario = val; }
 
-  // Estado e inputs del formulario de edicion
+  constructor(
+    private firebaseService: FirebaseService,
+    private cdr: ChangeDetectorRef
+  ) {}
+  
+  // CAMPOS ADICIONALES DE LA INTERFAZ VISTA
+  fechaRegistro: string = '26/06/2026';
+  telefono: string = '+57 312 456 7890';
+  ciudad: string = 'Bogotá';
+  biografia: string = 'Amante de los festivales de música y los eventos culturales al aire libre.';
+
+  // Estados de control nativos
   editando: boolean = false;
   editNombre: string = '';
   editFoto: string = '';
@@ -71,40 +91,48 @@ constructor(
     });
   }
 
-  ngOnDestroy(): void {
-    if (this.subUsuario) {
-      this.subUsuario.unsubscribe();
-    }
-  }
+  verificarSesionNavegador() {
+    const auth = getAuth();
+    
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        this.estaLogueado = true;
+        this.id_usuario = user.uid; 
+        this.correo = user.email || this.correo;
 
-  cambiarTab(tab: 'creados' | 'favoritos' | 'asistidos') {
-    this.tabActiva = tab;
-  }
+        this.firebaseService          
+          .obtenerUsuario(user.uid)
+          .subscribe((datos: any) => {
 
- procesarMetricasPerfil(userId: string) {
-    this.eventosService.obtenerEventos().subscribe({
-      next: (res: any) => {
-        const todosLosEventos = Array.isArray(res) ? res : [];
-        
-        // 1. Creados reales filtrados por autor
-        this.misEventos = todosLosEventos.filter((e: any) => e.authorId === userId);
-        this.misEventEventosLength = this.misEventos.length;
-        
-        // 2. 🌟 FAVORITOS COMPLETAMENTE REALES Y FILTRADOS:
-        // Traemos los IDs que guardamos en el Home mediante LocalStorage
-        const favoritosGuardadosRaw = localStorage.getItem('ids_favoritos');
-        
-        if (favoritosGuardadosRaw) {
-          const idsFavoritos: string[] = JSON.parse(favoritosGuardadosRaw);
-          // SÓLO se muestran los eventos cuyos IDs estén dentro de la lista de favoritos guardados
-          this.eventosFavoritos = todosLosEventos.filter((e: any) => idsFavoritos.includes(e.id));
-        } else {
-          // Si no hay nada en LocalStorage, la pestaña de favoritos aparece totalmente vacía
-          this.eventosFavoritos = [];
-        }
+            if (!datos) return;
 
-        // 3. Asistidos se queda limpio en []
-        this.eventosAsistidos = [];
+            this.nombre =
+              datos.nombre || user.displayName || this.nombre;
+
+            this.correo =
+              datos.correo || user.email || this.correo;
+
+            this.tipo_usuario =
+              datos.tipo_usuario || this.tipo_usuario;
+
+            this.telefono =
+              datos.telefono || this.telefono;
+
+            this.ciudad =
+              datos.ciudad || this.ciudad;
+
+            this.biografia =
+              datos.biografia || this.biografia;
+
+            this.foto_perfil =
+            datos.foto_perfil || user.photoURL || this.foto_perfil;
+
+            this.cdr.detectChanges();
+          });
+
+      } else {
+        this.estaLogueado = false;
+        this.editando = false;     
 
         this.cdr.detectChanges();
       },
@@ -145,28 +173,52 @@ constructor(
       reader.readAsDataURL(archivo);
     }
   }
+  async guardarCambios() {
 
-  guardarCambiosPerfil() {
-    if (!this.editNombre.trim() || !this.editCorreo.trim()) {
-      alert('El nombre y el correo no pueden estar vacíos');
-      return;
-    }
-    
-    this.nombreUsuario = this.editNombre;
-    this.fotoPerfil = this.editFoto;
-    this.correoUsuario = this.editCorreo;
-    this.telefonoUsuario = this.editTelefono;
-    
+    if (!this.estaLogueado) return;
+
+    this.editando = false;
+
+    const diccionarioUsuario = {
+
+      nombre: this.nombre,
+
+      correo: this.correo,
+
+      tipo_usuario: this.tipo_usuario,
+
+      telefono: this.telefono,
+
+      ciudad: this.ciudad,
+
+      biografia: this.biografia,
+
+      foto_perfil: this.foto_perfil
+
+    };
+
+    console.log("🆔 UID:", this.id_usuario);
+    console.log("📦 Datos a guardar:", diccionarioUsuario);
+
     try {
-      localStorage.setItem('perfil_nombre', this.nombreUsuario);
-      localStorage.setItem('perfil_foto', this.fotoPerfil);
-      localStorage.setItem('perfil_correo', this.correoUsuario);
-      localStorage.setItem('perfil_telefono', this.telefonoUsuario);
-    } catch (error) {
-      console.error('Error guardando en localStorage:', error);
+
+      await this.firebaseService.actualizarPerfil(
+
+        this.id_usuario,
+
+        diccionarioUsuario
+
+      );
+
+      console.log("✅ Perfil actualizado");
+
     }
 
-    this.editando = false; 
-    this.cdr.detectChanges(); 
+    catch(error){
+
+      console.error(error);
+
+    }
+
   }
 }
