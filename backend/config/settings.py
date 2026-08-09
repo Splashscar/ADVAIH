@@ -12,16 +12,17 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 import cloudinary
+import os
+from dotenv import load_dotenv
 
-cloudinary.config(
-    cloud_name="dja6hru5c",
-    api_key="854178595428229",
-    api_secret="avY8Nbrc6b2XtRa6u5ng2BUMLXI",
-    secure=True
-)
+load_dotenv()
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
@@ -129,3 +130,10 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 CORS_ALLOW_ALL_ORIGINS = True
+
+cloudinary.config(
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
+    secure=True
+)

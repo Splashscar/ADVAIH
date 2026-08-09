@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Navbar } from '../../components/navbar/navbar';
 import { EventosService } from '../../services/eventos';
-import { AuthServices } from '../../services/auth'; // Asegúrate de que esta ruta sea correcta para leer el usuario
+import { AuthServices } from '../../services/auth';
 import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
@@ -14,15 +14,23 @@ import { ChangeDetectorRef } from '@angular/core';
   styleUrl: './home.css'
 })
 export class HomeComponent implements OnInit {
-  // 📥 VARIABLES REQUERIDAS POR TU HOME.HTML
+
   todosLosEventos: any[] = [];
   eventosFiltrados: any[] = [];
+
   nombreUsuario: string = '';
+
   filtroTexto: string = '';
   filtroCategoria: string = 'Todos';
-  
-  // Categorías de respaldo si tu select las usa dinámicamente
-  categorias: string[] = ['Todos', 'Tecnología', 'Diseño & Código', 'Conciertos', 'Deportes', 'Cultura'];
+
+  categorias: string[] = [
+    'Todos',
+    'Tecnología',
+    'Diseño & Código',
+    'Conciertos',
+    'Deportes',
+    'Cultura'
+  ];
 
   constructor(
     private eventosService: EventosService,
@@ -31,78 +39,226 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // 👤 Obtener el nombre del usuario logueado para la bienvenida del HTML
+
+
     this.authService.usuario$.subscribe(usuario => {
+
       if (usuario) {
-        const guardadoNombre = localStorage.getItem('perfil_nombre');
-        this.nombreUsuario = guardadoNombre || usuario.displayName || usuario.email || 'Usuario';
+
+        const guardadoNombre =
+          localStorage.getItem('perfil_nombre');
+
+        this.nombreUsuario =
+          guardadoNombre ||
+          usuario.displayName ||
+          usuario.email ||
+          'Usuario';
+
       }
+
     });
 
     this.cargarEventos();
   }
 
+
   cargarEventos(): void {
+
     this.eventosService.obtenerEventos().subscribe({
+
       next: (res: any) => {
-        this.todosLosEventos = Array.isArray(res) ? res : [];
+
+        this.todosLosEventos =
+          Array.isArray(res) ? res : [];
+
         this.aplicarFiltros();
+
       },
+
       error: (err) => {
-        console.error('Error al cargar eventos en el Home:', err);
+
+        console.error(
+          '❌ Error al cargar eventos:',
+          err
+        );
+
       }
+
     });
+
   }
 
-  // 🔍 FUNCIÓN REQUERIDA POR TU INPUT Y SELECT: (input)="aplicarFiltros()"
+
   aplicarFiltros(): void {
-    this.eventosFiltrados = this.todosLosEventos.filter(evento => {
-      const cumpleCategoria = !this.filtroCategoria || this.filtroCategoria === 'Todos' || evento.category === this.filtroCategoria;
-      const cumpleBusqueda = !this.filtroTexto || 
-                             evento.title.toLowerCase().includes(this.filtroTexto.toLowerCase()) ||
-                             evento.location.toLowerCase().includes(this.filtroTexto.toLowerCase());
-      return cumpleCategoria && cumpleBusqueda;
-    });
+
+    this.eventosFiltrados =
+      this.todosLosEventos.filter(evento => {
+
+        const cumpleCategoria =
+          !this.filtroCategoria ||
+          this.filtroCategoria === 'Todos' ||
+          evento.category === this.filtroCategoria;
+
+        const texto =
+          this.filtroTexto.toLowerCase();
+
+        const titulo =
+          (evento.title || '').toLowerCase();
+
+        const ubicacion =
+          (evento.location || '').toLowerCase();
+
+        const cumpleBusqueda =
+          !texto ||
+          titulo.includes(texto) ||
+          ubicacion.includes(texto);
+
+        return cumpleCategoria && cumpleBusqueda;
+
+      });
+
     this.cdr.detectChanges();
+
   }
 
-  // ❤️ ACCIÓN REQUERIDA: (click)="darLike(evento)"
+
   darLike(evento: any): void {
-    this.toggleMecanismoFavorito(evento);
-  }
 
-  // ⭐ ACCIÓN REQUERIDA: (click)="darFavorito(evento)"
-  darFavorito(evento: any): void {
-    this.toggleMecanismoFavorito(evento);
-  }
+    const usuario = this.authService.obtenerUsuario();
 
-  // 👁️ VALIDACIÓN REQUERIDA POR TU HTML: *ngIf="usuarioDioLike(evento)"
-  usuarioDioLike(evento: any): boolean {
-    const favoritosIds: string[] = JSON.parse(localStorage.getItem('ids_favoritos') || '[]');
-    return favoritosIds.includes(evento.id) || evento.liked === true || evento.isFavorite === true;
-  }
+    if (!usuario) {
 
-  // 👁️ VALIDACIÓN REQUERIDA POR TU HTML: usuarioTieneFavorito(evento)
-  usuarioTieneFavorito(evento: any): boolean {
-    return this.usuarioDioLike(evento);
-  }
+      console.warn(
+        '⚠️ Debes iniciar sesión para dar Like'
+      );
 
-  // ⚙️ MÉTODO INTERNO PARA AGREGAR/REMOVER DE LOCALSTORAGE
-  private toggleMecanismoFavorito(evento: any): void {
-    evento.liked = !this.usuarioDioLike(evento);
-    evento.isFavorite = evento.liked;
-    
-    let favoritosIds: string[] = JSON.parse(localStorage.getItem('ids_favoritos') || '[]');
-    
-    if (evento.liked) {
-      if (!favoritosIds.includes(evento.id)) {
-        favoritosIds.push(evento.id);
-      }
-    } else {
-      favoritosIds = favoritosIds.filter(id => id !== evento.id);
+      return;
+
     }
-    
-    localStorage.setItem('ids_favoritos', JSON.stringify(favoritosIds));
-    this.cdr.detectChanges();
+
+    this.eventosService
+      .toggleLike(
+        evento.id,
+        usuario.uid
+      )
+      .subscribe({
+
+        next: (respuesta: any) => {
+
+          console.log(
+            '❤️ Respuesta Like:',
+            respuesta
+          );
+
+          evento.likes =
+            respuesta.likes;
+
+          evento.usuariosLike =
+            respuesta.usuariosLike;
+
+          this.cdr.detectChanges();
+
+        },
+
+        error: (err) => {
+
+          console.error(
+            '❌ Error al cambiar Like:',
+            err
+          );
+
+        }
+
+      });
+
   }
+
+
+  darFavorito(evento: any): void {
+
+    const usuario = this.authService.obtenerUsuario();
+
+    if (!usuario) {
+
+      console.warn(
+        '⚠️ Debes iniciar sesión para guardar favoritos'
+      );
+
+      return;
+
+    }
+
+    this.eventosService
+      .toggleFavorito(
+        evento.id,
+        usuario.uid
+      )
+      .subscribe({
+
+        next: (respuesta: any) => {
+
+          console.log(
+            '⭐ Respuesta Favorito:',
+            respuesta
+          );
+
+          evento.favoritos =
+            respuesta.favoritos;
+
+          evento.usuariosFavoritos =
+            respuesta.usuariosFavoritos;
+
+          this.cdr.detectChanges();
+
+        },
+
+        error: (err) => {
+
+          console.error(
+            '❌ Error al cambiar Favorito:',
+            err
+          );
+
+        }
+
+      });
+
+  }
+
+
+  usuarioDioLike(evento: any): boolean {
+
+    const usuario =
+      this.authService.obtenerUsuario();
+
+    if (!usuario) {
+      return false;
+    }
+
+    return (
+      evento.usuariosLike?.includes(
+        usuario.uid
+      ) || false
+    );
+
+  }
+
+
+  usuarioTieneFavorito(evento: any): boolean {
+
+    const usuario =
+      this.authService.obtenerUsuario();
+
+    if (!usuario) {
+      return false;
+    }
+
+    return (
+      evento.usuariosFavoritos?.includes(
+        usuario.uid
+      ) || false
+    );
+
+  }
+
 }

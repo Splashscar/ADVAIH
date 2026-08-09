@@ -1,200 +1,414 @@
-body{
-    margin:0;
+body {
+    margin: 0;
 }
 
-.crud-container{
-    min-height:100vh;
-    background:#050816;
-    color:white;
-    padding:40px;
+/* =========================
+   CONTENEDOR PRINCIPAL
+========================= */
+
+.crud-container {
+    min-height: calc(100vh - 70px);
+    background: #050816;
+    color: white;
+    padding: 40px 20px;
 }
 
-h1{
-    text-align:center;
-    margin-bottom:30px;
+/* =========================
+   TITULO
+========================= */
+
+.crud-container h1 {
+    text-align: center;
+    margin-bottom: 30px;
 }
 
-.form-card,
-.tabla-card{
-    background:#0f172a;
-    border:1px solid #7c3aed;
-    border-radius:15px;
-    padding:25px;
-    margin-bottom:30px;
+/* =========================
+   FORMULARIO
+========================= */
+
+.form-card {
+    background: #0f172a;
+    border: 1px solid #7c3aed;
+    border-radius: 15px;
+
+    padding: 25px;
+
+    /*
+       Aquí hacemos que el formulario
+       no ocupe toda la pantalla
+    */
+    width: 100%;
+    max-width: 650px;
+
+    margin: 0 auto 30px auto;
+
+    box-sizing: border-box;
 }
+
+.form-card h2 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 25px;
+}
+
+/* =========================
+   INPUTS
+========================= */
 
 input,
 textarea,
-select{
-    width:100%;
-    padding:14px;
-    margin-top:10px;
-    margin-bottom:15px;
-    border:none;
-    border-radius:10px;
-    background:#1e293b;
-    color:white;
+select {
+    width: 100%;
+
+    padding: 12px;
+
+    margin-top: 8px;
+    margin-bottom: 15px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: #1e293b;
+    color: white;
+
+    box-sizing: border-box;
+
+    font-size: 14px;
 }
 
-textarea{
-    height:120px;
+textarea {
+    height: 100px;
+    resize: vertical;
 }
 
-.btn-crear{
-    width:100%;
-    padding:15px;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-    font-weight:bold;
-    background:linear-gradient(
-        90deg,
-        #7c3aed,
-        #3b82f6
-    );
-    color:white;
+input::placeholder,
+textarea::placeholder {
+    color: #94a3b8;
 }
 
-table{
-    width:100%;
-    border-collapse:collapse;
+/* =========================
+   FECHA Y HORA
+========================= */
+
+.form-row {
+    display: flex;
+    gap: 15px;
 }
 
-th{
-    background:#7c3aed;
+.form-group {
+    flex: 1;
 }
 
-th,
-td{
-    padding:15px;
-    text-align:center;
+.form-group label,
+.imagen-section label {
+    display: block;
+
+    color: #cbd5e1;
+
+    font-size: 14px;
+    font-weight: bold;
+
+    margin-bottom: 5px;
 }
 
-tr:nth-child(even){
-    background:#1e293b;
+/* =========================
+   INPUT DE ARCHIVO
+========================= */
+
+.imagen-section {
+    margin-top: 5px;
 }
 
-.btn-editar{
-    background:#2563eb;
-    color:white;
-    border:none;
-    padding:8px 15px;
-    border-radius:8px;
-    cursor:pointer;
-    margin-right:5px;
+.imagen-section input[type="file"] {
+    background: #1e293b;
+    padding: 10px;
 }
 
-.btn-eliminar{
-    background:#dc2626;
-    color:white;
-    border:none;
-    padding:8px 15px;
-    border-radius:8px;
-    cursor:pointer;
-}
-.btn-crear-evento{
-    background:linear-gradient(
-        90deg,
-        #7c3aed,
-        #3b82f6
-    );
+/* =========================
+   PREVISUALIZACIÓN
+========================= */
 
-    color:white;
-    border:none;
-    padding:12px 25px;
-    border-radius:10px;
-    font-size:16px;
-    font-weight:bold;
-    cursor:pointer;
-    transition:.3s;
-}
-
-.btn-crear-evento:hover{
-    transform:translateY(-2px);
-}
-.navbar{
-    height:70px;
-    background:#0f172a;
-    color:white;
-
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-
-    padding:0 40px;
-
-    box-shadow:0 2px 10px rgba(0,0,0,.2);
-}
-
-.logo{
-    font-size:28px;
-    font-weight:bold;
-    color:#38bdf8;
-}
-
-.nav-links{
-    display:flex;
-    gap:30px;
-}
-
-.nav-links a{
-    color:white;
-    text-decoration:none;
-    font-size:16px;
-    transition:.3s;
-}
-
-.nav-links a:hover{
-    color:#38bdf8;
-}
-
-.user-menu{
-    display:flex;
-    align-items:center;
-    gap:15px;
-}
-
-.avatar{
-    width:45px;
-    height:45px;
-
-    border-radius:50%;
-
-    background:#38bdf8;
-    color:white;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    font-size:20px;
-}
-
-.btn-logout{
-    background:#ef4444;
-    border:none;
-
-    color:white;
-
-    padding:10px 16px;
-
-    border-radius:8px;
-
-    cursor:pointer;
-}
-
-.btn-logout:hover{
-    background:#dc2626;
-}
 .preview-container {
-  margin-top: 15px;
-  text-align: center;
+    margin-top: 15px;
+    text-align: center;
 }
 
 .preview-image {
-  width: 200px;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 12px;
-  border: 2px solid #ddd;
+    width: 200px;
+    height: 120px;
+
+    object-fit: cover;
+
+    border-radius: 12px;
+
+    border: 2px solid #7c3aed;
+}
+
+/* =========================
+   BOTÓN CREAR
+========================= */
+
+.btn-crear {
+    width: 100%;
+
+    padding: 13px;
+
+    border: none;
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+    font-size: 15px;
+
+    background: linear-gradient(
+        90deg,
+        #7c3aed,
+        #3b82f6
+    );
+
+    color: white;
+
+    transition: 0.3s;
+}
+
+.btn-crear:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(124, 58, 237, 0.3);
+}
+
+/* =========================
+   TABLA
+========================= */
+
+.tabla-card {
+    background: #0f172a;
+
+    border: 1px solid #7c3aed;
+
+    border-radius: 15px;
+
+    padding: 25px;
+
+    width: 100%;
+
+    box-sizing: border-box;
+}
+
+.tabla-card h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+/* =========================
+   TABLA RESPONSIVA
+========================= */
+
+.tabla-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background: #7c3aed;
+}
+
+th,
+td {
+    padding: 15px;
+
+    text-align: center;
+
+    color: white;
+}
+
+tr:nth-child(even) {
+    background: #1e293b;
+}
+
+tr:hover {
+    background: #263449;
+}
+
+/* =========================
+   BOTÓN EDITAR
+========================= */
+
+.btn-editar {
+    background: #2563eb;
+
+    color: white;
+
+    border: none;
+
+    padding: 8px 15px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    margin-right: 5px;
+}
+
+.btn-editar:hover {
+    background: #1d4ed8;
+}
+
+/* =========================
+   BOTÓN ELIMINAR
+========================= */
+
+.btn-eliminar {
+    background: #dc2626;
+
+    color: white;
+
+    border: none;
+
+    padding: 8px 15px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+}
+
+.btn-eliminar:hover {
+    background: #b91c1c;
+}
+
+
+/* ==================================================
+   NAVBAR
+================================================== */
+
+.navbar {
+    height: 70px;
+
+    background: #0f172a;
+
+    color: white;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 0 40px;
+
+    box-shadow: 0 2px 10px rgba(0, 0, 0, .2);
+
+    box-sizing: border-box;
+}
+
+.logo {
+    font-size: 28px;
+
+    font-weight: bold;
+
+    color: #38bdf8;
+}
+
+.nav-links {
+    display: flex;
+
+    gap: 30px;
+}
+
+.nav-links a {
+    color: white;
+
+    text-decoration: none;
+
+    font-size: 16px;
+
+    transition: .3s;
+}
+
+.nav-links a:hover {
+    color: #38bdf8;
+}
+
+.user-menu {
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+}
+
+.avatar {
+    width: 45px;
+    height: 45px;
+
+    border-radius: 50%;
+
+    background: #38bdf8;
+
+    color: white;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 20px;
+}
+
+.btn-logout {
+    background: #ef4444;
+
+    border: none;
+
+    color: white;
+
+    padding: 10px 16px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+}
+
+.btn-logout:hover {
+    background: #dc2626;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 700px) {
+
+    .crud-container {
+        padding: 25px 15px;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .navbar {
+        padding: 0 15px;
+    }
+
+    .nav-links {
+        gap: 10px;
+    }
+
+    .nav-links a {
+        font-size: 14px;
+    }
+
+    .logo {
+        font-size: 22px;
+    }
+
 }

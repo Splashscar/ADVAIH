@@ -1,130 +1,373 @@
+<app-navbar></app-navbar>
+
 <div class="crud-container">
 
-<app-navbar></app-navbar>
-  <h1>Gestión de Eventos</h1>
+    <h1>Gestión de Eventos</h1>
 
-  <div class="form-card">
+    <!-- =========================
+         FORMULARIO
+    ========================== -->
 
-    <h2>Crear Evento</h2>
+    <div class="form-card">
 
-    <input
-  type="text"
-  placeholder="Nombre del evento"
-  [(ngModel)]="title">
+        <h2>
+            {{ eventoEditandoId ? 'Editar Evento' : 'Crear Evento' }}
+        </h2>
 
-<textarea
-  placeholder="Descripción"
-  [(ngModel)]="description">
-</textarea>
+        <!-- NOMBRE -->
 
-<input
-  type="date"
-  [(ngModel)]="date">
+        <label for="title">
+            Nombre del evento
+        </label>
 
-<input
-  type="time"
-  [(ngModel)]="time">
-
-<input
-  type="text"
-  placeholder="Ubicación"
-  [(ngModel)]="location">
-
-<select [(ngModel)]="category">
-
-  <option value="">
-    Seleccionar categoría
-  </option>
-
-  <option value="Música">
-    Música
-  </option>
-
-  <option value="Tecnología">
-    Tecnología
-  </option>
-
-  <option value="Deportes">
-    Deportes
-  </option>
-
-  <option value="Arte">
-    Arte
-  </option>
-
-</select>
-<!-- Imagen -->
-<input
-  type="file"
-  accept="image/*"
-  (change)="onFileSelected($event)">
-
-<!-- Vista previa -->
-<div *ngIf="previewImage" class="preview-container">
-  <img
-    [src]="previewImage"
-    alt="Vista previa"
-    class="preview-image">
-</div>
+        <input
+            id="title"
+            type="text"
+            placeholder="Ej: Festival de Tecnología"
+            [(ngModel)]="title"
+        >
 
 
-<button
-  class="btn-crear"
-  (click)="eventoEditandoId ? actualizarEvento() : crearEvento()">
+        <!-- DESCRIPCIÓN -->
 
-  {{ eventoEditandoId ? 'Guardar Cambios' : 'Crear Evento' }}
+        <label for="description">
+            Descripción
+        </label>
 
-</button>
+        <textarea
+            id="description"
+            placeholder="Describe el evento..."
+            [(ngModel)]="description">
+        </textarea>
 
-  </div>
 
-  <div class="tabla-card">
+        <!-- FECHA Y HORA -->
 
-    <h2>Eventos Registrados</h2>
+        <div class="form-row">
 
-    <table>
+            <div class="form-group">
 
-      <thead>
-        <tr>
-          <th style="padding: 18px;color: white;font-size: 16px; letter-spacing: 0.5px;">Evento</th>
-          <th style="padding: 18px;color: white;font-size: 16px; letter-spacing: 0.5px;">Fecha</th>
-          <th style="padding: 18px;color: white;font-size: 16px; letter-spacing: 0.5px;">Categoría</th>
-          <th style="padding: 18px;color: white;font-size: 16px; letter-spacing: 0.5px;">Ubicación</th>
-          <th style="padding: 18px;color: white;font-size: 16px; letter-spacing: 0.5px;">Acciones</th>
-        </tr>
-      </thead>
+                <label for="date">
+                    Fecha
+                </label>
 
-      <tbody>
+                <input
+                    id="date"
+                    type="date"
+                    [(ngModel)]="date"
+                >
 
-@for (evento of eventos; track evento.id) {
+            </div>
 
-    <tr>
-      <td style="padding: 18px;color: white;font-size: 16px; letter-spacing: 0.5px;">{{ evento.title }}</td>
-      <td style="padding: 18px;color: white;font-size: 16px; letter-spacing: 0.5px;">{{ evento.date }}</td>
-      <td style="padding: 18px;color: white;font-size: 16px; letter-spacing: 0.5px;">{{ evento.category }}</td>
-      <td style="padding: 18px;color: white;font-size: 16px; letter-spacing: 0.5px;">{{ evento.location }}</td>
 
-      <td>
+            <div class="form-group">
+
+                <label for="time">
+                    Hora
+                </label>
+
+                <input
+                    id="time"
+                    type="time"
+                    [(ngModel)]="time"
+                >
+
+            </div>
+
+        </div>
+
+
+        <!-- UBICACIÓN -->
+
+        <label for="location">
+            Ubicación
+        </label>
+
+        <select
+            id="location"
+            [(ngModel)]="ubicacionSeleccionada"
+        >
+
+            <option value="">
+                Selecciona una ubicación
+            </option>
+
+            <option value="Centro de Convenciones">
+                Centro de Convenciones
+            </option>
+
+            <option value="Parque Principal">
+                Parque Principal
+            </option>
+
+            <option value="Biblioteca Municipal">
+                Biblioteca Municipal
+            </option>
+
+            <option value="SENA">
+                SENA
+            </option>
+
+            <option value="Universidad">
+                Universidad
+            </option>
+
+            <option value="Coliseo Municipal">
+                Coliseo Municipal
+            </option>
+
+            <option value="Teatro Municipal">
+                Teatro Municipal
+            </option>
+
+            <option value="Otro">
+                Otra ubicación
+            </option>
+
+        </select>
+
+
+        <!-- OTRA UBICACIÓN -->
+
+        <div
+            class="ubicacion-personalizada"
+            *ngIf="ubicacionSeleccionada === 'Otro'"
+        >
+
+            <label for="ubicacionPersonalizada">
+                Escribe la ubicación
+            </label>
+
+            <input
+                id="ubicacionPersonalizada"
+                type="text"
+                placeholder="Ej: Parque Simón Bolívar"
+                [(ngModel)]="ubicacionPersonalizada"
+            >
+
+        </div>
+
+
+        <!-- CATEGORÍA -->
+
+        <label for="category">
+            Categoría
+        </label>
+
+        <select
+            id="category"
+            [(ngModel)]="category"
+        >
+
+            <option value="">
+                Selecciona una categoría
+            </option>
+
+            <option value="Musica">
+                Música
+            </option>
+
+            <option value="Tecnologia">
+                Tecnología
+            </option>
+
+            <option value="Arte">
+                Arte
+            </option>
+
+            <option value="Deportes">
+                Deportes
+            </option>
+
+            <option value="Cultura">
+                Cultura
+            </option>
+
+        </select>
+
+
+        <!-- IMAGEN -->
+
+        <div class="imagen-section">
+
+            <label for="imagen">
+                {{ eventoEditandoId
+                    ? 'Cambiar imagen'
+                    : 'Imagen del evento'
+                }}
+            </label>
+
+            <input
+                id="imagen"
+                type="file"
+                accept="image/*"
+                (change)="onFileSelected($event)"
+            >
+
+            <small *ngIf="eventoEditandoId">
+                Selecciona una nueva imagen solamente si deseas cambiarla.
+            </small>
+
+
+            <!-- PREVISUALIZACIÓN -->
+
+            <div
+                class="preview-container"
+                *ngIf="previewImage"
+            >
+
+                <img
+                    [src]="previewImage"
+                    class="preview-image"
+                    alt="Vista previa de la imagen del evento"
+                >
+
+            </div>
+
+        </div>
+
+
+        <!-- BOTÓN GUARDAR -->
+
         <button
-          class="btn-editar"
-          (click)="editarEvento(evento)">
-          Editar
+            class="btn-crear"
+            [disabled]="cargando"
+            (click)="guardarEvento()"
+        >
+
+            {{
+                cargando
+                    ? 'Procesando...'
+                    : (
+                        eventoEditandoId
+                            ? 'Guardar Cambios'
+                            : 'Crear Evento'
+                    )
+            }}
+
         </button>
 
+
+        <!-- CANCELAR EDICIÓN -->
+
         <button
-          class="btn-eliminar"
-          (click)="eliminarEvento(evento.id)">
-          Eliminar
+            *ngIf="eventoEditandoId"
+            class="btn-cancelar"
+            type="button"
+            (click)="limpiarFormulario()"
+        >
+
+            Cancelar edición
+
         </button>
-      </td>
-    </tr>
 
-    }
+    </div>
 
-      </tbody>
 
-    </table>
+    <!-- =========================
+         TABLA DE EVENTOS
+    ========================== -->
 
-  </div>
+    <div class="tabla-card">
+
+        <h2>
+            Eventos Registrados
+        </h2>
+
+
+        <div class="tabla-responsive">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Evento
+                        </th>
+
+                        <th>
+                            Fecha
+                        </th>
+
+                        <th>
+                            Hora
+                        </th>
+
+                        <th>
+                            Categoría
+                        </th>
+
+                        <th>
+                            Ubicación
+                        </th>
+
+                        <th>
+                            Acciones
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    @for (evento of eventos; track evento.id) {
+
+                        <tr>
+
+                            <td>
+                                {{ evento.title }}
+                            </td>
+
+                            <td>
+                                {{ evento.date }}
+                            </td>
+
+                            <td>
+                                {{ evento.time || '--' }}
+                            </td>
+
+                            <td>
+                                {{ evento.category }}
+                            </td>
+
+                            <td>
+                                {{ evento.location }}
+                            </td>
+
+                            <td>
+
+                                <button
+                                    class="btn-editar"
+                                    type="button"
+                                    (click)="editarEvento(evento)"
+                                >
+                                    Editar
+                                </button>
+
+                                <button
+                                    class="btn-eliminar"
+                                    type="button"
+                                    (click)="eliminarEvento(evento.id)"
+                                >
+                                    Eliminar
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
 
 </div>

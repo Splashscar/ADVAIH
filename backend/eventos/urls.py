@@ -26,6 +26,10 @@ urlpatterns = [
         'eventos/<str:evento_id>/favorito/',
         views.toggle_favorito
     ),
+    path(
+        'ia-recomendar/',
+        views.recomendar_eventos_ia
+    ),
 
 
 ]
