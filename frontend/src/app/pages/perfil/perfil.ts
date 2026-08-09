@@ -2,223 +2,674 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { getAuth, onAuthStateChanged,  } from 'firebase/auth';
-import { Navbar } from '../../components/navbar/navbar';
+
+import { Subscription } from 'rxjs';
+
+import { AuthServices } from '../../services/auth';
+import { EventosService } from '../../services/eventos';
 import { FirebaseService } from '../../services/firebase';
+import { Navbar } from '../../components/navbar/navbar';
+
 import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, FormsModule, Navbar], 
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterLink,
+    Navbar
+  ],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css'
 })
-export class PerfilComponent implements OnInit {
-  
-  // ATRIBUTOS OFICIALES DEL DICCIONARIO (ENTIDAD 1: USUARIOS)
-  id_usuario: string = '';
-  nombre: string = 'Usuario ADVAIH';
-  correo: string = 'usuario@advaih.com';
-  contrasena: string = '********'; 
-  foto_perfil: string = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500';
-  tipo_usuario: string = 'Organizador';
+export class PerfilComponent implements OnInit, OnDestroy {
 
-  // Alias para mantener compatibilidad exacta con tu HTML
-  get email(): string { return this.correo; }
-  set email(val: string) { this.correo = val; }
-  get fotoUrl(): string { return this.foto_perfil; }
-  set fotoUrl(val: string) { this.foto_perfil = val; }
-  get rol(): string { return this.tipo_usuario; }
-  set rol(val: string) { this.tipo_usuario = val; }
+  // =========================================================
+  // USUARIO
+  // =========================================================
+
+  usuario: any = null;
+
+  id_usuario: string = '';
+
+  nombreUsuario: string = 'Usuario ADVAIH';
+  correoUsuario: string = 'usuario@advaih.com';
+  telefonoUsuario: string = '';
+  fotoPerfil: string = '';
+
+  tipoUsuario: string = 'Organizador';
+  ciudad: string = 'Bogotá';
+  biografia: string =
+    'Amante de los festivales de música y los eventos culturales al aire libre.';
+
+  fechaRegistro: string = '';
+
+  // =========================================================
+  // ALIAS PARA COMPATIBILIDAD CON OTROS HTML
+  // =========================================================
+
+  get nombre(): string {
+    return this.nombreUsuario;
+  }
+
+  set nombre(valor: string) {
+    this.nombreUsuario = valor;
+  }
+
+  get correo(): string {
+    return this.correoUsuario;
+  }
+
+  set correo(valor: string) {
+    this.correoUsuario = valor;
+  }
+
+  get email(): string {
+    return this.correoUsuario;
+  }
+
+  set email(valor: string) {
+    this.correoUsuario = valor;
+  }
+
+  get foto_perfil(): string {
+    return this.fotoPerfil;
+  }
+
+  set foto_perfil(valor: string) {
+    this.fotoPerfil = valor;
+  }
+
+  get fotoUrl(): string {
+    return this.fotoPerfil;
+  }
+
+  set fotoUrl(valor: string) {
+    this.fotoPerfil = valor;
+  }
+
+  get rol(): string {
+    return this.tipoUsuario;
+  }
+
+  set rol(valor: string) {
+    this.tipoUsuario = valor;
+  }
+
+  get tipo_usuario(): string {
+    return this.tipoUsuario;
+  }
+
+  set tipo_usuario(valor: string) {
+    this.tipoUsuario = valor;
+  }
+
+  // =========================================================
+  // EDICIÓN DEL PERFIL
+  // =========================================================
+
+  editando: boolean = false;
+
+  editNombre: string = '';
+  editCorreo: string = '';
+  editTelefono: string = '';
+  editFoto: string = '';
+  editCiudad: string = '';
+  editBiografia: string = '';
+  editTipoUsuario: string = 'Organizador';
+
+  fotoArchivo: File | null = null;
+
+  // =========================================================
+  // EVENTOS
+  // =========================================================
+
+  misEventos: any[] = [];
+  misEventEventosLength: number = 0;
+
+  eventosFavoritos: any[] = [];
+
+  eventosAsistidos: any[] = [];
+
+  tabActiva: 'creados' | 'favoritos' | 'asistidos' = 'creados';
+
+  // =========================================================
+  // ESTADO
+  // =========================================================
+
+  estaLogueado: boolean = false;
+
+  private subUsuario?: Subscription;
+
+  // =========================================================
+  // CONSTRUCTOR
+  // =========================================================
 
   constructor(
+    private authService: AuthServices,
+    private eventosService: EventosService,
     private firebaseService: FirebaseService,
     private cdr: ChangeDetectorRef
   ) {}
-  
-  // CAMPOS ADICIONALES DE LA INTERFAZ VISTA
-  fechaRegistro: string = '26/06/2026';
-  telefono: string = '+57 312 456 7890';
-  ciudad: string = 'Bogotá';
-  biografia: string = 'Amante de los festivales de música y los eventos culturales al aire libre.';
 
-  // Estados de control nativos
-  editando: boolean = false;
-  editNombre: string = '';
-  editFoto: string = '';
-  editCorreo: string = '';
-  editTelefono: string = '';
-
-  // Repositorios de datos
-  misEventos: any[] = [];
-  misEventEventosLength: number = 0;
-  eventosFavoritos: any[] = [];
-  eventosAsistidos: any[] = []; // Se mantiene vacio como pediste
-
-  tabActiva: 'creados' | 'favoritos' | 'asistidos' = 'creados';
-  private subUsuario!: Subscription;
-constructor(
-  private authService: AuthServices,
-  private eventosService: EventosService,
-  private firebaseService: FirebaseService,
-  private cdr: ChangeDetectorRef
-) {}
+  // =========================================================
+  // INICIO
+  // =========================================================
 
   ngOnInit(): void {
-    this.subUsuario = this.authService.usuario$.subscribe(usuario => {
-      if (usuario) {
+
+    this.subUsuario = this.authService.usuario$.subscribe({
+
+      next: (usuario) => {
+
+        if (!usuario) {
+          this.estaLogueado = false;
+          this.usuario = null;
+          return;
+        }
+
         this.usuario = usuario;
-        
-        // 🔄 LEER DE LOCALSTORAGE (Persistencia de datos)
-        const guardadoNombre = localStorage.getItem('perfil_nombre');
-        const guardadoFoto = localStorage.getItem('perfil_foto');
-        const guardadoCorreo = localStorage.getItem('perfil_correo');
-        const guardadoTelefono = localStorage.getItem('perfil_telefono');
-
-        this.nombreUsuario = guardadoNombre || usuario.displayName || usuario.email || 'SEBASTIAN CAMILO MURCIA MATEUS';
-        this.fotoPerfil = guardadoFoto || usuario.photoURL || '';
-        this.correoUsuario = guardadoCorreo || usuario.email || 'murciamateussebastiancamilo@gmail.com';
-        this.telefonoUsuario = guardadoTelefono || usuario.phoneNumber || '+57 312 456 7890';
-        
-        this.editNombre = this.nombreUsuario;
-        this.editFoto = this.fotoPerfil;
-        this.editCorreo = this.correoUsuario;
-        this.editTelefono = this.telefonoUsuario;
-
-        this.procesarMetricasPerfil(usuario.uid);
-      }
-    });
-  }
-
-  verificarSesionNavegador() {
-    const auth = getAuth();
-    
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
         this.estaLogueado = true;
-        this.id_usuario = user.uid; 
-        this.correo = user.email || this.correo;
+        this.id_usuario = usuario.uid;
 
-        this.firebaseService          
-          .obtenerUsuario(user.uid)
-          .subscribe((datos: any) => {
+        console.log('👤 Usuario autenticado:', usuario.uid);
 
-            if (!datos) return;
+        // Cargar información REAL desde Firestore
+        this.cargarPerfil(usuario.uid);
 
-            this.nombre =
-              datos.nombre || user.displayName || this.nombre;
+        // Cargar eventos
+        this.procesarMetricasPerfil(usuario.uid);
 
-            this.correo =
-              datos.correo || user.email || this.correo;
-
-            this.tipo_usuario =
-              datos.tipo_usuario || this.tipo_usuario;
-
-            this.telefono =
-              datos.telefono || this.telefono;
-
-            this.ciudad =
-              datos.ciudad || this.ciudad;
-
-            this.biografia =
-              datos.biografia || this.biografia;
-
-            this.foto_perfil =
-            datos.foto_perfil || user.photoURL || this.foto_perfil;
-
-            this.cdr.detectChanges();
-          });
-
-      } else {
-        this.estaLogueado = false;
-        this.editando = false;     
-
-        this.cdr.detectChanges();
       },
-      error: (err) => console.error('Error procesando métricas:', err)
+
+      error: (error) => {
+
+        console.error(
+          '❌ Error obteniendo usuario:',
+          error
+        );
+
+      }
+
     });
+
   }
 
-  alternarEdicion() {
-    this.editando = !this.editando;
-    if (this.editando) {
-      this.editNombre = this.nombreUsuario;
-      this.editFoto = this.fotoPerfil;
-      this.editCorreo = this.correoUsuario;
-      this.editTelefono = this.telefonoUsuario;
-    }
+  // =========================================================
+  // DESTRUIR COMPONENTE
+  // =========================================================
+
+  ngOnDestroy(): void {
+
+    this.subUsuario?.unsubscribe();
+
   }
 
-  onFotoSeleccionada(event: any) {
-    const archivo = event.target.files[0];
-    if (archivo) {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        const img = new Image();
-        img.src = e.target.result;
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          canvas.width = 150;
-          canvas.height = 150;
-          
-          if (ctx) {
-            ctx.drawImage(img, 0, 0, 150, 150);
-            this.editFoto = canvas.toDataURL('image/jpeg', 0.7);
-            this.cdr.detectChanges();
+  // =========================================================
+  // CARGAR PERFIL DESDE FIRESTORE
+  // =========================================================
+
+  cargarPerfil(uid: string): void {
+
+    this.firebaseService
+      .obtenerUsuario(uid)
+      .subscribe({
+
+        next: (datos: any) => {
+
+          console.log(
+            '📥 Perfil recibido desde Firestore:',
+            datos
+          );
+
+          if (!datos) {
+
+            console.warn(
+              '⚠️ No existe información del usuario en Firestore'
+            );
+
+            return;
+
           }
-        };
-      };
-      reader.readAsDataURL(archivo);
-    }
+
+          // =================================================
+          // DATOS DEL PERFIL
+          // =================================================
+
+          this.nombreUsuario =
+            datos.nombre ||
+            this.usuario?.displayName ||
+            'Usuario ADVAIH';
+
+          this.correoUsuario =
+            datos.correo ||
+            datos.email ||
+            this.usuario?.email ||
+            '';
+
+          this.telefonoUsuario =
+            datos.telefono ||
+            '';
+
+          this.tipoUsuario =
+            datos.tipo_usuario ||
+            'Organizador';
+
+          this.ciudad =
+            datos.ciudad ||
+            'Bogotá';
+
+          this.biografia =
+            datos.biografia ||
+            'Amante de los festivales de música y los eventos culturales al aire libre.';
+
+          this.fotoPerfil =
+            datos.foto_perfil ||
+            datos.foto_url ||
+            this.usuario?.photoURL ||
+            '';
+
+          // =================================================
+          // FECHA DE REGISTRO
+          // =================================================
+
+          if (datos.FechaCreacion) {
+
+            try {
+
+              const fecha =
+                datos.FechaCreacion.toDate
+                  ? datos.FechaCreacion.toDate()
+                  : new Date(datos.FechaCreacion);
+
+              this.fechaRegistro =
+                fecha.toLocaleDateString('es-CO');
+
+            } catch {
+
+              this.fechaRegistro = '';
+
+            }
+
+          }
+
+          // =================================================
+          // SINCRONIZAR CAMPOS DE EDICIÓN
+          // =================================================
+
+          this.editNombre =
+            this.nombreUsuario;
+
+          this.editCorreo =
+            this.correoUsuario;
+
+          this.editTelefono =
+            this.telefonoUsuario;
+
+          this.editFoto =
+            this.fotoPerfil;
+
+          this.editCiudad =
+            this.ciudad;
+
+          this.editBiografia =
+            this.biografia;
+
+          this.editTipoUsuario =
+            this.tipoUsuario;
+
+          this.cdr.detectChanges();
+
+        },
+
+        error: (error) => {
+
+          console.error(
+            '❌ Error cargando perfil desde Firestore:',
+            error
+          );
+
+        }
+
+      });
+
   }
-  async guardarCambios() {
 
-    if (!this.estaLogueado) return;
+  // =========================================================
+  // CAMBIAR TAB
+  // =========================================================
 
-    this.editando = false;
+  cambiarTab(
+    tab: 'creados' | 'favoritos' | 'asistidos'
+  ): void {
 
-    const diccionarioUsuario = {
+    this.tabActiva = tab;
 
-      nombre: this.nombre,
+  }
 
-      correo: this.correo,
+  // =========================================================
+  // CARGAR EVENTOS DEL PERFIL
+  // =========================================================
 
-      tipo_usuario: this.tipo_usuario,
+  procesarMetricasPerfil(userId: string): void {
 
-      telefono: this.telefono,
+    this.eventosService
+      .obtenerEventos()
+      .subscribe({
 
-      ciudad: this.ciudad,
+        next: (res: any) => {
 
-      biografia: this.biografia,
+          const todosLosEventos =
+            Array.isArray(res)
+              ? res
+              : [];
 
-      foto_perfil: this.foto_perfil
+          // =================================================
+          // EVENTOS CREADOS
+          // =================================================
+
+          this.misEventos =
+            todosLosEventos.filter(
+              (evento: any) =>
+                evento.authorId === userId
+            );
+
+          this.misEventEventosLength =
+            this.misEventos.length;
+
+          // =================================================
+          // FAVORITOS
+          // =================================================
+
+          this.firebaseService
+            .obtenerFavoritos(userId)
+            .subscribe({
+
+              next: (favoritos: any[]) => {
+
+                console.log(
+                  '⭐ Favoritos del usuario:',
+                  favoritos
+                );
+
+                const idsFavoritos =
+                  favoritos.map(
+                    favorito =>
+                      favorito.eventoId
+                  );
+
+                this.eventosFavoritos =
+                  todosLosEventos.filter(
+                    evento =>
+                      idsFavoritos.includes(
+                        evento.id
+                      )
+                  );
+
+                this.cdr.detectChanges();
+
+              },
+
+              error: (error) => {
+
+                console.error(
+                  '❌ Error obteniendo favoritos:',
+                  error
+                );
+
+                this.eventosFavoritos = [];
+
+              }
+
+            });
+
+          // =================================================
+          // ASISTIDOS
+          // =================================================
+
+          this.eventosAsistidos = [];
+
+          this.cdr.detectChanges();
+
+        },
+
+        error: (error) => {
+
+          console.error(
+            '❌ Error obteniendo eventos:',
+            error
+          );
+
+        }
+
+      });
+
+  }
+
+  // =========================================================
+  // ACTIVAR / DESACTIVAR EDICIÓN
+  // =========================================================
+
+  alternarEdicion(): void {
+
+    this.editando =
+      !this.editando;
+
+    if (this.editando) {
+
+      this.editNombre =
+        this.nombreUsuario;
+
+      this.editCorreo =
+        this.correoUsuario;
+
+      this.editTelefono =
+        this.telefonoUsuario;
+
+      this.editFoto =
+        this.fotoPerfil;
+
+      this.editCiudad =
+        this.ciudad;
+
+      this.editBiografia =
+        this.biografia;
+
+      this.editTipoUsuario =
+        this.tipoUsuario;
+
+    }
+
+  }
+
+  // =========================================================
+  // SELECCIONAR FOTO
+  // =========================================================
+
+  onFotoSeleccionada(event: any): void {
+
+    if (!this.estaLogueado) {
+      return;
+    }
+
+    const archivo =
+      event.target.files?.[0];
+
+    if (!archivo) {
+      return;
+    }
+
+    this.fotoArchivo =
+      archivo;
+
+    const reader =
+      new FileReader();
+
+    reader.onload = () => {
+
+      this.editFoto =
+        reader.result as string;
+
+      this.cdr.detectChanges();
 
     };
 
-    console.log("🆔 UID:", this.id_usuario);
-    console.log("📦 Datos a guardar:", diccionarioUsuario);
+    reader.readAsDataURL(archivo);
 
-    try {
+  }
 
-      await this.firebaseService.actualizarPerfil(
+  // =========================================================
+  // GUARDAR CAMBIOS
+  // =========================================================
 
-        this.id_usuario,
+  async guardarCambios(): Promise<void> {
 
-        diccionarioUsuario
+    if (!this.estaLogueado) {
 
+      console.warn(
+        'No hay usuario autenticado'
       );
 
-      console.log("✅ Perfil actualizado");
+      return;
 
     }
 
-    catch(error){
+    if (!this.id_usuario) {
 
-      console.error(error);
+      console.error(
+        'No existe UID del usuario'
+      );
+
+      return;
+
+    }
+
+    // =================================================
+    // VALIDACIONES
+    // =================================================
+
+    if (!this.editNombre.trim()) {
+
+      alert(
+        'El nombre no puede estar vacío'
+      );
+
+      return;
+
+    }
+
+    if (!this.editCorreo.trim()) {
+
+      alert(
+        'El correo no puede estar vacío'
+      );
+
+      return;
+
+    }
+
+    // =================================================
+    // DATOS A GUARDAR
+    // =================================================
+
+    const datosActualizados = {
+
+      nombre:
+        this.editNombre.trim(),
+
+      correo:
+        this.editCorreo.trim(),
+
+      tipo_usuario:
+        this.editTipoUsuario,
+
+      telefono:
+        this.editTelefono.trim(),
+
+      ciudad:
+        this.editCiudad.trim(),
+
+      biografia:
+        this.editBiografia.trim(),
+
+      foto_perfil:
+        this.editFoto
+
+    };
+
+    console.log(
+      'UID:',
+      this.id_usuario
+    );
+
+    console.log(
+      'Datos a guardar:',
+      datosActualizados
+    );
+
+    try {
+
+      // =================================================
+      // GUARDAR DIRECTAMENTE EN FIRESTORE
+      // =================================================
+
+      await this.firebaseService.actualizarPerfil(
+        this.id_usuario,
+        datosActualizados
+      );
+
+      console.log(
+        'Perfil actualizado correctamente en Firestore'
+      );
+
+      // =================================================
+      // ACTUALIZAR LA VISTA INMEDIATAMENTE
+      // =================================================
+
+      this.nombreUsuario =
+        datosActualizados.nombre;
+
+      this.correoUsuario =
+        datosActualizados.correo;
+
+      this.tipoUsuario =
+        datosActualizados.tipo_usuario;
+
+      this.telefonoUsuario =
+        datosActualizados.telefono;
+
+      this.ciudad =
+        datosActualizados.ciudad;
+
+      this.biografia =
+        datosActualizados.biografia;
+
+      this.fotoPerfil =
+        datosActualizados.foto_perfil;
+
+      this.editando = false;
+
+      this.cdr.detectChanges();
+
+      console.log(
+        'Vista del perfil actualizada'
+      );
+
+    } catch (error) {
+
+      console.error(
+        'Error actualizando perfil:',
+        error
+      );
+
+      alert(
+        'No se pudieron guardar los cambios del perfil.'
+      );
 
     }
 
   }
+
 }
