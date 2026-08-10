@@ -6,10 +6,11 @@ import { EventosService } from '../../services/eventos';
 import { AuthServices } from '../../services/auth';
 import { ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
+import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, Navbar],
+  imports: [CommonModule, FormsModule, Navbar, RouterLink],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
