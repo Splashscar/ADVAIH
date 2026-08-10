@@ -1,0 +1,665 @@
+/* =========================================
+   PÁGINA IA
+========================================= */
+
+.ia-page {
+  min-height: calc(100vh - 70px);
+  background: #050816;
+  color: white;
+
+  padding: 30px 20px 40px;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+.ia-header {
+  width: 100%;
+  max-width: 950px;
+
+  margin: 0 auto 25px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 15px;
+
+  padding: 22px;
+
+  box-sizing: border-box;
+
+  background: #0f172a;
+
+  border: 1px solid #7c3aed;
+
+  border-radius: 18px;
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.25),
+    0 0 25px rgba(124, 58, 237, 0.12);
+}
+
+
+.ia-header-icon {
+  width: 55px;
+  height: 55px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(
+    135deg,
+    #7c3aed,
+    #3b82f6
+  );
+
+  border-radius: 50%;
+
+  font-size: 28px;
+
+  flex-shrink: 0;
+}
+
+
+.ia-header h1 {
+  margin: 0;
+
+  font-size: 26px;
+}
+
+
+.ia-header p {
+  margin: 5px 0 0;
+
+  color: #94a3b8;
+
+  font-size: 14px;
+}
+
+
+/* =========================================
+   CHAT
+========================================= */
+
+.chat-container {
+  width: 100%;
+  max-width: 950px;
+
+  margin: 0 auto;
+
+  padding: 25px;
+
+  box-sizing: border-box;
+
+  background: #0f172a;
+
+  border-radius: 18px;
+
+  border: 1px solid #1e293b;
+
+  min-height: 400px;
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+
+/* =========================================
+   MENSAJES
+========================================= */
+
+.mensaje {
+  display: flex;
+
+  gap: 12px;
+
+  margin-bottom: 25px;
+}
+
+
+.mensaje-avatar {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(
+    135deg,
+    #7c3aed,
+    #3b82f6
+  );
+
+  border-radius: 50%;
+
+  font-size: 21px;
+
+  flex-shrink: 0;
+}
+
+
+.mensaje-contenido {
+  max-width: 80%;
+
+  padding: 16px 18px;
+
+  background: #1e293b;
+
+  border-radius: 14px;
+
+  line-height: 1.6;
+}
+
+
+.mensaje-contenido strong {
+  display: block;
+
+  margin-bottom: 8px;
+
+  color: #c4b5fd;
+}
+
+
+.mensaje-contenido p {
+  margin: 0 0 12px;
+
+  color: #e2e8f0;
+}
+
+
+.mensaje-contenido p:last-child {
+  margin-bottom: 0;
+}
+
+
+.mensaje-contenido ul {
+  margin: 8px 0 0;
+
+  padding-left: 20px;
+
+  color: #cbd5e1;
+}
+
+
+.mensaje-contenido li {
+  margin-bottom: 5px;
+}
+
+
+/* =========================================
+   RESPUESTA IA
+========================================= */
+
+.respuesta-ia {
+  white-space: pre-line;
+
+  line-height: 1.7;
+}
+
+
+/* =========================================
+   CONTADOR EVENTOS
+========================================= */
+
+.eventos-encontrados {
+  margin: 10px 0 18px;
+
+  color: #a78bfa;
+
+  font-size: 14px;
+
+  font-weight: 600;
+}
+
+
+/* =========================================
+   EVENTOS
+========================================= */
+
+.eventos-ia {
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(280px, 1fr));
+
+  gap: 18px;
+
+  margin-top: 10px;
+}
+
+
+.evento-ia-card {
+  display: flex;
+
+  flex-direction: column;
+
+  background: #111c32;
+
+  border: 1px solid #293548;
+
+  border-radius: 16px;
+
+  overflow: hidden;
+
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+.evento-ia-card:hover {
+  transform: translateY(-4px);
+
+  border-color: #7c3aed;
+
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.35),
+    0 0 20px rgba(124, 58, 237, 0.15);
+}
+
+
+/* =========================================
+   HEADER EVENTO
+========================================= */
+
+.evento-ia-header {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 18px;
+
+  border-bottom: 1px solid #293548;
+}
+
+
+.evento-icono {
+  width: 45px;
+  height: 45px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(124, 58, 237, 0.15);
+
+  border-radius: 12px;
+
+  font-size: 22px;
+
+  flex-shrink: 0;
+}
+
+
+.evento-titulo {
+  min-width: 0;
+}
+
+
+.evento-titulo h3 {
+  margin: 0 0 7px;
+
+  font-size: 17px;
+
+  color: white;
+
+  word-break: break-word;
+}
+
+
+.evento-categoria {
+  display: inline-block;
+
+  padding: 4px 9px;
+
+  border-radius: 20px;
+
+  background: rgba(59, 130, 246, 0.15);
+
+  color: #93c5fd;
+
+  font-size: 12px;
+
+  font-weight: 600;
+}
+
+
+/* =========================================
+   INFORMACIÓN
+========================================= */
+
+.evento-ia-info {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 15px;
+
+  padding: 18px;
+
+  flex: 1;
+}
+
+
+.evento-dato {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 11px;
+}
+
+
+.dato-icono {
+  width: 28px;
+  height: 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #1e293b;
+
+  border-radius: 8px;
+
+  flex-shrink: 0;
+
+  font-size: 14px;
+}
+
+
+.evento-dato strong {
+  display: block;
+
+  margin-bottom: 2px;
+
+  color: #94a3b8;
+
+  font-size: 12px;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.4px;
+}
+
+
+.evento-dato p {
+  margin: 0;
+
+  color: #e2e8f0;
+
+  font-size: 14px;
+
+  line-height: 1.5;
+
+  word-break: break-word;
+}
+
+
+.evento-descripcion {
+  align-items: flex-start;
+}
+
+
+/* =========================================
+   FOOTER EVENTO
+========================================= */
+
+.evento-ia-footer {
+  padding: 0 18px 18px;
+}
+
+
+.btn-ver-evento {
+  width: 100%;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 11px 15px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: linear-gradient(
+    90deg,
+    #7c3aed,
+    #3b82f6
+  );
+
+  color: white;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+
+.btn-ver-evento:hover {
+  transform: translateY(-2px);
+
+  opacity: 0.9;
+}
+
+
+.btn-ver-evento span {
+  font-size: 18px;
+}
+
+
+/* =========================================
+   IA PENSANDO
+========================================= */
+
+.pensando {
+  display: flex;
+
+  align-items: center;
+
+  gap: 5px;
+
+  color: #94a3b8;
+}
+
+
+.puntos {
+  display: flex;
+
+  gap: 2px;
+}
+
+
+.puntos span {
+  animation: puntos 1.4s infinite;
+}
+
+
+.puntos span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+
+.puntos span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+
+@keyframes puntos {
+
+  0%,
+  60%,
+  100% {
+    opacity: 0.25;
+  }
+
+  30% {
+    opacity: 1;
+  }
+
+}
+
+
+/* =========================================
+   INPUT
+========================================= */
+
+.input-container {
+  width: 100%;
+  max-width: 950px;
+
+  margin: 18px auto 0;
+
+  display: flex;
+
+  gap: 10px;
+}
+
+
+.input-container input {
+  flex: 1;
+
+  min-width: 0;
+
+  padding: 14px 16px;
+
+  box-sizing: border-box;
+
+  border: 1px solid #334155;
+
+  border-radius: 12px;
+
+  outline: none;
+
+  background: #0f172a;
+
+  color: white;
+
+  font-size: 14px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.input-container input::placeholder {
+  color: #64748b;
+}
+
+
+.input-container input:focus {
+  border-color: #7c3aed;
+
+  box-shadow:
+    0 0 0 3px rgba(124, 58, 237, 0.12);
+}
+
+
+.input-container input:disabled {
+  opacity: 0.6;
+}
+
+
+.input-container button {
+  min-width: 100px;
+
+  padding: 0 18px;
+
+  border: none;
+
+  border-radius: 12px;
+
+  background: linear-gradient(
+    90deg,
+    #7c3aed,
+    #3b82f6
+  );
+
+  color: white;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+
+.input-container button:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+
+.input-container button:disabled {
+  opacity: 0.45;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 600px) {
+
+  .ia-page {
+    padding: 20px 12px 30px;
+  }
+
+
+  .ia-header {
+    padding: 18px;
+  }
+
+
+  .ia-header h1 {
+    font-size: 21px;
+  }
+
+
+  .chat-container {
+    padding: 18px;
+  }
+
+
+  .mensaje-contenido {
+    max-width: calc(100% - 50px);
+  }
+
+
+  .eventos-ia {
+    grid-template-columns: 1fr;
+  }
+
+
+  .input-container {
+    flex-direction: column;
+  }
+
+
+  .input-container button {
+    min-height: 45px;
+  }
+
+}

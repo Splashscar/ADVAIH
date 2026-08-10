@@ -1,0 +1,309 @@
+<div class="ia-page">
+
+  <!-- ENCABEZADO -->
+  <section class="ia-header">
+
+    <div class="ia-header-icon">
+      🤖
+    </div>
+
+    <div>
+      <h1>ADVAIH IA</h1>
+
+      <p>
+        Tu asistente inteligente para descubrir eventos
+      </p>
+    </div>
+
+  </section>
+
+
+  <!-- CHAT -->
+  <main class="chat-container">
+
+    <!-- MENSAJE INICIAL -->
+    <div class="mensaje mensaje-ia">
+
+      <div class="mensaje-avatar">
+        🤖
+      </div>
+
+      <div class="mensaje-contenido">
+
+        <strong>ADVAIH IA</strong>
+
+        <p>
+          ¡Hola! 👋 Soy la IA de ADVAIH.
+          Puedo ayudarte a encontrar eventos según
+          tus intereses, categorías o lugares.
+        </p>
+
+        <p>
+          Puedes preguntarme, por ejemplo:
+        </p>
+
+        <ul>
+          <li>¿Qué eventos de tecnología hay?</li>
+          <li>Muéstrame eventos deportivos</li>
+          <li>¿Qué eventos hay de arte?</li>
+          <li>Quiero encontrar eventos de música</li>
+        </ul>
+
+      </div>
+
+    </div>
+
+
+    <!-- RESPUESTA DE LA IA -->
+    <div
+      class="mensaje mensaje-ia"
+      *ngIf="respuesta"
+    >
+
+      <div class="mensaje-avatar">
+        🤖
+      </div>
+
+      <div class="mensaje-contenido">
+
+        <strong>ADVAIH IA</strong>
+
+        <p class="respuesta-ia">
+          {{ respuesta }}
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <!-- INDICADOR DE EVENTOS -->
+    <div
+      class="eventos-encontrados"
+      *ngIf="eventos.length > 0"
+    >
+
+      <span>
+        ✨ {{ eventos.length }}
+        {{ eventos.length === 1 ? 'evento encontrado' : 'eventos encontrados' }}
+      </span>
+
+    </div>
+
+
+    <!-- TARJETAS DE EVENTOS -->
+    <section
+      class="eventos-ia"
+      *ngIf="eventos.length > 0"
+    >
+
+      <article
+        class="evento-ia-card"
+        *ngFor="let evento of eventos"
+      >
+
+        <!-- CABECERA -->
+        <div class="evento-ia-header">
+
+          <div class="evento-icono">
+            📅
+          </div>
+
+          <div class="evento-titulo">
+
+            <h3>
+              {{ evento.titulo }}
+            </h3>
+
+            <span class="evento-categoria">
+              {{ evento.categoria }}
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <!-- INFORMACIÓN -->
+        <div class="evento-ia-info">
+
+          <!-- FECHA -->
+          <div class="evento-dato">
+
+            <span class="dato-icono">
+              📅
+            </span>
+
+            <div>
+              <strong>Fecha</strong>
+              <p>{{ evento.fecha }}</p>
+            </div>
+
+          </div>
+
+
+          <!-- HORA -->
+          <div
+            class="evento-dato"
+            *ngIf="evento.hora"
+          >
+
+            <span class="dato-icono">
+              🕐
+            </span>
+
+            <div>
+              <strong>Hora</strong>
+              <p>{{ evento.hora }}</p>
+            </div>
+
+          </div>
+
+
+          <!-- UBICACIÓN -->
+          <div class="evento-dato">
+
+            <span class="dato-icono">
+              📍
+            </span>
+
+            <div>
+              <strong>Ubicación</strong>
+              <p>{{ evento.ubicacion }}</p>
+            </div>
+
+          </div>
+
+
+          <!-- DESCRIPCIÓN -->
+          <div class="evento-dato evento-descripcion">
+
+            <span class="dato-icono">
+              📝
+            </span>
+
+            <div>
+              <strong>Descripción</strong>
+
+              <p>
+                {{ evento.descripcion }}
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <!-- CREADOR -->
+          <div
+            class="evento-dato"
+            *ngIf="evento.creador"
+          >
+
+            <span class="dato-icono">
+              👤
+            </span>
+
+            <div>
+              <strong>Creado por</strong>
+
+              <p>
+                {{ evento.creador }}
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- FOOTER -->
+        <div class="evento-ia-footer">
+
+          <button
+            type="button"
+            class="btn-ver-evento"
+            [routerLink]="['/eventos', evento.id]"
+          >
+
+            Ver evento
+
+            <span>
+              →
+            </span>
+
+          </button>
+
+        </div>
+
+      </article>
+
+    </section>
+
+
+    <!-- CARGANDO -->
+    <div
+      class="mensaje mensaje-ia"
+      *ngIf="cargando"
+    >
+
+      <div class="mensaje-avatar">
+        🤖
+      </div>
+
+      <div class="mensaje-contenido">
+
+        <strong>ADVAIH IA</strong>
+
+        <div class="pensando">
+
+          <span>
+            La IA está pensando
+          </span>
+
+          <div class="puntos">
+            <span>.</span>
+            <span>.</span>
+            <span>.</span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+
+  <!-- INPUT -->
+  <div class="input-container">
+
+    <input
+      type="text"
+      [(ngModel)]="mensaje"
+      (keyup.enter)="enviarMensaje()"
+      placeholder="Pregúntame por algún evento..."
+      [disabled]="cargando"
+    />
+
+    <button
+      type="button"
+      (click)="enviarMensaje()"
+      [disabled]="cargando || !mensaje.trim()"
+    >
+
+      <span *ngIf="!cargando">
+        Enviar
+      </span>
+
+      <span *ngIf="cargando">
+        ...
+      </span>
+
+    </button>
+
+  </div>
+
+</div>

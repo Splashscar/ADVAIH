@@ -160,3 +160,179 @@
     font-weight: bold;
     border: none;
 }
+
+/* =========================================
+   BURBUJA ADVAIH IA
+========================================= */
+
+.ia-floating {
+  position: fixed;
+
+  right: 25px;
+  bottom: 25px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 10px 18px 10px 10px;
+
+  background: linear-gradient(
+    135deg,
+    #7c3aed,
+    #3b82f6
+  );
+
+  color: white;
+
+  border-radius: 50px;
+
+  cursor: pointer;
+
+  z-index: 999;
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.4),
+    0 0 25px rgba(124, 58, 237, 0.35);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+/* =========================================
+   HOVER
+========================================= */
+
+.ia-floating:hover {
+
+  transform: translateY(-5px) scale(1.03);
+
+  box-shadow:
+    0 15px 35px rgba(0, 0, 0, 0.5),
+    0 0 35px rgba(124, 58, 237, 0.55);
+}
+
+
+/* =========================================
+   ICONO
+========================================= */
+
+.ia-floating-icon {
+
+  width: 45px;
+  height: 45px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(255, 255, 255, 0.15);
+
+  border-radius: 50%;
+
+  font-size: 24px;
+
+  flex-shrink: 0;
+}
+
+
+/* =========================================
+   TEXTO
+========================================= */
+
+.ia-floating-text {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+
+  line-height: 1.2;
+}
+
+
+.ia-floating-text strong {
+
+  font-size: 14px;
+
+  font-weight: 700;
+}
+
+
+.ia-floating-text span {
+
+  font-size: 12px;
+
+  color: rgba(255, 255, 255, 0.8);
+}
+
+
+/* =========================================
+   ANIMACIÓN SUAVE
+========================================= */
+
+.ia-floating-icon {
+
+  animation: ia-pulse 2.5s infinite;
+}
+
+
+@keyframes ia-pulse {
+
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.08);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 600px) {
+
+  .ia-floating {
+
+    right: 15px;
+    bottom: 15px;
+
+    width: 55px;
+    height: 55px;
+
+    padding: 0;
+
+    justify-content: center;
+
+    border-radius: 50%;
+  }
+
+
+  .ia-floating-text {
+    display: none;
+  }
+
+
+  .ia-floating-icon {
+
+    width: 55px;
+    height: 55px;
+
+    background: transparent;
+
+    font-size: 25px;
+  }
+
+}
