@@ -8,7 +8,7 @@ import { authGuard } from './guard/auth-guard.ts-guard';
 import { FavoritosComponent } from './pages/favoritos/favoritos';
 import { ChatsComponent } from './pages/chats/chats';
 import { ChatConversacion } from './pages/chat-conversacion/chat-conversacion';
-
+import { EventoDetalleComponent } from './pages/evento-detalle/evento-detalle';
 export const routes: Routes = [
   { path: '', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
@@ -47,5 +47,9 @@ export const routes: Routes = [
     path: 'chats/:chatId',
     loadComponent: () => import('./pages/chat-conversacion/chat-conversacion').then(m => m.ChatConversacion),
     canActivate: [authGuard]
+  },
+  {
+  path: 'eventos/:id',
+  component: EventoDetalleComponent
   }
 ];

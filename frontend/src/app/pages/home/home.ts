@@ -5,7 +5,7 @@ import { Navbar } from '../../components/navbar/navbar';
 import { EventosService } from '../../services/eventos';
 import { AuthServices } from '../../services/auth';
 import { ChangeDetectorRef } from '@angular/core';
-
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -35,7 +35,8 @@ export class HomeComponent implements OnInit {
   constructor(
     private eventosService: EventosService,
     private authService: AuthServices,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -242,7 +243,17 @@ export class HomeComponent implements OnInit {
     );
 
   }
+  verMas(evento: any): void {
 
+  console.log('Evento seleccionado:', evento);
+  console.log('ID del evento:', evento.id);
+
+  this.router.navigate([
+    '/eventos',
+    evento.id
+  ]);
+
+}
 
   usuarioTieneFavorito(evento: any): boolean {
 

@@ -300,6 +300,8 @@ def upload_image(request):
                 status=400
             )
 
+        
+
         print("📸 Imagen recibida:")
         print("Nombre:", image.name)
         print("Tipo:", image.content_type)

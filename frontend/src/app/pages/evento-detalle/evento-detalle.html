@@ -1,0 +1,205 @@
+<div class="detalle-page">
+
+  <!-- CARGANDO -->
+  <div *ngIf="cargando" class="estado-container">
+    <div class="loader"></div>
+    <p>Cargando información del evento...</p>
+  </div>
+
+
+  <!-- ERROR -->
+  <div *ngIf="!cargando && error" class="estado-container">
+
+    <div class="error-icon">
+      ⚠️
+    </div>
+
+    <h2>No se pudo cargar el evento</h2>
+
+    <p>
+      El evento no existe o ocurrió un problema al obtener la información.
+    </p>
+
+    <button
+      class="btn-volver"
+      (click)="volver()">
+      ← Volver a eventos
+    </button>
+
+  </div>
+
+
+  <!-- DETALLE DEL EVENTO -->
+  <div
+    *ngIf="!cargando && !error && evento"
+    class="detalle-container">
+
+    <!-- BOTÓN VOLVER -->
+    <button
+      class="btn-regresar"
+      (click)="volver()">
+
+      ← Volver
+
+    </button>
+
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="evento-card">
+
+
+      <!-- IMAGEN -->
+      <div class="evento-imagen-container">
+
+        <img
+          *ngIf="evento.imageUrl"
+          [src]="evento.imageUrl"
+          [alt]="evento.title"
+          class="evento-imagen">
+
+        <div
+          *ngIf="!evento.imageUrl"
+          class="imagen-placeholder">
+
+          <span>🎫</span>
+          <p>Sin imagen disponible</p>
+
+        </div>
+
+      </div>
+
+
+      <!-- INFORMACIÓN -->
+      <div class="evento-contenido">
+
+        <!-- CATEGORÍA -->
+        <span
+          *ngIf="evento.category"
+          class="evento-categoria">
+
+          {{ evento.category }}
+
+        </span>
+
+
+        <!-- TÍTULO -->
+        <h1 class="evento-titulo">
+
+          {{ evento.title }}
+
+        </h1>
+
+
+        <!-- DESCRIPCIÓN -->
+        <div
+          *ngIf="evento.description"
+          class="evento-descripcion">
+
+          <h2>Descripción</h2>
+
+          <p>
+            {{ evento.description }}
+          </p>
+
+        </div>
+
+
+        <!-- INFORMACIÓN DEL EVENTO -->
+        <div class="informacion-evento">
+
+          <!-- FECHA -->
+          <div
+            *ngIf="evento.date"
+            class="dato-evento">
+
+            <div class="dato-icono">
+              📅
+            </div>
+
+            <div>
+              <span>Fecha</span>
+              <strong>
+                {{ evento.date }}
+              </strong>
+            </div>
+
+          </div>
+
+
+          <!-- HORA -->
+          <div
+            *ngIf="evento.time"
+            class="dato-evento">
+
+            <div class="dato-icono">
+              🕐
+            </div>
+
+            <div>
+              <span>Hora</span>
+              <strong>
+                {{ evento.time }}
+              </strong>
+            </div>
+
+          </div>
+
+
+          <!-- UBICACIÓN -->
+          <div
+            *ngIf="evento.location"
+            class="dato-evento">
+
+            <div class="dato-icono">
+              📍
+            </div>
+
+            <div>
+              <span>Ubicación</span>
+              <strong>
+                {{ evento.location }}
+              </strong>
+            </div>
+
+          </div>
+
+
+          <!-- CREADOR -->
+          <div
+            *ngIf="evento.creatorName"
+            class="dato-evento">
+
+            <div class="dato-icono">
+              👤
+            </div>
+
+            <div>
+              <span>Organizado por</span>
+              <strong>
+                {{ evento.creatorName }}
+              </strong>
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- ID DEL EVENTO -->
+        <div class="evento-id">
+
+          <span>ID del evento:</span>
+
+          <code>
+            {{ evento.id }}
+          </code>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
