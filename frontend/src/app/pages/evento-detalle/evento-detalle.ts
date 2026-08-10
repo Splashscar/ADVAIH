@@ -23,11 +23,11 @@ export class EventoDetalleComponent implements OnInit {
     private firebaseService: FirebaseService
   ) {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
 
     const id = this.route.snapshot.paramMap.get('id');
 
-    console.log('ID del evento:', id);
+    console.log('🔎 ID del evento:', id);
 
     if (!id) {
       this.cargando = false;
@@ -35,32 +35,31 @@ export class EventoDetalleComponent implements OnInit {
       return;
     }
 
-    this.firebaseService.obtenerEvento(id).subscribe({
+    try {
 
-      next: (evento) => {
+      const evento = await this.firebaseService.obtenerEventoUnaVez(id);
 
-        console.log('Evento cargado:', evento);
+      console.log('📦 Evento cargado:', evento);
 
-        this.evento = evento;
-        this.cargando = false;
-
-      },
-
-      error: (error) => {
-
-        console.error('Error cargando evento:', error);
-
-        this.cargando = false;
+      if (!evento) {
         this.error = true;
-
+      } else {
+        this.evento = evento;
       }
 
-    });
+    } catch (error) {
 
+      console.error('❌ Error cargando evento:', error);
+      this.error = true;
+
+    } finally {
+
+      this.cargando = false;
+
+    }
   }
 
   volver(): void {
     this.router.navigate(['/home']);
   }
-
 }

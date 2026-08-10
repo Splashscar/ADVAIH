@@ -37,6 +37,19 @@ export class FirebaseService {
     const eventosRef = collection(this.firestore, 'events');
     return collectionData(eventosRef, { idField: 'id' }) as Observable<any[]>;
   }
+  async obtenerEventoUnaVez(id: string): Promise<any | null> {
+  const eventoRef = doc(this.firestore, `events/${id}`);
+  const snapshot = await getDoc(eventoRef);
+
+  if (!snapshot.exists()) {
+    return null;
+  }
+
+  return {
+    id: snapshot.id,
+    ...snapshot.data()
+  };
+}
 
   async crearEvento(evento: any) {
     const eventosRef = collection(this.firestore, 'events');
