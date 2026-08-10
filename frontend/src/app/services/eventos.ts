@@ -54,6 +54,11 @@ export class EventosService {
     );
 
   }
+  obtenerEvento(id: string) {
+  return this.http.get(
+    `${this.apiUrl}/eventos/${id}/`
+  );
+}
   toggleFavorito(eventoId: string, uid: string) {
 
     return this.http.post(

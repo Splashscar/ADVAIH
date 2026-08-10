@@ -246,13 +246,17 @@ export class HomeComponent implements OnInit {
   }
   verMas(evento: any): void {
 
-  console.log('Evento seleccionado:', evento);
-  console.log('ID del evento:', evento.id);
+  console.log('📦 Evento seleccionado:', evento);
+  console.log('🔎 ID del evento:', evento.id);
 
-  this.router.navigate([
-    '/eventos',
-    evento.id
-  ]);
+  this.router.navigate(
+    ['/eventos', evento.id],
+    {
+      state: {
+        evento: evento
+      }
+    }
+  );
 
 }
 

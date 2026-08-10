@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { FirebaseService } from '../../services/firebase';
+import { EventosService } from '../../services/eventos';
 
 @Component({
   selector: 'app-evento-detalle',
@@ -14,52 +14,130 @@ import { FirebaseService } from '../../services/firebase';
 export class EventoDetalleComponent implements OnInit {
 
   evento: any = null;
-  cargando = true;
+
   error = false;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private firebaseService: FirebaseService
+    private eventosService: EventosService
   ) {}
 
-  async ngOnInit(): Promise<void> {
+  ngOnInit(): void {
 
-    const id = this.route.snapshot.paramMap.get('id');
+    // ========================================
+    // 1. INTENTAR RECIBIR EL EVENTO DESDE HOME
+    // ========================================
 
-    console.log('🔎 ID del evento:', id);
+    const eventoRecibido = history.state?.evento;
 
-    if (!id) {
-      this.cargando = false;
-      this.error = true;
+    console.log(
+      '📦 Evento recibido desde Home:',
+      eventoRecibido
+    );
+
+    if (eventoRecibido) {
+
+      // El evento ya estaba cargado en Home
+      this.evento = eventoRecibido;
+
+      console.log(
+        '⚡ Evento mostrado directamente desde Home'
+      );
+
       return;
     }
 
-    try {
 
-      const evento = await this.firebaseService.obtenerEventoUnaVez(id);
+    // ========================================
+    // 2. SI NO VIENE DE HOME, BUSCAR POR ID
+    // ========================================
 
-      console.log('📦 Evento cargado:', evento);
+    const id = this.route.snapshot.paramMap.get('id');
 
-      if (!evento) {
-        this.error = true;
-      } else {
-        this.evento = evento;
-      }
+    console.log(
+      '🔎 Buscando evento por ID:',
+      id
+    );
 
-    } catch (error) {
+    if (!id) {
 
-      console.error('❌ Error cargando evento:', error);
+      console.error(
+        '❌ No se recibió el ID del evento'
+      );
+
       this.error = true;
 
-    } finally {
-
-      this.cargando = false;
-
+      return;
     }
+
+
+    // ========================================
+    // 3. CONSULTA DE RESPALDO
+    // ========================================
+
+    this.eventosService.obtenerEvento(id).subscribe({
+
+      next: (evento: any) => {
+
+        console.log(
+          '📦 Evento cargado desde backend:',
+          evento
+        );
+
+        if (!evento) {
+
+          this.error = true;
+
+          return;
+        }
+
+        this.evento = evento;
+
+      },
+
+      error: (error) => {
+
+        console.error(
+          '❌ Error cargando evento:',
+          error
+        );
+
+        this.error = true;
+
+      }
+
+    });
+
   }
+
+
+  // ========================================
+  // VOLVER
+  // ========================================
 
   volver(): void {
+
     this.router.navigate(['/home']);
+
   }
+
+
+  // ========================================
+  // OPTIMIZAR IMAGEN DE CLOUDINARY
+  // ========================================
+
+  imagenOptimizada(url: string): string {
+
+    if (!url) {
+      return '';
+    }
+
+    return url.replace(
+      '/upload/',
+      '/upload/f_auto,q_auto,w_1000/'
+    );
+
+  }
+
 }

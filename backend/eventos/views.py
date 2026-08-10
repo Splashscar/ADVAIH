@@ -76,16 +76,31 @@ def listar_eventos(request):
             {"error": str(e)},
             status=500
         )
+
 @csrf_exempt
 def detalle_evento(request, evento_id):
 
     try:
 
-        if request.method == 'DELETE':
+        evento_ref = db.collection('events').document(evento_id)
+        evento = evento_ref.get()
 
-            db.collection('events')\
-              .document(evento_id)\
-              .delete()
+        if not evento.exists:
+            return JsonResponse(
+                {"error": "Evento no encontrado"},
+                status=404
+            )
+
+        if request.method == 'GET':
+
+            datos = evento.to_dict()
+            datos["id"] = evento.id
+
+            return JsonResponse(datos)
+
+        elif request.method == 'DELETE':
+
+            evento_ref.delete()
 
             return JsonResponse({
                 "mensaje": "Evento eliminado"
@@ -95,13 +110,16 @@ def detalle_evento(request, evento_id):
 
             data = json.loads(request.body)
 
-            db.collection('events')\
-              .document(evento_id)\
-              .update(data)
+            evento_ref.update(data)
 
             return JsonResponse({
                 "mensaje": "Evento actualizado"
             })
+
+        return JsonResponse(
+            {"error": "Método no permitido"},
+            status=405
+        )
 
     except Exception as e:
 
@@ -109,7 +127,6 @@ def detalle_evento(request, evento_id):
             {"error": str(e)},
             status=500
         )
-    
 @csrf_exempt
 def toggle_like(request, evento_id):
 

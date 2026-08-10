@@ -1,31 +1,18 @@
 <!-- =========================
-     CARGANDO
-========================= -->
-
-<div
-  *ngIf="cargando"
-  class="estado-cargando">
-
-  <div class="spinner"></div>
-
-  <p>Cargando evento...</p>
-
-</div>
-
-
-<!-- =========================
      ERROR
 ========================= -->
 
 <div
-  *ngIf="!cargando && error"
+  *ngIf="error"
   class="estado-error">
 
   <div class="error-icon">
     ⚠️
   </div>
 
-  <h2>No se pudo cargar el evento</h2>
+  <h2>
+    No se pudo cargar el evento
+  </h2>
 
   <p>
     El evento no existe o ocurrió un problema
@@ -47,12 +34,9 @@
      EVENTO
 ========================= -->
 
-<div
-  *ngIf="!cargando && !error && evento"
-  class="detalle-container">
+<ng-container *ngIf="evento && !error">
 
-
-  <!-- BOTÓN REGRESAR -->
+  <!-- BOTÓN VOLVER -->
 
   <button
     class="btn-regresar"
@@ -63,22 +47,24 @@
   </button>
 
 
-  <!-- TARJETA DEL EVENTO -->
+  <!-- =========================
+       TARJETA
+  ========================= -->
 
   <div class="evento-card">
 
 
-    <!-- =========================
-         IMAGEN
-    ========================= -->
+    <!-- IMAGEN -->
 
     <div class="evento-imagen-container">
 
       <img
         *ngIf="evento.imageUrl"
-        [src]="evento.imageUrl"
-        [alt]="evento.title"
-        class="evento-imagen">
+        [src]="imagenOptimizada(evento.imageUrl)"
+        [alt]="evento.title || 'Imagen del evento'"
+        class="evento-imagen"
+        loading="eager"
+        decoding="async">
 
       <div
         *ngIf="!evento.imageUrl"
@@ -224,7 +210,7 @@
         <!-- ORGANIZADOR -->
 
         <div
-          *ngIf="evento.creatorName"
+          *ngIf="evento.authorName"
           class="dato-evento">
 
           <div class="dato-icono">
@@ -238,7 +224,7 @@
             </span>
 
             <strong>
-              {{ evento.creatorName }}
+              {{ evento.authorName }}
             </strong>
 
           </div>
@@ -270,4 +256,4 @@
 
   </div>
 
-</div>
+</ng-container>
