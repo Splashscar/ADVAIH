@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 
 export interface EventoIA {
   id: string;
@@ -17,7 +17,6 @@ export interface RespuestaIA {
   respuesta: string;
   consulta: string;
   cantidad_eventos: number;
-  categoria_detectada: string | null;
   eventos: EventoIA[];
 }
 
@@ -36,12 +35,36 @@ export class IaService {
     mensaje: string
   ): Observable<RespuestaIA> {
 
-    return this.http.post<RespuestaIA>(
-      this.apiUrl,
-      {
-        mensaje: mensaje
-      }
-    );
+    return this.http
+      .post<any>(
+        this.apiUrl,
+        {
+          mensaje: mensaje.trim()
+        }
+      )
+      .pipe(
+
+        map((res) => {
+
+          console.log('📥 Respuesta recibida en IaService:', res);
+
+          // Validar que Django realmente respondió
+          if (!res) {
+            throw new Error('La respuesta del servidor está vacía');
+          }
+
+          return {
+            respuesta: res.respuesta || '',
+            consulta: res.consulta || mensaje,
+            cantidad_eventos: res.cantidad_eventos || 0,
+            eventos: Array.isArray(res.eventos)
+              ? res.eventos
+              : []
+          };
+
+        })
+
+      );
 
   }
 
