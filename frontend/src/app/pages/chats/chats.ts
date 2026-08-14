@@ -17,7 +17,8 @@ import { AuthServices } from '../../services/auth';
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,Navbar
+    FormsModule,
+    Navbar
   ],
   templateUrl: './chats.html',
   styleUrls: ['./chats.css']
@@ -28,9 +29,10 @@ export class ChatsComponent implements OnInit {
 
   usuarios: any[] = [];
 
-  filtro = '';
+  filtro: string = '';
 
   cargando = true;
+
 
   constructor(
     private firebaseService: FirebaseService,
@@ -39,9 +41,13 @@ export class ChatsComponent implements OnInit {
     private cdr: ChangeDetectorRef
   ) {}
 
+
   ngOnInit(): void {
 
-    // Usuario autenticado
+    // =========================
+    // USUARIO ACTUAL
+    // =========================
+
     this.authService.usuario$
       .subscribe({
 
@@ -60,13 +66,20 @@ export class ChatsComponent implements OnInit {
 
         error: (err) => {
 
-          console.error(err);
+          console.error(
+            'Error obteniendo usuario:',
+            err
+          );
 
         }
 
       });
 
-    // Usuarios de Firebase
+
+    // =========================
+    // CARGAR USUARIOS
+    // =========================
+
     this.firebaseService
       .obtenerUsuarios()
       .subscribe({
@@ -90,7 +103,10 @@ export class ChatsComponent implements OnInit {
 
           this.cargando = false;
 
-          console.error(err);
+          console.error(
+            'Error cargando usuarios:',
+            err
+          );
 
         }
 
@@ -98,13 +114,75 @@ export class ChatsComponent implements OnInit {
 
   }
 
+
+  // =========================
+  // USUARIOS FILTRADOS
+  // =========================
+
+  get usuariosFiltrados(): any[] {
+
+    const texto = this.filtro
+      .toLowerCase()
+      .trim();
+
+
+    return this.usuarios.filter(usuario => {
+
+      // No mostrar usuario actual
+      if (
+        this.usuarioActual &&
+        usuario.uid === this.usuarioActual.uid
+      ) {
+
+        return false;
+
+      }
+
+
+      // Si no hay búsqueda
+      if (!texto) {
+
+        return true;
+
+      }
+
+
+      const nombre =
+        (usuario.nombre || '')
+          .toLowerCase();
+
+      const email =
+        (usuario.email || '')
+          .toLowerCase();
+
+
+      return (
+        nombre.includes(texto) ||
+        email.includes(texto)
+      );
+
+    });
+
+  }
+
+
+  // =========================
+  // CREAR CHAT
+  // =========================
+
   async crearChat(usuario: any) {
 
     if (!this.usuarioActual) {
+
       return;
+
     }
 
-    if (usuario.uid === this.usuarioActual.uid) {
+
+    if (
+      usuario.uid ===
+      this.usuarioActual.uid
+    ) {
 
       alert(
         'No puedes enviarte mensajes a ti mismo'
@@ -114,28 +192,48 @@ export class ChatsComponent implements OnInit {
 
     }
 
+
     const participantes = [
+
       this.usuarioActual.uid,
+
       usuario.uid
+
     ].sort();
+
 
     const chatId =
       participantes.join('_');
+
 
     console.log(
       'Chat ID:',
       chatId
     );
 
-    await this.firebaseService.crearChat(
-      chatId,
-      participantes
-    );
 
-    this.router.navigate([
-      '/chats',
-      chatId
-    ]);
+    try {
+
+      await this.firebaseService
+        .crearChat(
+          chatId,
+          participantes
+        );
+
+
+      this.router.navigate([
+        '/chats',
+        chatId
+      ]);
+
+    } catch (error) {
+
+      console.error(
+        '❌ Error creando chat:',
+        error
+      );
+
+    }
 
   }
 
