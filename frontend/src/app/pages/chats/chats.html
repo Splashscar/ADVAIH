@@ -1,25 +1,101 @@
 <app-navbar></app-navbar>
 
-<h1>Chats</h1>
+<div class="chat-container">
 
-<div
-  class="usuario-card"
-  *ngFor="let usuario of usuarios">
+  <div class="chat-header">
+    <div>
+      <h1>Chats</h1>
+      <p>Busca una persona para iniciar una conversación</p>
+    </div>
+  </div>
 
-  <img
-  [src]="usuario.fotoURL || 'https://static.vecteezy.com/system/resources/previews/018/765/757/non_2x/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg'"
-  alt="Foto de perfil">
+  <!-- BUSCADOR -->
+  <div class="buscador-container">
 
-  <div class="info">
+    <span class="buscador-icono">🔍</span>
 
-    <h3>{{ usuario.nombre }}</h3>
-
-    <p>{{ usuario.email }}</p>
+    <input
+      type="text"
+      [(ngModel)]="filtro"
+      placeholder="Buscar por nombre o correo..."
+    >
 
     <button
-      (click)="crearChat(usuario)">
-      Mensaje
+      *ngIf="filtro"
+      class="btn-limpiar"
+      (click)="filtro = ''">
+
+      ✕
+
     </button>
+
+  </div>
+
+
+  <!-- RESULTADOS -->
+
+  <div class="lista-usuarios">
+
+    <div
+      class="usuario-card"
+      *ngFor="let usuario of usuariosFiltrados">
+
+      <!-- FOTO -->
+      <img
+        [src]="
+          usuario.fotoURL ||
+          'https://static.vecteezy.com/system/resources/previews/018/765/757/non_2x/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg'
+        "
+        alt="Foto de perfil"
+        class="usuario-foto"
+      >
+
+
+      <!-- INFORMACIÓN -->
+      <div class="info">
+
+        <h3>
+          {{ usuario.nombre || 'Usuario' }}
+        </h3>
+
+        <p>
+          {{ usuario.email }}
+        </p>
+
+      </div>
+
+
+      <!-- BOTÓN -->
+      <button
+        class="btn-mensaje"
+        (click)="crearChat(usuario)">
+
+        <span>💬</span>
+
+        <span>Mensaje</span>
+
+      </button>
+
+    </div>
+
+
+    <!-- SIN RESULTADOS -->
+
+    <div
+      class="sin-resultados"
+      *ngIf="usuariosFiltrados.length === 0">
+
+      <div class="sin-resultados-icono">
+        🔎
+      </div>
+
+      <h3>No encontramos usuarios</h3>
+
+      <p>
+        Intenta buscar con otro nombre o correo.
+      </p>
+
+    </div>
 
   </div>
 

@@ -1,59 +1,414 @@
-.chat-container{
-    max-width: 900px;
-    margin: 40px auto;
+/* =========================
+   CONTENEDOR
+========================= */
+
+.chat-container {
+
+    max-width: 1000px;
+
+    margin: 35px auto;
+
     padding: 20px;
 }
 
-.chat-container h1{
-    color:white;
-    margin-bottom:20px;
+
+/* =========================
+   ENCABEZADO
+========================= */
+
+.chat-header {
+
+    margin-bottom: 25px;
 }
 
-.chat-container input{
-    width:100%;
-    padding:12px;
-    border-radius:10px;
-    border:none;
-    margin-bottom:20px;
+.chat-header h1 {
+
+    color: #ffffff;
+
+    font-size: 32px;
+
+    margin: 0 0 6px 0;
 }
 
-.usuario-card{
-    display:flex;
-    align-items:center;
-    gap:15px;
+.chat-header p {
 
-    background:#111827;
+    color: #9ca3af;
 
-    padding:15px;
-    border-radius:12px;
+    margin: 0;
 
-    margin-bottom:10px;
-
-    cursor:pointer;
-
-    transition:.2s;
+    font-size: 15px;
 }
 
-.usuario-card:hover{
-    transform:translateY(-2px);
+
+/* =========================
+   BUSCADOR
+========================= */
+
+.buscador-container {
+
+    position: relative;
+
+    margin-bottom: 25px;
 }
 
-.usuario-card img{
-    width:55px;
-    height:55px;
-    border-radius:50%;
-    object-fit:cover;
+.buscador-container input {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 15px 45px 15px 45px;
+
+    background: #111827;
+
+    border: 1px solid #26324a;
+
+    border-radius: 12px;
+
+    color: white;
+
+    font-size: 15px;
+
+    outline: none;
+
+    transition: 0.2s;
 }
 
-.info h3{
-    color:white;
-    margin:0;
+.buscador-container input::placeholder {
+
+    color: #6b7280;
 }
 
-.info p{
-    color:#9ca3af;
-    margin:0;
+.buscador-container input:focus {
+
+    border-color: #6366f1;
+
+    box-shadow:
+        0 0 0 3px rgba(99, 102, 241, 0.12);
 }
-h1{
-    color: blanchedalmond;
+
+
+/* ICONO BUSCADOR */
+
+.buscador-icono {
+
+    position: absolute;
+
+    left: 16px;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    font-size: 18px;
+
+    z-index: 2;
+}
+
+
+/* BOTÓN LIMPIAR */
+
+.btn-limpiar {
+
+    position: absolute;
+
+    right: 12px;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    width: 30px;
+
+    height: 30px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: #374151;
+
+    color: #d1d5db;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.btn-limpiar:hover {
+
+    background: #4b5563;
+
+    color: white;
+}
+
+
+/* =========================
+   LISTA
+========================= */
+
+.lista-usuarios {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+}
+
+
+/* =========================
+   TARJETA USUARIO
+========================= */
+
+.usuario-card {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    background: #111827;
+
+    border: 1px solid rgba(255,255,255,0.04);
+
+    padding: 16px;
+
+    border-radius: 14px;
+
+    transition:
+        transform 0.2s,
+        background 0.2s,
+        border 0.2s;
+
+    min-height: 72px;
+}
+
+
+.usuario-card:hover {
+
+    transform: translateY(-2px);
+
+    background: #151e30;
+
+    border-color:
+        rgba(99,102,241,0.25);
+}
+
+
+/* =========================
+   FOTO
+========================= */
+
+.usuario-foto {
+
+    width: 58px;
+
+    height: 58px;
+
+    border-radius: 50%;
+
+    object-fit: cover;
+
+    flex-shrink: 0;
+
+    border: 2px solid #273449;
+}
+
+
+/* =========================
+   INFORMACIÓN
+========================= */
+
+.info {
+
+    flex: 1;
+
+    min-width: 0;
+}
+
+.info h3 {
+
+    color: white;
+
+    margin: 0 0 5px 0;
+
+    font-size: 17px;
+
+    font-weight: 600;
+}
+
+.info p {
+
+    color: #9ca3af;
+
+    margin: 0;
+
+    font-size: 14px;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+
+/* =========================
+   BOTÓN MENSAJE
+========================= */
+
+.btn-mensaje {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 7px;
+
+    background: #6366f1;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 9px;
+
+    padding: 10px 17px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s,
+        transform 0.2s,
+        box-shadow 0.2s;
+
+    flex-shrink: 0;
+}
+
+
+.btn-mensaje:hover {
+
+    background: #4f46e5;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 5px 15px rgba(79,70,229,0.25);
+}
+
+
+.btn-mensaje:active {
+
+    transform: scale(0.97);
+}
+
+
+/* =========================
+   SIN RESULTADOS
+========================= */
+
+.sin-resultados {
+
+    text-align: center;
+
+    padding: 60px 20px;
+
+    background: #111827;
+
+    border-radius: 14px;
+
+    border: 1px solid rgba(255,255,255,0.04);
+}
+
+.sin-resultados-icono {
+
+    font-size: 40px;
+
+    margin-bottom: 12px;
+}
+
+.sin-resultados h3 {
+
+    color: white;
+
+    margin: 0 0 8px 0;
+}
+
+.sin-resultados p {
+
+    color: #9ca3af;
+
+    margin: 0;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 600px) {
+
+    .chat-container {
+
+        margin: 20px auto;
+
+        padding: 15px;
+    }
+
+
+    .chat-header h1 {
+
+        font-size: 27px;
+    }
+
+
+    .usuario-card {
+
+        padding: 13px;
+
+        gap: 12px;
+    }
+
+
+    .usuario-foto {
+
+        width: 50px;
+
+        height: 50px;
+    }
+
+
+    .info h3 {
+
+        font-size: 15px;
+    }
+
+
+    .info p {
+
+        font-size: 12px;
+    }
+
+
+    .btn-mensaje {
+
+        padding: 9px 11px;
+
+        font-size: 0;
+    }
+
+
+    .btn-mensaje span:first-child {
+
+        font-size: 18px;
+    }
+
 }
