@@ -1,4 +1,242 @@
-footer {
-    text-align: center;
-    padding: 15px;
+.footer {
+  width: 100%;
+  background: #050816;
+  color: white;
+  border-top: 1px solid rgba(124, 58, 237, 0.35);
+  margin-top: 60px;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+
+  padding: 50px 30px 40px;
+
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.5fr;
+  gap: 50px;
+}
+
+
+/* ============================= */
+/* MARCA */
+/* ============================= */
+
+.footer-brand {
+  max-width: 330px;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 1px;
+
+  margin-bottom: 15px;
+}
+
+.logo-icon {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: linear-gradient(
+    135deg,
+    #7c3aed,
+    #3b82f6
+  );
+
+  font-size: 22px;
+}
+
+.footer-section p {
+  color: #94a3b8;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.footer-description {
+  margin-top: 10px !important;
+  font-size: 14px;
+}
+
+
+/* ============================= */
+/* TITULOS */
+/* ============================= */
+
+.footer-section h3 {
+  margin: 0 0 18px;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  color: white;
+}
+
+
+/* ============================= */
+/* LINKS */
+/* ============================= */
+
+.footer-section a {
+  display: block;
+
+  width: fit-content;
+
+  color: #94a3b8;
+
+  text-decoration: none;
+
+  margin-bottom: 12px;
+
+  font-size: 14px;
+
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.footer-section a:hover {
+  color: #a78bfa;
+
+  transform: translateX(4px);
+}
+
+
+/* ============================= */
+/* TEXTO */
+/* ============================= */
+
+.footer-text {
+  font-size: 14px;
+  margin-bottom: 18px !important;
+}
+
+
+/* ============================= */
+/* REDES */
+/* ============================= */
+
+.social-links {
+  display: flex;
+  gap: 10px;
+}
+
+.social-links a {
+  width: 38px;
+  height: 38px;
+
+  margin: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #111827;
+
+  border: 1px solid #1e293b;
+
+  color: #cbd5e1;
+
+  font-size: 17px;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.social-links a:hover {
+  background: rgba(124, 58, 237, 0.15);
+
+  border-color: #7c3aed;
+
+  color: #a78bfa;
+
+  transform: translateY(-3px);
+}
+
+
+/* ============================= */
+/* PARTE INFERIOR */
+/* ============================= */
+
+.footer-bottom {
+  max-width: 1200px;
+
+  margin: 0 auto;
+
+  padding: 20px 30px;
+
+  border-top: 1px solid #1e293b;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+}
+
+.footer-bottom p {
+  margin: 0;
+
+  color: #64748b;
+
+  font-size: 13px;
+}
+
+
+/* ============================= */
+/* RESPONSIVE */
+/* ============================= */
+
+@media (max-width: 900px) {
+
+  .footer-container {
+    grid-template-columns: 1fr 1fr;
+
+    gap: 40px;
+  }
+
+  .footer-brand {
+    max-width: none;
+  }
+
+}
+
+
+@media (max-width: 600px) {
+
+  .footer-container {
+    grid-template-columns: 1fr;
+
+    padding: 40px 20px 30px;
+
+    gap: 30px;
+  }
+
+  .footer-bottom {
+    padding: 20px;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    text-align: left;
+  }
+
 }

@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Navbar } from '../../components/navbar/navbar';
-
+import { FooterComponent } from '../../components/footer/footer';
 import { FirebaseService } from '../../services/firebase';
 import { AuthServices } from '../../services/auth';
 
@@ -18,7 +18,8 @@ import { AuthServices } from '../../services/auth';
   imports: [
     CommonModule,
     FormsModule,
-    Navbar
+    Navbar,
+    FooterComponent
   ],
   templateUrl: './chats.html',
   styleUrls: ['./chats.css']

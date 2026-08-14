@@ -5,11 +5,12 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef } from '@angular/core';
 import { Navbar } from '../../components/navbar/navbar';
 import { AuthServices } from '../../services/auth';
+import { FooterComponent } from '../../components/footer/footer';
 
 @Component({
   selector: 'app-crud-eventos',
   standalone: true,
-  imports: [FormsModule, CommonModule, Navbar],
+  imports: [FormsModule, CommonModule, Navbar, FooterComponent],
   templateUrl: './crud-eventos.html',
   styleUrl: './crud-eventos.css',
 })
