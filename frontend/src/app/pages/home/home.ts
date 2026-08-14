@@ -7,10 +7,11 @@ import { AuthServices } from '../../services/auth';
 import { ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLink } from '@angular/router';
+import {FooterComponent} from '../../components/footer/footer';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, Navbar, RouterLink],
+  imports: [CommonModule, FormsModule, Navbar, RouterLink, FooterComponent],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })

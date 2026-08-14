@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-
+import {FooterComponent} from '../../components/footer/footer';
 import { AuthServices } from '../../services/auth';
 import { FirebaseService } from '../../services/firebase';
 
@@ -10,7 +10,8 @@ import { FirebaseService } from '../../services/firebase';
   standalone: true,
   imports: [
     RouterLink,
-    FormsModule
+    FormsModule,
+    FooterComponent
   ],
   templateUrl: './register.html',
   styleUrl: './register.css'

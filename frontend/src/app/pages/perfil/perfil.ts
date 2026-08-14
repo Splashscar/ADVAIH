@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
 import { Subscription } from 'rxjs';
-
+import { FooterComponent } from '../../components/footer/footer';
 import { AuthServices } from '../../services/auth';
 import { EventosService } from '../../services/eventos';
 import { FirebaseService } from '../../services/firebase';
@@ -19,7 +19,8 @@ import { ChangeDetectorRef } from '@angular/core';
     CommonModule,
     FormsModule,
     RouterLink,
-    Navbar
+    Navbar,
+    FooterComponent
   ],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css'
@@ -383,47 +384,18 @@ export class PerfilComponent implements OnInit, OnDestroy {
           // FAVORITOS
           // =================================================
 
-          this.firebaseService
-            .obtenerFavoritos(userId)
-            .subscribe({
+          this.eventosFavoritos =
+            todosLosEventos.filter(
+              (evento: any) =>
+                evento.usuariosFavoritos?.includes(userId)
+            );
 
-              next: (favoritos: any[]) => {
+          console.log(
+            '⭐ Eventos favoritos del usuario:',
+            this.eventosFavoritos
+          );
 
-                console.log(
-                  '⭐ Favoritos del usuario:',
-                  favoritos
-                );
-
-                const idsFavoritos =
-                  favoritos.map(
-                    favorito =>
-                      favorito.eventoId
-                  );
-
-                this.eventosFavoritos =
-                  todosLosEventos.filter(
-                    evento =>
-                      idsFavoritos.includes(
-                        evento.id
-                      )
-                  );
-
-                this.cdr.detectChanges();
-
-              },
-
-              error: (error) => {
-
-                console.error(
-                  '❌ Error obteniendo favoritos:',
-                  error
-                );
-
-                this.eventosFavoritos = [];
-
-              }
-
-            });
+          this.cdr.detectChanges();
 
           // =================================================
           // ASISTIDOS

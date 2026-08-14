@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { IaService, EventoIA } from '../../services/ia';
 import { RouterLink } from '@angular/router';
+import { FooterComponent } from '../../components/footer/footer';
 
 @Component({
   selector: 'app-ia',
@@ -11,6 +12,7 @@ import { RouterLink } from '@angular/router';
     CommonModule,
     FormsModule,
     RouterLink,
+    FooterComponent
   ],
   templateUrl: './ia.html',
   styleUrl: './ia.css'

@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-
+import {FooterComponent} from '../../components/footer/footer';
 import { EventosService } from '../../services/eventos';
 
 @Component({
   selector: 'app-evento-detalle',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FooterComponent],
   templateUrl: './evento-detalle.html',
   styleUrl: './evento-detalle.css'
 })

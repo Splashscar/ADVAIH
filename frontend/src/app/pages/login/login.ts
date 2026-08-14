@@ -3,11 +3,12 @@
   import { AuthServices } from '../../services/auth';
   import { FirebaseService } from '../../services/firebase';
   import { FormsModule } from '@angular/forms';
-  import { CommonModule } from '@angular/common'; // 👈 Necesario para poder usar *ngIf en el HTML
+  import { CommonModule } from '@angular/common'; 
+  import {FooterComponent} from '../../components/footer/footer';
 
   @Component({
     selector: 'app-login',
-    imports: [RouterLink, FormsModule, CommonModule], // 👈 Agregado CommonModule aquí
+    imports: [RouterLink, FormsModule, CommonModule, FooterComponent], 
     templateUrl: './login.html',
     styleUrl: './login.css'
   })
