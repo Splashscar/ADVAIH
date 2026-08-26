@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-
+import { RoleService } from '../../services/role';
 import { Subscription } from 'rxjs';
 import { FooterComponent } from '../../components/footer/footer';
 import { AuthServices } from '../../services/auth';
@@ -152,7 +152,8 @@ export class PerfilComponent implements OnInit, OnDestroy {
     private authService: AuthServices,
     private eventosService: EventosService,
     private firebaseService: FirebaseService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private roleService: RoleService
   ) {}
 
   // =========================================================
@@ -160,6 +161,11 @@ export class PerfilComponent implements OnInit, OnDestroy {
   // =========================================================
 
   ngOnInit(): void {
+
+    console.log(
+      '🎭 ROL ACTUAL:',
+      this.roleService.obtenerRol()
+    );
 
     this.subUsuario = this.authService.usuario$.subscribe({
 
