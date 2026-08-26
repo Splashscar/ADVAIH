@@ -8,6 +8,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLink } from '@angular/router';
 import {FooterComponent} from '../../components/footer/footer';
+import { RoleService } from '../../services/role';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -38,7 +39,8 @@ export class HomeComponent implements OnInit {
     private eventosService: EventosService,
     private authService: AuthServices,
     private cdr: ChangeDetectorRef,
-    private router: Router
+    private router: Router,
+    public roleService: RoleService 
   ) {}
 
   ngOnInit(): void {

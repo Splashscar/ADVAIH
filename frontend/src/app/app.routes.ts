@@ -8,6 +8,7 @@ import { PerfilComponent } from './pages/perfil/perfil';
 import { authGuard } from './guard/auth-guard.ts-guard';
 import { FavoritosComponent } from './pages/favoritos/favoritos';
 import { ChatsComponent } from './pages/chats/chats';
+import { AdminPanelComponent } from './pages/admin-panel/admin-panel';
 import { ChatConversacion } from './pages/chat-conversacion/chat-conversacion';
 import { EventoDetalleComponent } from './pages/evento-detalle/evento-detalle';
 import { Ia } from './pages/ia/ia';
@@ -80,5 +81,12 @@ export const routes: Routes = [
     canActivate: [authGuard, roleGuard],
     data: { roles: ['organizador', 'administrador'] }
   },
+  {
+    path: 'admin-panel',
+    component: AdminPanelComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['administrador'] }
+  },
+  
 
 ];

@@ -1,0 +1,107 @@
+.admin-container {
+    min-height: 100vh;
+    background: #050816;
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.admin-content {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+.admin-content h2 {
+    margin-bottom: 20px;
+    font-size: 2rem;
+}
+
+.admin-error {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    padding: 12px 18px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.admin-loading {
+    text-align: center;
+    padding: 40px;
+    color: #a0aec0;
+}
+
+.tabla-usuarios-wrapper {
+    background: #10152d;
+    border-radius: 16px;
+    padding: 10px 20px;
+    overflow-x: auto;
+}
+
+.tabla-usuarios {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabla-usuarios th {
+    text-align: left;
+    padding: 14px 10px;
+    color: #a0aec0;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tabla-usuarios td {
+    padding: 14px 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: white;
+}
+
+.tabla-usuarios tr:last-child td {
+    border-bottom: none;
+}
+
+.badge-rol {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+.badge-usuario {
+    background: rgba(255, 255, 255, 0.08);
+    color: #a0aec0;
+}
+
+.badge-organizador {
+    background: rgba(124, 58, 237, 0.2);
+    color: #c084fc;
+}
+
+.badge-administrador {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+}
+
+.tabla-usuarios select {
+    background: #1a203e;
+    color: white;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 8px 12px;
+}
+
+.tabla-usuarios button {
+    background: linear-gradient(90deg, #7c3aed, #2563eb);
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.tabla-usuarios button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

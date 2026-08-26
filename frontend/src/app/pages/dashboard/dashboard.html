@@ -2,78 +2,83 @@
 
     <app-navbar></app-navbar>
 
-    <div style="max-width: 1200px; margin: 30px auto; padding: 0 20px;">
+    <div class="dashboard-content">
 
-        <h2>📊 Dashboard</h2>
+        <div class="dashboard-header">
+            <h2>📊 Dashboard</h2>
+            <span class="badge-rol">{{ roleService.obtenerRol() }}</span>
+        </div>
 
-        <div *ngIf="cargando" style="text-align: center; padding: 40px; color: #a0aec0;">
+        <div *ngIf="cargando" class="dashboard-loading">
             Cargando...
         </div>
 
         <div *ngIf="!cargando">
 
             <!-- MÉTRICAS GENERALES -->
-            <div style="display: flex; gap: 15px; flex-wrap: wrap; margin: 20px 0;">
+            <div class="metricas-grid">
 
-                <div style="flex: 1; min-width: 150px; background: #1a203e; border-radius: 8px; padding: 20px; text-align: center;">
-                    <div style="font-size: 28px; font-weight: bold;">{{ totalEventos }}</div>
-                    <div style="color: #a0aec0; font-size: 13px;">Eventos totales</div>
+                <div class="metric-card">
+                    <div class="metric-value">{{ totalEventos }}</div>
+                    <div class="metric-label">Eventos totales</div>
                 </div>
 
-                <div style="flex: 1; min-width: 150px; background: #1a203e; border-radius: 8px; padding: 20px; text-align: center;">
-                    <div style="font-size: 28px; font-weight: bold;">{{ eventosActivos.length }}</div>
-                    <div style="color: #a0aec0; font-size: 13px;">Activos</div>
+                <div class="metric-card">
+                    <div class="metric-value">{{ eventosActivos.length }}</div>
+                    <div class="metric-label">Activos</div>
                 </div>
 
-                <div style="flex: 1; min-width: 150px; background: #1a203e; border-radius: 8px; padding: 20px; text-align: center;">
-                    <div style="font-size: 28px; font-weight: bold;">{{ eventosFinalizados.length }}</div>
-                    <div style="color: #a0aec0; font-size: 13px;">Finalizados</div>
+                <div class="metric-card">
+                    <div class="metric-value">{{ eventosFinalizados.length }}</div>
+                    <div class="metric-label">Finalizados</div>
                 </div>
 
-                <div style="flex: 1; min-width: 150px; background: #1a203e; border-radius: 8px; padding: 20px; text-align: center;">
-                    <div style="font-size: 28px; font-weight: bold;">❤️ {{ totalLikes }}</div>
-                    <div style="color: #a0aec0; font-size: 13px;">Likes totales</div>
+                <div class="metric-card">
+                    <div class="metric-value">❤️ {{ totalLikes }}</div>
+                    <div class="metric-label">Likes totales</div>
                 </div>
 
-                <div style="flex: 1; min-width: 150px; background: #1a203e; border-radius: 8px; padding: 20px; text-align: center;">
-                    <div style="font-size: 28px; font-weight: bold;">⭐ {{ totalFavoritos }}</div>
-                    <div style="color: #a0aec0; font-size: 13px;">Favoritos totales</div>
+                <div class="metric-card">
+                    <div class="metric-value">⭐ {{ totalFavoritos }}</div>
+                    <div class="metric-label">Favoritos totales</div>
                 </div>
 
             </div>
 
             <!-- TABLA DE EVENTOS -->
-            <h3 style="margin-top: 30px;">Mis eventos</h3>
+            <h3>Mis eventos</h3>
 
-            <div *ngIf="misEventos.length === 0" style="text-align: center; padding: 30px; color: #a0aec0;">
+            <div *ngIf="misEventos.length === 0" class="sin-eventos">
                 Aún no has creado eventos.
             </div>
 
-            <table *ngIf="misEventos.length > 0" style="width: 100%; border-collapse: collapse; margin-top: 15px;">
-                <thead>
-                    <tr style="text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                        <th style="padding: 10px;">Título</th>
-                        <th style="padding: 10px;">Fecha</th>
-                        <th style="padding: 10px;">Estado</th>
-                        <th style="padding: 10px;">❤️ Likes</th>
-                        <th style="padding: 10px;">⭐ Favoritos</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @for (evento of misEventos; track evento.id) {
-                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                            <td style="padding: 10px;">{{ evento.title }}</td>
-                            <td style="padding: 10px;">{{ evento.date }}</td>
-                            <td style="padding: 10px;">
-                                <span *ngIf="eventosActivos.includes(evento)" style="color: #4ade80;">Activo</span>
-                                <span *ngIf="eventosFinalizados.includes(evento)" style="color: #a0aec0;">Finalizado</span>
-                            </td>
-                            <td style="padding: 10px;">{{ evento.likes || 0 }}</td>
-                            <td style="padding: 10px;">{{ evento.favoritos || 0 }}</td>
+            <div *ngIf="misEventos.length > 0" class="tabla-eventos-wrapper">
+                <table class="tabla-eventos">
+                    <thead>
+                        <tr>
+                            <th>Título</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>❤️ Likes</th>
+                            <th>⭐ Favoritos</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @for (evento of misEventos; track evento.id) {
+                            <tr>
+                                <td>{{ evento.title }}</td>
+                                <td>{{ evento.date }}</td>
+                                <td>
+                                    <span *ngIf="eventosActivos.includes(evento)" class="badge-activo">Activo</span>
+                                    <span *ngIf="eventosFinalizados.includes(evento)" class="badge-finalizado">Finalizado</span>
+                                </td>
+                                <td>{{ evento.likes || 0 }}</td>
+                                <td>{{ evento.favoritos || 0 }}</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
 
         </div>
 
