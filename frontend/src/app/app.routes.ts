@@ -11,6 +11,8 @@ import { ChatsComponent } from './pages/chats/chats';
 import { ChatConversacion } from './pages/chat-conversacion/chat-conversacion';
 import { EventoDetalleComponent } from './pages/evento-detalle/evento-detalle';
 import { Ia } from './pages/ia/ia';
+import { roleGuard } from './guard/role-guard';
+import { DashboardComponent } from './pages/dashboard/dashboard';
 
 export const routes: Routes = [
 
@@ -71,6 +73,12 @@ export const routes: Routes = [
     path: 'ia',
     component: Ia,
     canActivate: [authGuard]
-  }
+  },
+  {
+    path: 'dashboard',
+    component: DashboardComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['organizador', 'administrador'] }
+  },
 
 ];
