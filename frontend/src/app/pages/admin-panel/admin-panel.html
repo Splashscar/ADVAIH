@@ -1,0 +1,64 @@
+<div class="admin-container">
+
+    <app-navbar></app-navbar>
+
+    <div class="admin-content">
+
+        <h2>🛡️ Panel de Administrador</h2>
+
+        <div *ngIf="mensajeError" class="admin-error">
+            {{ mensajeError }}
+        </div>
+
+        <div *ngIf="cargando" class="admin-loading">
+            Cargando usuarios...
+        </div>
+
+        <div *ngIf="!cargando" class="tabla-usuarios-wrapper">
+
+            <table class="tabla-usuarios">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Correo</th>
+                        <th>Rol actual</th>
+                        <th>Cambiar a</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (usuario of usuarios; track usuario.uid) {
+                        <tr>
+                            <td>{{ usuario.nombre || 'Sin nombre' }}</td>
+                            <td>{{ usuario.correo || usuario.email }}</td>
+                            <td>
+                                <span class="badge-rol" [class]="'badge-' + (usuario.tipo_usuario || 'usuario')">
+                                    {{ usuario.tipo_usuario || 'usuario' }}
+                                </span>
+                            </td>
+                            <td>
+                                <select [(ngModel)]="usuario.rolSeleccionado">
+                                    @for (rol of rolesDisponibles; track rol) {
+                                        <option [value]="rol">{{ rol }}</option>
+                                    }
+                                </select>
+                            </td>
+                            <td>
+                                <button
+                                    (click)="guardarRol(usuario)"
+                                    [disabled]="guardandoUid === usuario.uid || usuario.rolSeleccionado === usuario.tipo_usuario">
+                                    {{ guardandoUid === usuario.uid ? 'Guardando...' : 'Guardar' }}
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+    <app-footer></app-footer>
+
+</div>

@@ -40,7 +40,7 @@ export class PerfilComponent implements OnInit, OnDestroy {
   telefonoUsuario: string = '';
   fotoPerfil: string = '';
 
-  tipoUsuario: string = 'Organizador';
+  tipoUsuario: string = 'usuario';
   ciudad: string = 'Bogotá';
   biografia: string =
     'Amante de los festivales de música y los eventos culturales al aire libre.';
@@ -119,7 +119,7 @@ export class PerfilComponent implements OnInit, OnDestroy {
   editFoto: string = '';
   editCiudad: string = '';
   editBiografia: string = '';
-  editTipoUsuario: string = 'Organizador';
+  editTipoUsuario: string = 'usuario';
 
   fotoArchivo: File | null = null;
 

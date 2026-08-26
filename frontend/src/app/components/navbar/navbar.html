@@ -20,6 +20,14 @@
             <a routerLink="/chats">Chats</a>
         </li>
 
+        <li *ngIf="roleService.esOrganizador() || roleService.esAdministrador()">
+            <a routerLink="/dashboard">Dashboard</a>
+        </li>
+
+        <li *ngIf="roleService.esAdministrador()">
+            <a routerLink="/admin-panel">Panel Admin</a>
+        </li>
+
     </ul>
 
     <div class="navbar-user">

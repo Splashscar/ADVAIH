@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 
 import { AuthServices } from '../../services/auth';
+import { RoleService } from '../../services/role';
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterLink],
+  imports: [RouterLink, CommonModule],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css'
 })
@@ -15,6 +17,7 @@ export class Navbar implements OnInit {
 
   constructor(
     private authService: AuthServices,
+    public roleService: RoleService,
     private router: Router
   ) {}
 
