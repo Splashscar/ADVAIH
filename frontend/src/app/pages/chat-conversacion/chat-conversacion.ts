@@ -156,43 +156,41 @@ export class ChatConversacion implements OnInit {
 
   async enviar() {
 
-    if (!this.usuarioActual) {
-      return;
-    }
+  if (!this.usuarioActual) {
+    return;
+  }
 
-    if (!this.mensaje.trim()) {
-      return;
-    }
+  const texto = this.mensaje.trim();
 
-    try {
+  if (!texto) {
+    return;
+  }
 
-      await this.firebaseService.enviarMensaje(
+  try {
 
-        this.chatId,
+    await this.firebaseService.enviarMensaje(
+      this.chatId,
+      texto,
+      this.usuarioActual.uid
+    );
 
-        this.mensaje,
+    console.log('✅ Mensaje enviado');
 
-        this.usuarioActual.uid
+    // Limpiar el campo
+    this.mensaje = '';
 
-      );
+    // Actualizar Angular
+    this.cdr.detectChanges();
 
-      console.log('✅ Mensaje enviado');
+  } catch (error) {
 
-      this.mensaje = '';
-
-      this.cdr.detectChanges();
-
-    }
-
-    catch (error) {
-
-      console.error(
-        'ERROR ENVIANDO:',
-        error
-      );
-
-    }
+    console.error(
+      'ERROR ENVIANDO:',
+      error
+    );
 
   }
+
+}
 
 }
