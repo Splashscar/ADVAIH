@@ -51,16 +51,19 @@ export class CrudEventos implements OnInit {
 
   ngOnInit(): void {
 
-    this.authService.usuario$.subscribe(usuario => {
+  this.authService.usuario$.subscribe(usuario => {
 
-      this.usuario = usuario;
+    this.usuario = usuario;
 
-      console.log('Usuario:', usuario);
+    console.log('Usuario:', usuario);
 
-    });
+    if (this.usuario?.uid) {
+      this.cargarEventos();
+    }
 
-    this.cargarEventos();
-  }
+  });
+
+}
 
 
   // ==========================================
@@ -154,15 +157,8 @@ export class CrudEventos implements OnInit {
   // ==========================================
 
   obtenerUbicacionFinal(): string {
-
-    if (this.ubicacionSeleccionada === 'Otro') {
-
-      return this.ubicacionPersonalizada.trim();
-
-    }
-
-    return this.ubicacionSeleccionada.trim();
-  }
+  return this.location.trim();
+}
 
 
   // ==========================================
@@ -340,36 +336,6 @@ export class CrudEventos implements OnInit {
       evento.category || '';
 
     // Restaurar ubicación
-    const ubicacionesPredefinidas = [
-      'Centro de Convenciones',
-      'Parque Principal',
-      'Biblioteca Municipal',
-      'SENA',
-      'Universidad',
-      'Coliseo Municipal',
-      'Teatro Municipal'
-    ];
-
-    if (
-      ubicacionesPredefinidas.includes(
-        evento.location
-      )
-    ) {
-
-      this.ubicacionSeleccionada =
-        evento.location;
-
-      this.ubicacionPersonalizada = '';
-
-    } else {
-
-      this.ubicacionSeleccionada = 'Otro';
-
-      this.ubicacionPersonalizada =
-        evento.location || '';
-
-    }
-
     this.location =
       evento.location || '';
 
@@ -583,38 +549,48 @@ export class CrudEventos implements OnInit {
 
   cargarEventos(): void {
 
-    this.eventosService
-      .obtenerEventos()
-      .subscribe({
+  this.eventosService
+    .obtenerEventos()
+    .subscribe({
 
-        next: (data: any) => {
+      next: (data: any) => {
 
-          console.log(
-            '📥 Eventos:',
-            data
+        console.log('📥 Todos los eventos:', data);
+
+        const todosLosEventos =
+          Array.isArray(data)
+            ? data
+            : [];
+
+        // Mostrar solamente los eventos creados
+        // por el usuario actualmente autenticado
+        this.eventos =
+          todosLosEventos.filter(
+            (evento: any) =>
+              evento.authorId === this.usuario?.uid
           );
 
-          this.eventos =
-            Array.isArray(data)
-              ? data
-              : [];
+        console.log(
+          '👤 Mis eventos:',
+          this.eventos
+        );
 
-          this.cdr.detectChanges();
+        this.cdr.detectChanges();
 
-        },
+      },
 
-        error: (err) => {
+      error: (err) => {
 
-          console.error(
-            '❌ Error cargando eventos:',
-            err
-          );
+        console.error(
+          '❌ Error cargando eventos:',
+          err
+        );
 
-        }
+      }
 
-      });
+    });
 
-  }
+}
 
 
   // ==========================================

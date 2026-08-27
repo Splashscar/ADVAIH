@@ -1,10 +1,8 @@
 <!-- =========================
-     ERROR
-========================= -->
+      ERROR
+  ========================= -->
 
-<div
-  *ngIf="error"
-  class="estado-error">
+<div *ngIf="error" class="estado-error">
 
   <div class="error-icon">
     ⚠️
@@ -19,9 +17,7 @@
     al obtener la información.
   </p>
 
-  <button
-    class="btn-volver"
-    (click)="volver()">
+  <button class="btn-volver" (click)="volver()">
 
     ← Volver a eventos
 
@@ -31,16 +27,14 @@
 
 
 <!-- =========================
-     EVENTO
-========================= -->
+      EVENTO
+  ========================= -->
 
 <ng-container *ngIf="evento && !error">
 
   <!-- BOTÓN VOLVER -->
 
-  <button
-    class="btn-regresar"
-    (click)="volver()">
+  <button class="btn-regresar" (click)="volver()">
 
     ← Volver
 
@@ -48,8 +42,8 @@
 
 
   <!-- =========================
-       TARJETA
-  ========================= -->
+        TARJETA
+    ========================= -->
 
   <div class="evento-card">
 
@@ -58,17 +52,10 @@
 
     <div class="evento-imagen-container">
 
-      <img
-        *ngIf="evento.imageUrl"
-        [src]="imagenOptimizada(evento.imageUrl)"
-        [alt]="evento.title || 'Imagen del evento'"
-        class="evento-imagen"
-        loading="eager"
-        decoding="async">
+      <img *ngIf="evento.imageUrl" [src]="imagenOptimizada(evento.imageUrl)" [alt]="evento.title || 'Imagen del evento'"
+        class="evento-imagen" loading="eager" decoding="async">
 
-      <div
-        *ngIf="!evento.imageUrl"
-        class="imagen-placeholder">
+      <div *ngIf="!evento.imageUrl" class="imagen-placeholder">
 
         <span>🎫</span>
 
@@ -82,17 +69,15 @@
 
 
     <!-- =========================
-         INFORMACIÓN
-    ========================= -->
+          INFORMACIÓN
+      ========================= -->
 
     <div class="evento-contenido">
 
 
       <!-- CATEGORÍA -->
 
-      <span
-        *ngIf="evento.category"
-        class="evento-categoria">
+      <span *ngIf="evento.category" class="evento-categoria">
 
         {{ evento.category }}
 
@@ -110,9 +95,7 @@
 
       <!-- DESCRIPCIÓN -->
 
-      <div
-        *ngIf="evento.description"
-        class="evento-descripcion">
+      <div *ngIf="evento.description" class="evento-descripcion">
 
         <h2>
           Descripción
@@ -126,17 +109,15 @@
 
 
       <!-- =========================
-           INFORMACIÓN DEL EVENTO
-      ========================= -->
+            INFORMACIÓN DEL EVENTO
+        ========================= -->
 
       <div class="informacion-evento">
 
 
         <!-- FECHA -->
 
-        <div
-          *ngIf="evento.date"
-          class="dato-evento">
+        <div *ngIf="evento.date" class="dato-evento">
 
           <div class="dato-icono">
             📅
@@ -159,9 +140,7 @@
 
         <!-- HORA -->
 
-        <div
-          *ngIf="evento.time"
-          class="dato-evento">
+        <div *ngIf="evento.time" class="dato-evento">
 
           <div class="dato-icono">
             🕐
@@ -182,17 +161,20 @@
         </div>
 
 
+
         <!-- UBICACIÓN -->
 
-        <div
-          *ngIf="evento.location"
-          class="dato-evento">
+        <!-- =========================
+     UBICACIÓN
+========================= -->
+
+        <div *ngIf="evento.location" class="dato-evento ubicacion-dato">
 
           <div class="dato-icono">
             📍
           </div>
 
-          <div>
+          <div class="ubicacion-contenido">
 
             <span>
               Ubicación
@@ -202,6 +184,12 @@
               {{ evento.location }}
             </strong>
 
+            <button type="button" class="btn-mapa" (click)="abrirGoogleMaps()">
+
+              🗺️ Ver en Google Maps
+
+            </button>
+
           </div>
 
         </div>
@@ -209,9 +197,7 @@
 
         <!-- ORGANIZADOR -->
 
-        <div
-          *ngIf="evento.authorName"
-          class="dato-evento">
+        <div *ngIf="evento.authorName" class="dato-evento">
 
           <div class="dato-icono">
             👤
@@ -234,118 +220,106 @@
 
       </div>
       <!-- =========================
-     ASISTENCIA
-========================= -->
+      ASISTENCIA
+  ========================= -->
 
-<div class="asistencia-evento">
+      <div class="asistencia-evento">
 
-  <button
-  type="button"
-  class="btn-asistencia"
-  [class.asistiendo]="estaAsistiendo"
-  (click)="toggleAsistencia()">
+        <button type="button" class="btn-asistencia" [class.asistiendo]="estaAsistiendo" (click)="toggleAsistencia()">
 
-  <span>
-    {{ estaAsistiendo ? '✓' : '🎟️' }}
-  </span>
+          <span>
+            {{ estaAsistiendo ? '✓' : '🎟️' }}
+          </span>
 
-  {{ estaAsistiendo ? 'No voy a asistir' : 'Voy a asistir' }}
+          {{ estaAsistiendo ? 'No voy a asistir' : 'Voy a asistir' }}
 
-</button>
+        </button>
 
 
-  <div class="contador-asistentes">
+        <div class="contador-asistentes">
 
-    👥
+          👥
 
-    <strong>
-      {{ cantidadAsistentes }}
-    </strong>
+          <strong>
+            {{ cantidadAsistentes }}
+          </strong>
 
-    {{ cantidadAsistentes === 1
-      ? 'persona asistirá'
-      : 'personas asistirán' }}
+          {{ cantidadAsistentes === 1
+          ? 'persona asistirá'
+          : 'personas asistirán' }}
 
-  </div>
-
-</div>
-
-<!-- ======================================== -->
-<!-- ASISTENTES DEL EVENTO -->
-<!-- ======================================== -->
-
-<section
-  class="seccion-asistentes"
-  *ngIf="esCreador">
-
-  <div class="asistentes-header">
-
-    <div>
-
-      <h2>
-        ASISTENTES
-      </h2>
-
-      <p>
-        👥 {{ asistentes.length }} asistentes
-      </p>
-
-    </div>
-
-  </div>
-
-
-  <div
-    class="lista-asistentes"
-    *ngIf="asistentes.length > 0">
-
-    <div
-      class="asistente-item"
-      *ngFor="let asistente of asistentes">
-
-      <div class="asistente-avatar">
-
-        👤
+        </div>
 
       </div>
 
-      <div class="asistente-info">
+      <!-- ======================================== -->
+      <!-- ASISTENTES DEL EVENTO -->
+      <!-- ======================================== -->
 
-        <strong>
-          {{ asistente.nombre || 'Usuario' }}
-        </strong>
+      <section class="seccion-asistentes" *ngIf="esCreador">
 
-        <span>
-          {{ asistente.email }}
-        </span>
+        <div class="asistentes-header">
 
-      </div>
+          <div>
 
-    </div>
+            <h2>
+              ASISTENTES
+            </h2>
 
-  </div>
+            <p>
+              👥 {{ asistentes.length }} asistentes
+            </p>
+
+          </div>
+
+        </div>
 
 
-  <div
-    class="sin-asistentes"
-    *ngIf="asistentes.length === 0">
+        <div class="lista-asistentes" *ngIf="asistentes.length > 0">
 
-    <span>
-      👥
-    </span>
+          <div class="asistente-item" *ngFor="let asistente of asistentes">
 
-    <p>
-      Todavía no hay asistentes.
-    </p>
+            <div class="asistente-avatar">
 
-  </div>
+              👤
 
-</section>
+            </div>
+
+            <div class="asistente-info">
+
+              <strong>
+                {{ asistente.nombre || 'Usuario' }}
+              </strong>
+
+              <span>
+                {{ asistente.email }}
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="sin-asistentes" *ngIf="asistentes.length === 0">
+
+          <span>
+            👥
+          </span>
+
+          <p>
+            Todavía no hay asistentes.
+          </p>
+
+        </div>
+
+      </section>
 
 
       <!-- =========================
-           ID
-      ========================= -->
+            ID
+        ========================= -->
 
       <div class="evento-id">
 
@@ -354,15 +328,15 @@
         </span>
 
         <code>
-          {{ evento.id }}
-        </code>
+            {{ evento.id }}
+          </code>
 
       </div>
 
 
     </div>
 
-    
+
   </div>
   <app-footer></app-footer>
 </ng-container>
