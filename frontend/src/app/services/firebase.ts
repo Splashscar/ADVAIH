@@ -15,7 +15,8 @@ import {
   increment,
   serverTimestamp,
   query,
-  orderBy
+  orderBy,
+  where
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { Usuario } from '../models/usuario';
@@ -147,14 +148,210 @@ export class FirebaseService {
     }
   }
 
-  async enviarMensaje(chatId: string, texto: string, emisor: string) {
-    const mensajesRef = collection(this.firestore, `chats/${chatId}/mensajes`);
-    return await addDoc(mensajesRef, { texto, emisor, fecha: serverTimestamp() });
+ async enviarMensaje(
+  chatId: string,
+  texto: string,
+  emisor: string
+) {
+
+  // =========================
+  // 1. GUARDAR MENSAJE
+  // =========================
+
+  const mensajesRef = collection(
+    this.firestore,
+    `chats/${chatId}/mensajes`
+  );
+
+  await addDoc(
+    mensajesRef,
+    {
+      texto: texto,
+      emisor: emisor,
+      fecha: serverTimestamp()
+    }
+  );
+
+
+  // =========================
+  // 2. OBTENER CHAT
+  // =========================
+
+  const chatRef = doc(
+    this.firestore,
+    `chats/${chatId}`
+  );
+
+  const chatSnapshot = await getDoc(chatRef);
+
+  if (!chatSnapshot.exists()) {
+
+    console.error(
+      '❌ No existe el chat:',
+      chatId
+    );
+
+    return;
   }
+
+
+  // =========================
+  // 3. OBTENER PARTICIPANTES
+  // =========================
+
+  const chatData: any =
+    chatSnapshot.data();
+
+  const participantes: string[] =
+    chatData.participantes || [];
+
+
+  console.log(
+    '👥 Participantes:',
+    participantes
+  );
+
+
+  // =========================
+  // 4. BUSCAR DESTINATARIO
+  // =========================
+
+  const destinatario =
+    participantes.find(
+      uid => uid !== emisor
+    );
+
+
+  if (!destinatario) {
+
+    console.error(
+      '❌ No se encontró destinatario'
+    );
+
+    return;
+  }
+
+
+  console.log(
+    '📨 Destinatario:',
+    destinatario
+  );
+  const emisorRef = doc(
+  this.firestore,
+  `usuarios/${emisor}`
+);
+
+const emisorSnapshot = await getDoc(emisorRef);
+
+let nombreEmisor = 'Usuario';
+let fotoEmisor = '';
+
+if (emisorSnapshot.exists()) {
+
+  const datosEmisor: any =
+    emisorSnapshot.data();
+
+  nombreEmisor =
+    datosEmisor.nombre || 'Usuario';
+
+  fotoEmisor =
+    datosEmisor.fotoURL || '';
+
+}
+
+  // =========================
+  // 5. CREAR NOTIFICACIÓN
+  // =========================
+
+  await this.crearNotificacion(
+  destinatario,
+  {
+    tipo: 'mensaje',
+
+    titulo: nombreEmisor,
+
+    texto: texto,
+
+    fotoURL: fotoEmisor,
+
+    chatId: chatId,
+
+    emisor: emisor
+  }
+);
+
+
+  console.log(
+    '🔔 Notificación creada'
+  );
+}
 
   obtenerMensajes(chatId: string) {
     const mensajesRef = collection(this.firestore, `chats/${chatId}/mensajes`);
     const q = query(mensajesRef, orderBy('fecha'));
     return collectionData(q, { idField: 'id' });
   }
+  // =========================
+// NOTIFICACIONES
+// =========================
+
+async crearNotificacion(
+  uidDestino: string,
+  notificacion: any
+) {
+
+  const notificacionesRef = collection(
+    this.firestore,
+    `notificaciones/${uidDestino}/items`
+  );
+
+  return await addDoc(
+    notificacionesRef,
+    {
+      ...notificacion,
+      leida: false,
+      fecha: serverTimestamp()
+    }
+  );
+}
+
+
+obtenerNotificaciones(uid: string) {
+
+  const notificacionesRef = collection(
+    this.firestore,
+    `notificaciones/${uid}/items`
+  );
+
+  const q = query(
+    notificacionesRef,
+    orderBy('fecha', 'desc')
+  );
+
+  return collectionData(
+    q,
+    { idField: 'id' }
+  );
+}
+
+
+async marcarNotificacionLeida(
+  uid: string,
+  notificacionId: string
+) {
+
+  const notificacionRef = doc(
+    this.firestore,
+    `notificaciones/${uid}/items/${notificacionId}`
+  );
+
+  return await updateDoc(
+    notificacionRef,
+    {
+      leida: true
+    }
+  );
+}
+
+
 }
