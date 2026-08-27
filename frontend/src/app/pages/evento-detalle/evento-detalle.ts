@@ -418,7 +418,26 @@ export class EventoDetalleComponent implements OnInit {
     this.router.navigate(['/home']);
 
   }
+  // ========================================
+// ABRIR UBICACIÓN EN GOOGLE MAPS
+// ========================================
 
+abrirGoogleMaps(): void {
+
+  if (!this.evento?.location) {
+    return;
+  }
+
+  const url =
+    'https://www.google.com/maps/search/?api=1&query=' +
+    encodeURIComponent(this.evento.location);
+
+  window.open(
+    url,
+    '_blank',
+    'noopener,noreferrer'
+  );
+}
 
   // ========================================
   // OPTIMIZAR IMAGEN DE CLOUDINARY

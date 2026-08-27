@@ -20,12 +20,7 @@
             Nombre del evento
         </label>
 
-        <input
-            id="title"
-            type="text"
-            placeholder="Ej: Festival de Tecnología"
-            [(ngModel)]="title"
-        >
+        <input id="title" type="text" placeholder="Ej: Festival de Tecnología" [(ngModel)]="title">
 
 
         <!-- DESCRIPCIÓN -->
@@ -34,10 +29,7 @@
             Descripción
         </label>
 
-        <textarea
-            id="description"
-            placeholder="Describe el evento..."
-            [(ngModel)]="description">
+        <textarea id="description" placeholder="Describe el evento..." [(ngModel)]="description">
         </textarea>
 
 
@@ -51,11 +43,7 @@
                     Fecha
                 </label>
 
-                <input
-                    id="date"
-                    type="date"
-                    [(ngModel)]="date"
-                >
+                <input id="date" type="date" [(ngModel)]="date">
 
             </div>
 
@@ -66,86 +54,22 @@
                     Hora
                 </label>
 
-                <input
-                    id="time"
-                    type="time"
-                    [(ngModel)]="time"
-                >
+                <input id="time" type="time" [(ngModel)]="time">
 
             </div>
 
         </div>
 
 
-        <!-- UBICACIÓN -->
+        <!-- =========================
+            UBICACIÓN
+        ========================== -->
 
         <label for="location">
-            Ubicación
+            📍 Ubicación del evento
         </label>
 
-        <select
-            id="location"
-            [(ngModel)]="ubicacionSeleccionada"
-        >
-
-            <option value="">
-                Selecciona una ubicación
-            </option>
-
-            <option value="Centro de Convenciones">
-                Centro de Convenciones
-            </option>
-
-            <option value="Parque Principal">
-                Parque Principal
-            </option>
-
-            <option value="Biblioteca Municipal">
-                Biblioteca Municipal
-            </option>
-
-            <option value="SENA">
-                SENA
-            </option>
-
-            <option value="Universidad">
-                Universidad
-            </option>
-
-            <option value="Coliseo Municipal">
-                Coliseo Municipal
-            </option>
-
-            <option value="Teatro Municipal">
-                Teatro Municipal
-            </option>
-
-            <option value="Otro">
-                Otra ubicación
-            </option>
-
-        </select>
-
-
-        <!-- OTRA UBICACIÓN -->
-
-        <div
-            class="ubicacion-personalizada"
-            *ngIf="ubicacionSeleccionada === 'Otro'"
-        >
-
-            <label for="ubicacionPersonalizada">
-                Escribe la ubicación
-            </label>
-
-            <input
-                id="ubicacionPersonalizada"
-                type="text"
-                placeholder="Ej: Parque Simón Bolívar"
-                [(ngModel)]="ubicacionPersonalizada"
-            >
-
-        </div>
+        <input id="location" type="text" placeholder="Ej: Universidad Nacional, Bogotá" [(ngModel)]="location">
 
 
         <!-- CATEGORÍA -->
@@ -154,10 +78,7 @@
             Categoría
         </label>
 
-        <select
-            id="category"
-            [(ngModel)]="category"
-        >
+        <select id="category" [(ngModel)]="category">
 
             <option value="">
                 Selecciona una categoría
@@ -192,17 +113,12 @@
 
             <label for="imagen">
                 {{ eventoEditandoId
-                    ? 'Cambiar imagen'
-                    : 'Imagen del evento'
+                ? 'Cambiar imagen'
+                : 'Imagen del evento'
                 }}
             </label>
 
-            <input
-                id="imagen"
-                type="file"
-                accept="image/*"
-                (change)="onFileSelected($event)"
-            >
+            <input id="imagen" type="file" accept="image/*" (change)="onFileSelected($event)">
 
             <small *ngIf="eventoEditandoId">
                 Selecciona una nueva imagen solamente si deseas cambiarla.
@@ -211,16 +127,9 @@
 
             <!-- PREVISUALIZACIÓN -->
 
-            <div
-                class="preview-container"
-                *ngIf="previewImage"
-            >
+            <div class="preview-container" *ngIf="previewImage">
 
-                <img
-                    [src]="previewImage"
-                    class="preview-image"
-                    alt="Vista previa de la imagen del evento"
-                >
+                <img [src]="previewImage" class="preview-image" alt="Vista previa de la imagen del evento">
 
             </div>
 
@@ -229,20 +138,16 @@
 
         <!-- BOTÓN GUARDAR -->
 
-        <button
-            class="btn-crear"
-            [disabled]="cargando"
-            (click)="guardarEvento()"
-        >
+        <button class="btn-crear" [disabled]="cargando" (click)="guardarEvento()">
 
             {{
-                cargando
-                    ? 'Procesando...'
-                    : (
-                        eventoEditandoId
-                            ? 'Guardar Cambios'
-                            : 'Crear Evento'
-                    )
+            cargando
+            ? 'Procesando...'
+            : (
+            eventoEditandoId
+            ? 'Guardar Cambios'
+            : 'Crear Evento'
+            )
             }}
 
         </button>
@@ -250,12 +155,7 @@
 
         <!-- CANCELAR EDICIÓN -->
 
-        <button
-            *ngIf="eventoEditandoId"
-            class="btn-cancelar"
-            type="button"
-            (click)="limpiarFormulario()"
-        >
+        <button *ngIf="eventoEditandoId" class="btn-cancelar" type="button" (click)="limpiarFormulario()">
 
             Cancelar edición
 
@@ -316,49 +216,41 @@
 
                     @for (evento of eventos; track evento.id) {
 
-                        <tr>
+                    <tr>
 
-                            <td>
-                                {{ evento.title }}
-                            </td>
+                        <td>
+                            {{ evento.title }}
+                        </td>
 
-                            <td>
-                                {{ evento.date }}
-                            </td>
+                        <td>
+                            {{ evento.date }}
+                        </td>
 
-                            <td>
-                                {{ evento.time || '--' }}
-                            </td>
+                        <td>
+                            {{ evento.time || '--' }}
+                        </td>
 
-                            <td>
-                                {{ evento.category }}
-                            </td>
+                        <td>
+                            {{ evento.category }}
+                        </td>
 
-                            <td>
-                                {{ evento.location }}
-                            </td>
+                        <td>
+                            {{ evento.location }}
+                        </td>
 
-                            <td>
+                        <td>
 
-                                <button
-                                    class="btn-editar"
-                                    type="button"
-                                    (click)="editarEvento(evento)"
-                                >
-                                    Editar
-                                </button>
+                            <button class="btn-editar" type="button" (click)="editarEvento(evento)">
+                                Editar
+                            </button>
 
-                                <button
-                                    class="btn-eliminar"
-                                    type="button"
-                                    (click)="eliminarEvento(evento.id)"
-                                >
-                                    Eliminar
-                                </button>
+                            <button class="btn-eliminar" type="button" (click)="eliminarEvento(evento.id)">
+                                Eliminar
+                            </button>
 
-                            </td>
+                        </td>
 
-                        </tr>
+                    </tr>
 
                     }
 
