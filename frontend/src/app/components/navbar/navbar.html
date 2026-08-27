@@ -1,47 +1,174 @@
-<nav class="navbar">
+    <nav class="navbar">
 
-    <div class="navbar-logo">
-        <a routerLink="/home">ADVAIH</a>
+        <div class="navbar-logo">
+            <a routerLink="/home">ADVAIH</a>
+        </div>
+
+        <ul class="navbar-links">
+
+            <li>
+                <a routerLink="/home">Inicio</a>
+            </li>
+
+            <li>
+                <a routerLink="/crud-eventos">Crear Evento</a>
+            </li>
+            <li>
+                <a routerLink="/perfil">Mi Perfil</a>
+            </li>
+            <li>
+                <a routerLink="/chats">Chats</a>
+            </li>
+            <li class="notificaciones-wrapper">
+
+    <button
+        class="btn-notificaciones"
+        (click)="toggleNotificaciones()">
+
+        🔔
+
+        <span
+            class="badge-notificaciones"
+            *ngIf="noLeidas > 0">
+
+            {{ noLeidas }}
+
+        </span>
+
+    </button>
+
+
+    <div 
+    class="notificaciones-menu" 
+    *ngIf="mostrarNotificaciones">
+
+    <!-- CABECERA -->
+    <div class="notificaciones-titulo">
+
+        <strong>
+            Notificaciones
+        </strong>
+
+        <span *ngIf="noLeidas > 0">
+            {{ noLeidas }} nuevas
+        </span>
+
     </div>
 
-    <ul class="navbar-links">
 
-        <li>
-            <a routerLink="/home">Inicio</a>
-        </li>
+    <!-- NOTIFICACIONES -->
+    <div 
+        class="notificacion-item"
 
-        <li>
-            <a routerLink="/crud-eventos">Crear Evento</a>
-        </li>
-        <li>
-            <a routerLink="/perfil">Mi Perfil</a>
-        </li>
-        <li>
-            <a routerLink="/chats">Chats</a>
-        </li>
+        *ngFor="
+            let notificacion of notificaciones
+            | slice:0:5
+        "
 
-        <li *ngIf="roleService.esOrganizador() || roleService.esAdministrador()">
-            <a routerLink="/dashboard">Dashboard</a>
-        </li>
+        [class.no-leida]="!notificacion.leida"
 
-        <li *ngIf="roleService.esAdministrador()">
-            <a routerLink="/admin-panel">Panel Admin</a>
-        </li>
+        (click)="abrirNotificacion(notificacion)"
+    >
 
-    </ul>
+        <!-- ICONO -->
+        <div class="notificacion-icono">
 
-    <div class="navbar-user">
+    <img
+        *ngIf="
+            notificacion.tipo === 'mensaje' &&
+            notificacion.fotoURL
+        "
+        [src]="notificacion.fotoURL"
+        alt="Foto de perfil"
+    >
 
-        <span>{{ nombreUsuario }}</span>
+    <span
+        *ngIf="
+            notificacion.tipo === 'mensaje' &&
+            !notificacion.fotoURL
+        "
+    >
+        👤
+    </span>
 
-        <button
-            class="btn-logout"
-            (click)="cerrarSesion()">
+    <span
+        *ngIf="notificacion.tipo === 'asistencia'"
+    >
+        🎟️
+    </span>
 
-            Cerrar Sesión
+</div>
 
-        </button>
+
+        <!-- INFORMACIÓN -->
+        <div class="notificacion-texto">
+
+            <strong>
+                {{ notificacion.titulo }}
+            </strong>
+
+            <p>
+                Te ha enviado un mensaje
+            </p>
+
+            <span class="notificacion-preview">
+                "{{ notificacion.texto }}"
+            </span>
+
+        </div>
+
+
+        <!-- INDICADOR DE NO LEÍDA -->
+        <div
+            class="notificacion-punto"
+            *ngIf="!notificacion.leida">
+
+        </div>
 
     </div>
 
-</nav>
+
+    <!-- SIN NOTIFICACIONES -->
+    <div 
+        class="sin-notificaciones" 
+        *ngIf="notificaciones.length === 0">
+
+        <div class="sin-notificaciones-icono">
+            🔔
+        </div>
+
+        <p>
+            No tienes notificaciones
+        </p>
+
+    </div>
+
+</div>
+
+</li>
+
+            <li *ngIf="roleService.esOrganizador() || roleService.esAdministrador()">
+                <a routerLink="/dashboard">Dashboard</a>
+            </li>
+
+            <li *ngIf="roleService.esAdministrador()">
+                <a routerLink="/admin-panel">Panel Admin</a>
+            </li>
+
+        </ul>
+
+        <div class="navbar-user">
+
+            <span>{{ nombreUsuario }}</span>
+
+            <button
+                class="btn-logout"
+                (click)="cerrarSesion()">
+
+                Cerrar Sesión
+
+            </button>
+
+        </div>
+
+    </nav>
