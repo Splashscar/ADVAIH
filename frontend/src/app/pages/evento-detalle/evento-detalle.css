@@ -483,3 +483,116 @@ p {
   
 
 }
+/* =========================
+   ASISTENCIA AL EVENTO
+========================= */
+
+.asistencia-evento {
+  margin-top: 25px;
+  padding: 18px;
+  background: #20242d;
+  border: 1px solid #2c313c;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+
+/* =========================
+   BOTÓN ASISTENCIA
+========================= */
+
+.btn-asistencia {
+  width: 100%;
+  min-height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  padding: 12px 18px;
+
+  border: 1px solid #6366f1;
+  border-radius: 10px;
+
+  background: #6366f1;
+  color: #ffffff;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+
+/* Hover */
+
+.btn-asistencia:hover {
+  background: #5558e8;
+  border-color: #5558e8;
+  transform: translateY(-1px);
+}
+
+
+/* Click */
+
+.btn-asistencia:active {
+  transform: translateY(0);
+}
+
+
+/* Icono */
+
+.btn-asistencia span {
+  font-size: 18px;
+}
+
+
+/* =========================
+   USUARIO YA REGISTRADO
+========================= */
+
+.btn-asistencia.asistiendo {
+  background: transparent;
+  border-color: #3f4652;
+  color: #c5cad3;
+}
+
+
+/* Hover cuando ya está asistiendo */
+
+.btn-asistencia.asistiendo:hover {
+  background: #292e38;
+  border-color: #555d6b;
+  color: #ffffff;
+}
+
+
+/* =========================
+   CONTADOR
+========================= */
+
+.contador-asistentes {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  color: #858d9b;
+
+  font-size: 13px;
+}
+
+
+.contador-asistentes strong {
+  color: #ffffff;
+  font-size: 14px;
+}

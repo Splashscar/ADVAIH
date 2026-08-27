@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import {FooterComponent} from '../../components/footer/footer';
+import { FooterComponent } from '../../components/footer/footer';
 import { EventosService } from '../../services/eventos';
+import { AsistentesService } from '../../services/asistentes';
 
 @Component({
   selector: 'app-evento-detalle',
@@ -17,11 +18,20 @@ export class EventoDetalleComponent implements OnInit {
 
   error = false;
 
+  cantidadAsistentes = 0;
+
+  estaAsistiendo = false;
+
+  procesandoAsistencia = false;
+
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private eventosService: EventosService
+    private eventosService: EventosService,
+    private asistentesService: AsistentesService
   ) {}
+
 
   ngOnInit(): void {
 
@@ -36,14 +46,17 @@ export class EventoDetalleComponent implements OnInit {
       eventoRecibido
     );
 
+
     if (eventoRecibido) {
 
-      // El evento ya estaba cargado en Home
       this.evento = eventoRecibido;
 
       console.log(
         '⚡ Evento mostrado directamente desde Home'
       );
+
+      // Cargar asistencia y contador
+      this.cargarAsistencia();
 
       return;
     }
@@ -59,6 +72,7 @@ export class EventoDetalleComponent implements OnInit {
       '🔎 Buscando evento por ID:',
       id
     );
+
 
     if (!id) {
 
@@ -85,6 +99,7 @@ export class EventoDetalleComponent implements OnInit {
           evento
         );
 
+
         if (!evento) {
 
           this.error = true;
@@ -92,9 +107,14 @@ export class EventoDetalleComponent implements OnInit {
           return;
         }
 
+
         this.evento = evento;
 
+        // Cargar asistencia y contador
+        this.cargarAsistencia();
+
       },
+
 
       error: (error) => {
 
@@ -108,6 +128,205 @@ export class EventoDetalleComponent implements OnInit {
       }
 
     });
+
+  }
+
+
+  // ========================================
+  // CARGAR ASISTENCIA
+  // ========================================
+
+  private cargarAsistencia(): void {
+
+    if (!this.evento?.id) {
+
+      console.warn(
+        '⚠️ No se puede cargar asistencia: evento sin ID'
+      );
+
+      return;
+    }
+
+
+    console.log(
+      '👥 Cargando asistentes del evento:',
+      this.evento.id
+    );
+
+
+    // ========================================
+    // CONTADOR
+    // ========================================
+
+    this.asistentesService
+      .obtenerCantidad(this.evento.id)
+      .subscribe({
+
+        next: (cantidad) => {
+
+          console.log(
+            '🔢 Cantidad de asistentes:',
+            cantidad
+          );
+
+          this.cantidadAsistentes = cantidad;
+
+        },
+
+        error: (error) => {
+
+          console.error(
+            '❌ Error obteniendo asistentes:',
+            error
+          );
+
+        }
+
+      });
+
+
+    // ========================================
+    // ESTADO DEL USUARIO
+    // ========================================
+
+    this.asistentesService
+      .estaAsistiendo(this.evento.id)
+      .subscribe({
+
+        next: (asistiendo) => {
+
+          console.log(
+            '🎟️ ¿Usuario está asistiendo?:',
+            asistiendo
+          );
+
+          this.estaAsistiendo = asistiendo;
+
+        },
+
+        error: (error) => {
+
+          console.error(
+            '❌ Error comprobando asistencia:',
+            error
+          );
+
+        }
+
+      });
+
+  }
+
+
+  // ========================================
+  // TOGGLE ASISTENCIA
+  // ========================================
+
+  async toggleAsistencia(): Promise<void> {
+
+    if (!this.evento?.id) {
+
+      return;
+    }
+
+
+    if (this.procesandoAsistencia) {
+
+      return;
+    }
+
+
+    this.procesandoAsistencia = true;
+
+
+    try {
+
+      // ====================================
+      // CANCELAR ASISTENCIA
+      // ====================================
+
+      if (this.estaAsistiendo) {
+
+        await this.asistentesService
+          .cancelarAsistencia(this.evento.id);
+
+
+        this.estaAsistiendo = false;
+
+        console.log(
+          '❌ Asistencia cancelada'
+        );
+
+      }
+
+
+      // ====================================
+      // REGISTRAR ASISTENCIA
+      // ====================================
+
+      else {
+
+        await this.asistentesService
+          .asistir(this.evento.id);
+
+
+        this.estaAsistiendo = true;
+
+        console.log(
+          '✅ Asistencia registrada'
+        );
+
+      }
+
+
+      // ====================================
+      // ACTUALIZAR CONTADOR REAL
+      // ====================================
+
+      this.asistentesService
+        .obtenerCantidad(this.evento.id)
+        .subscribe({
+
+          next: (cantidad) => {
+
+            console.log(
+              '🔄 Contador actualizado:',
+              cantidad
+            );
+
+            this.cantidadAsistentes = cantidad;
+
+          },
+
+          error: (error) => {
+
+            console.error(
+              '❌ Error actualizando contador:',
+              error
+            );
+
+          }
+
+        });
+
+    }
+
+
+    catch (error) {
+
+      console.error(
+        '❌ Error cambiando asistencia:',
+        error
+      );
+
+    }
+
+
+    finally {
+
+      this.procesandoAsistencia = false;
+
+    }
 
   }
 
@@ -130,8 +349,11 @@ export class EventoDetalleComponent implements OnInit {
   imagenOptimizada(url: string): string {
 
     if (!url) {
+
       return '';
+
     }
+
 
     return url.replace(
       '/upload/',
