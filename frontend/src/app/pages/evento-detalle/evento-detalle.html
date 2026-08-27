@@ -233,6 +233,42 @@
 
 
       </div>
+      <!-- =========================
+     ASISTENCIA
+========================= -->
+
+<div class="asistencia-evento">
+
+  <button
+  type="button"
+  class="btn-asistencia"
+  [class.asistiendo]="estaAsistiendo"
+  (click)="toggleAsistencia()">
+
+  <span>
+    {{ estaAsistiendo ? '✓' : '🎟️' }}
+  </span>
+
+  {{ estaAsistiendo ? 'No voy a asistir' : 'Voy a asistir' }}
+
+</button>
+
+
+  <div class="contador-asistentes">
+
+    👥
+
+    <strong>
+      {{ cantidadAsistentes }}
+    </strong>
+
+    {{ cantidadAsistentes === 1
+      ? 'persona asistirá'
+      : 'personas asistirán' }}
+
+  </div>
+
+</div>
 
 
       <!-- =========================
