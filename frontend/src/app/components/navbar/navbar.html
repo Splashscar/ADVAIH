@@ -101,21 +101,48 @@
 
 
         <!-- INFORMACIÓN -->
-        <div class="notificacion-texto">
+<div class="notificacion-texto">
 
-            <strong>
-                {{ notificacion.titulo }}
-            </strong>
+    <!-- ========================= -->
+    <!-- MENSAJE -->
+    <!-- ========================= -->
 
-            <p>
-                Te ha enviado un mensaje
-            </p>
+    <ng-container
+        *ngIf="notificacion.tipo === 'mensaje'">
 
-            <span class="notificacion-preview">
-                "{{ notificacion.texto }}"
-            </span>
+        <strong>
+            {{ notificacion.titulo }}
+        </strong>
 
-        </div>
+        <p>
+            Te ha enviado un mensaje
+        </p>
+
+        <span class="notificacion-preview">
+            "{{ notificacion.texto }}"
+        </span>
+
+    </ng-container>
+
+
+    <!-- ========================= -->
+    <!-- ASISTENCIA -->
+    <!-- ========================= -->
+
+    <ng-container
+        *ngIf="notificacion.tipo === 'asistencia'">
+
+        <strong>
+            🎟️ Nueva asistencia
+        </strong>
+
+        <p>
+            {{ notificacion.texto }}
+        </p>
+
+    </ng-container>
+
+</div>
 
 
         <!-- INDICADOR DE NO LEÍDA -->

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Auth } from '@angular/fire/auth';
+
 import { FooterComponent } from '../../components/footer/footer';
 import { EventosService } from '../../services/eventos';
 import { AsistentesService } from '../../services/asistentes';
@@ -24,13 +26,18 @@ export class EventoDetalleComponent implements OnInit {
 
   procesandoAsistencia = false;
 
+  asistentes: any[] = [];
+
+  esCreador = false;
+
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private eventosService: EventosService,
-    private asistentesService: AsistentesService
-  ) {}
+    private asistentesService: AsistentesService,
+    private auth: Auth
+  ) { }
 
 
   ngOnInit(): void {
@@ -55,7 +62,11 @@ export class EventoDetalleComponent implements OnInit {
         '⚡ Evento mostrado directamente desde Home'
       );
 
-      // Cargar asistencia y contador
+      console.log(
+        '🔎 OBJETO COMPLETO DEL EVENTO:',
+        JSON.stringify(this.evento, null, 2)
+      );
+
       this.cargarAsistencia();
 
       return;
@@ -138,6 +149,8 @@ export class EventoDetalleComponent implements OnInit {
 
   private cargarAsistencia(): void {
 
+
+
     if (!this.evento?.id) {
 
       console.warn(
@@ -152,6 +165,19 @@ export class EventoDetalleComponent implements OnInit {
       '👥 Cargando asistentes del evento:',
       this.evento.id
     );
+    const usuario = this.auth.currentUser;
+
+    this.esCreador =
+      !!usuario &&
+      usuario.uid === this.evento.authorId;
+
+    console.log(
+      '👑 ¿Es creador?:',
+      this.esCreador
+    );
+    if (this.esCreador) {
+      this.cargarListaAsistentes();
+    }
 
 
     // ========================================
@@ -217,6 +243,52 @@ export class EventoDetalleComponent implements OnInit {
 
   }
 
+  // ========================================
+  // CARGAR LISTA DE ASISTENTES
+  // ========================================
+
+  private cargarListaAsistentes(): void {
+
+    if (!this.evento?.id) {
+
+      return;
+
+    }
+
+    console.log(
+      '👥 Cargando lista de asistentes:',
+      this.evento.id
+    );
+
+
+    this.asistentesService
+      .obtenerAsistentes(this.evento.id)
+      .subscribe({
+
+        next: (asistentes) => {
+
+          console.log(
+            '👥 Lista de asistentes:',
+            asistentes
+          );
+
+          this.asistentes = asistentes;
+
+        },
+
+        error: (error) => {
+
+          console.error(
+            '❌ Error cargando lista de asistentes:',
+            error
+          );
+
+        }
+
+      });
+
+  }
+
 
   // ========================================
   // TOGGLE ASISTENCIA
@@ -264,11 +336,17 @@ export class EventoDetalleComponent implements OnInit {
       // REGISTRAR ASISTENCIA
       // ====================================
 
+      // ====================================
+      // REGISTRAR ASISTENCIA
+      // ====================================
+
       else {
 
-        await this.asistentesService
-          .asistir(this.evento.id);
-
+        await this.asistentesService.asistir(
+          this.evento.id,
+          this.evento.authorId,
+          this.evento.title
+        );
 
         this.estaAsistiendo = true;
 

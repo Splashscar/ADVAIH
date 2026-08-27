@@ -1,164 +1,270 @@
-  import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-  import { CommonModule } from '@angular/common';
-  import { Router, RouterLink } from '@angular/router';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
+
 import { FirebaseService } from '../../services/firebase';
-  import { AuthServices } from '../../services/auth';
-  import { RoleService } from '../../services/role';
+import { AuthServices } from '../../services/auth';
+import { RoleService } from '../../services/role';
 
-  @Component({
-    selector: 'app-navbar',
-    imports: [RouterLink, CommonModule],
-    templateUrl: './navbar.html',
-    styleUrl: './navbar.css'
-  })
-  export class Navbar implements OnInit {
+@Component({
+  selector: 'app-navbar',
+  imports: [RouterLink, CommonModule],
+  templateUrl: './navbar.html',
+  styleUrl: './navbar.css'
+})
+export class Navbar implements OnInit {
 
-    nombreUsuario = '';
-    notificaciones: any[] = [];
-    noLeidas = 0;
-    mostrarNotificaciones = false;
-    usuarioActual: any = null;
+  nombreUsuario = '';
 
-    constructor(
-  private authService: AuthServices,
-  public roleService: RoleService,
-  private router: Router,
-  private firebaseService: FirebaseService,
-  private cdr: ChangeDetectorRef
-) {}
+  notificaciones: any[] = [];
+
+  noLeidas = 0;
+
+  mostrarNotificaciones = false;
+
+  usuarioActual: any = null;
 
 
-   ngOnInit(): void {
+  constructor(
+    private authService: AuthServices,
+    public roleService: RoleService,
+    private router: Router,
+    private firebaseService: FirebaseService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
-  this.authService.usuario$
-    .subscribe(usuario => {
 
-      this.usuarioActual = usuario;
+  // =========================================================
+  // INICIALIZAR
+  // =========================================================
 
-      if (!usuario) {
-        return;
-      }
+  ngOnInit(): void {
 
-      this.nombreUsuario =
-        usuario.displayName ||
-        usuario.email ||
-        'Usuario';
+    this.authService.usuario$
+      .subscribe(usuario => {
 
-      this.firebaseService
-        .obtenerNotificaciones(usuario.uid)
-        .subscribe({
+        this.usuarioActual = usuario;
 
-          next: (notificaciones: any[]) => {
 
-            this.notificaciones =
-              notificaciones;
+        // =====================================================
+        // NO HAY USUARIO
+        // =====================================================
 
-            this.noLeidas =
-              notificaciones.filter(
-                n => !n.leida
-              ).length;
+        if (!usuario) {
 
-            this.cdr.detectChanges();
+          this.notificaciones = [];
 
-          },
+          this.noLeidas = 0;
 
-          error: (error) => {
+          return;
 
-            console.error(
-              '❌ Error cargando notificaciones:',
-              error
-            );
+        }
 
-          }
 
-        });
+        // =====================================================
+        // NOMBRE DEL USUARIO
+        // =====================================================
 
-    });
+        this.nombreUsuario =
+          usuario.displayName ||
+          usuario.email ||
+          'Usuario';
 
-}
-toggleNotificaciones(): void {
 
-  this.mostrarNotificaciones =
-    !this.mostrarNotificaciones;
+        // =====================================================
+        // OBTENER NOTIFICACIONES
+        // =====================================================
 
-}
-async abrirNotificacion(notificacion: any) {
+        this.firebaseService
+          .obtenerNotificaciones(usuario.uid)
+          .subscribe({
 
-  if (!notificacion) {
-    return;
+            next: (notificaciones: any[]) => {
+
+              console.log(
+                '🔔 Notificaciones recibidas:',
+                notificaciones
+              );
+
+
+              this.notificaciones =
+                notificaciones;
+
+
+              // =================================================
+              // CONTAR NO LEÍDAS
+              // =================================================
+
+              this.noLeidas =
+                notificaciones.filter(
+                  n => !n.leida
+                ).length;
+
+
+              this.cdr.detectChanges();
+
+            },
+
+
+            error: (error) => {
+
+              console.error(
+                '❌ Error cargando notificaciones:',
+                error
+              );
+
+            }
+
+          });
+
+      });
+
   }
 
-  // =========================
-  // MARCAR COMO LEÍDA
-  // =========================
 
-  if (
-    !notificacion.leida &&
-    this.usuarioActual
-  ) {
+  // =========================================================
+  // MOSTRAR / OCULTAR NOTIFICACIONES
+  // =========================================================
+
+  toggleNotificaciones(): void {
+
+    this.mostrarNotificaciones =
+      !this.mostrarNotificaciones;
+
+  }
+
+
+  // =========================================================
+  // ABRIR NOTIFICACIÓN
+  // =========================================================
+
+  async abrirNotificacion(
+    notificacion: any
+  ): Promise<void> {
+
+    if (!notificacion) {
+
+      return;
+
+    }
+
+
+    // =======================================================
+    // MARCAR COMO LEÍDA
+    // =======================================================
+
+    if (
+      !notificacion.leida &&
+      this.usuarioActual
+    ) {
+
+      try {
+
+        await this.firebaseService
+          .marcarNotificacionLeida(
+            this.usuarioActual.uid,
+            notificacion.id
+          );
+
+
+        console.log(
+          '✅ Notificación marcada como leída'
+        );
+
+      } catch (error) {
+
+        console.error(
+          '❌ Error marcando notificación:',
+          error
+        );
+
+        return;
+
+      }
+
+    }
+
+
+    // =======================================================
+    // CERRAR MENÚ
+    // =======================================================
+
+    this.mostrarNotificaciones = false;
+
+
+    // =======================================================
+    // ABRIR CHAT
+    // =======================================================
+
+    if (
+      notificacion.tipo === 'mensaje' &&
+      notificacion.chatId
+    ) {
+
+      console.log(
+        '💬 Abriendo chat:',
+        notificacion.chatId
+      );
+
+
+      this.router.navigate([
+        '/chats',
+        notificacion.chatId
+      ]);
+
+      return;
+
+    }
+
+
+    // =======================================================
+    // ABRIR EVENTO
+    // =======================================================
+
+    if (
+      notificacion.tipo === 'asistencia' &&
+      notificacion.eventoId
+    ) {
+
+      console.log(
+        '🎟️ Abriendo evento:',
+        notificacion.eventoId
+      );
+
+
+      this.router.navigate([
+        '/evento',
+        notificacion.eventoId
+      ]);
+
+      return;
+
+    }
+
+  }
+
+
+  // =========================================================
+  // CERRAR SESIÓN
+  // =========================================================
+
+  async cerrarSesion(): Promise<void> {
 
     try {
 
-      await this.firebaseService
-        .marcarNotificacionLeida(
-          this.usuarioActual.uid,
-          notificacion.id
-        );
+      await this.authService.cerrarSesion();
+
+      this.router.navigate(['/']);
 
     } catch (error) {
 
       console.error(
-        '❌ Error marcando notificación:',
+        '❌ Error cerrando sesión:',
         error
       );
 
-      return;
     }
-
-  }
-
-
-  // =========================
-  // CERRAR MENÚ
-  // =========================
-
-  this.mostrarNotificaciones = false;
-
-
-  // =========================
-  // ABRIR CHAT
-  // =========================
-
-  if (
-    notificacion.tipo === 'mensaje' &&
-    notificacion.chatId
-  ) {
-
-    this.router.navigate([
-      '/chats',
-      notificacion.chatId
-    ]);
 
   }
 
 }
-
-
-    async cerrarSesion() {
-
-      try {
-
-        await this.authService.cerrarSesion();
-
-        this.router.navigate(['/']);
-
-      } catch (error) {
-
-        console.error(error);
-
-      }
-
-    }
-    
-
-  }

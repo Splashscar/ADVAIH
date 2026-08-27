@@ -270,6 +270,78 @@
 
 </div>
 
+<!-- ======================================== -->
+<!-- ASISTENTES DEL EVENTO -->
+<!-- ======================================== -->
+
+<section
+  class="seccion-asistentes"
+  *ngIf="esCreador">
+
+  <div class="asistentes-header">
+
+    <div>
+
+      <h2>
+        ASISTENTES
+      </h2>
+
+      <p>
+        👥 {{ asistentes.length }} asistentes
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <div
+    class="lista-asistentes"
+    *ngIf="asistentes.length > 0">
+
+    <div
+      class="asistente-item"
+      *ngFor="let asistente of asistentes">
+
+      <div class="asistente-avatar">
+
+        👤
+
+      </div>
+
+      <div class="asistente-info">
+
+        <strong>
+          {{ asistente.nombre || 'Usuario' }}
+        </strong>
+
+        <span>
+          {{ asistente.email }}
+        </span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div
+    class="sin-asistentes"
+    *ngIf="asistentes.length === 0">
+
+    <span>
+      👥
+    </span>
+
+    <p>
+      Todavía no hay asistentes.
+    </p>
+
+  </div>
+
+</section>
+
 
       <!-- =========================
            ID
