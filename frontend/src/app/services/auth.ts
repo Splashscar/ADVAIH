@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
-import { Auth, user, User, authState } from '@angular/fire/auth';
+import { Auth, User, authState } from '@angular/fire/auth';
 import { map } from 'rxjs';
 import { Usuario } from '../models/usuario';
-import { getRedirectResult, } from 'firebase/auth';
+import { getRedirectResult } from 'firebase/auth';
 
 import {
   GoogleAuthProvider,
@@ -22,14 +22,15 @@ export class AuthServices {
 
   usuario$ = authState(this.auth);
 
-
   estaAutenticado$ = this.usuario$.pipe(
     map(usuario => !!usuario)
   );
 
+
   // =========================
   // LOGIN CON GOOGLE
   // =========================
+
   async loginGoogle(): Promise<Usuario | null> {
 
     try {
@@ -46,29 +47,48 @@ export class AuthServices {
 
       const usuarioFirebase = resultado.user;
 
-      if (!usuarioFirebase) return null;
+      if (!usuarioFirebase) {
+        return null;
+      }
 
       return {
+
         uid: usuarioFirebase.uid,
-        nombre: usuarioFirebase.displayName || 'usuario sin nombre',
-        email: usuarioFirebase.email || '',
-        fotoURL: usuarioFirebase.photoURL ?? '',
+
+        nombre:
+          usuarioFirebase.displayName ||
+          'usuario sin nombre',
+
+        email:
+          usuarioFirebase.email || '',
+
+        fotoURL:
+          usuarioFirebase.photoURL || '',
+
         FechaCreacion: new Date(),
+
         ultimaconexion: new Date()
+
       };
 
     } catch (error) {
 
-      console.error("ERROR LOGIN GOOGLE:", error);
+      console.error(
+        'ERROR LOGIN GOOGLE:',
+        error
+      );
+
       throw error;
 
     }
 
   }
 
+
   // =========================
   // REGISTRO CON EMAIL
   // =========================
+
   async registrarConEmail(
     nombre: string,
     email: string,
@@ -92,26 +112,40 @@ export class AuthServices {
       );
 
       return {
+
         uid: resultado.user.uid,
+
         nombre: nombre,
-        email: resultado.user.email || '',
+
+        email:
+          resultado.user.email || '',
+
         fotoURL: '',
+
         FechaCreacion: new Date(),
+
         ultimaconexion: new Date()
+
       };
 
     } catch (error) {
 
-      console.error("ERROR REGISTRO:", error);
+      console.error(
+        'ERROR REGISTRO:',
+        error
+      );
+
       throw error;
 
     }
 
   }
 
+
   // =========================
   // LOGIN CON EMAIL
   // =========================
+
   async loginConEmail(
     email: string,
     password: string
@@ -126,32 +160,55 @@ export class AuthServices {
           password
         );
 
-      const usuarioFirebase = resultado.user;
+      const usuarioFirebase =
+        resultado.user;
 
       return {
-        uid: usuarioFirebase.uid,
-        nombre: usuarioFirebase.displayName || '',
-        email: usuarioFirebase.email || '',
-        fotoURL: usuarioFirebase.photoURL || '',
-        FechaCreacion: new Date(),
-        ultimaconexion: new Date()
+
+        uid:
+          usuarioFirebase.uid,
+
+        nombre:
+          usuarioFirebase.displayName || '',
+
+        email:
+          usuarioFirebase.email || '',
+
+        fotoURL:
+          usuarioFirebase.photoURL || '',
+
+        FechaCreacion:
+          new Date(),
+
+        ultimaconexion:
+          new Date()
+
       };
 
     } catch (error) {
 
-      console.error("ERROR LOGIN EMAIL:", error);
+      console.error(
+        'ERROR LOGIN EMAIL:',
+        error
+      );
+
       throw error;
 
     }
 
   }
 
+
   // =========================
   // UTILIDADES
   // =========================
+
   obtenerUsuario(): User | null {
+
     return this.auth.currentUser;
+
   }
+
 
   async cerrarSesion(): Promise<void> {
 
@@ -161,29 +218,36 @@ export class AuthServices {
 
     } catch (error) {
 
-      console.error('❌ Error cerrando sesión:', error);
+      console.error(
+        '❌ Error cerrando sesión:',
+        error
+      );
+
       throw error;
 
     }
 
   }
 
+
   async procesarRedirect() {
 
     try {
 
       const resultado =
-        await getRedirectResult(this.auth);
+        await getRedirectResult(
+          this.auth
+        );
 
       console.log(
-        "REDIRECT RESULT:",
+        'REDIRECT RESULT:',
         resultado
       );
 
       if (resultado?.user) {
 
         console.log(
-          "USUARIO:",
+          'USUARIO:',
           resultado.user
         );
 
@@ -192,12 +256,12 @@ export class AuthServices {
     } catch (error) {
 
       console.error(
-        "ERROR REDIRECT:",
+        'ERROR REDIRECT:',
         error
       );
 
     }
 
   }
- 
+
 }

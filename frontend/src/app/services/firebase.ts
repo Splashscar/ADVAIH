@@ -99,23 +99,92 @@ export class FirebaseService {
   // USUARIOS
   // =========================
 
-  async guardarUsuario(usuario: Usuario) {
-    try {
-      const usuarioRef = doc(this.firestore, `usuarios/${usuario.uid}`);
-      const usuarioExistente = await getDoc(usuarioRef);
-      if (!usuarioExistente.exists()) {
-        await setDoc(usuarioRef, {
+
+
+async guardarUsuario(usuario: Usuario) {
+
+  try {
+
+    const usuarioRef = doc(
+      this.firestore,
+      `usuarios/${usuario.uid}`
+    );
+
+    const usuarioExistente =
+      await getDoc(usuarioRef);
+
+
+    // =========================
+    // CREAR USUARIO
+    // =========================
+
+    if (!usuarioExistente.exists()) {
+
+      await setDoc(
+        usuarioRef,
+        {
           ...usuario,
-          tipo_usuario: 'usuario'
-        });
-      } else {
-        await setDoc(usuarioRef, { ultimaconexion: new Date() }, { merge: true });
-      }
-    } catch (error) {
-      console.error('❌ Error guardando usuario', error);
-      throw error;
+
+          tipo_usuario:
+            usuario.tipo_usuario || 'usuario',
+
+          descripcion:
+            usuario.descripcion || '',
+
+          fotoURL:
+            usuario.fotoURL || '',
+
+          FechaCreacion:
+            usuario.FechaCreacion || new Date(),
+
+          ultimaconexion:
+            new Date()
+        }
+      );
+
+      console.log(
+        '✅ Usuario guardado en Firestore'
+      );
+
     }
+
+    // =========================
+    // USUARIO YA EXISTENTE
+    // =========================
+
+    else {
+
+      await setDoc(
+        usuarioRef,
+        {
+          ultimaconexion: new Date()
+        },
+        {
+          merge: true
+        }
+      );
+
+      console.log(
+        '🔄 Usuario actualizado'
+      );
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      '❌ Error guardando usuario',
+      error
+    );
+
+    throw error;
+
   }
+
+}
+
+
+
 
   obtenerUsuarios(): Observable<Usuario[]> {
     const usuariosRef = collection(this.firestore, 'usuarios');
