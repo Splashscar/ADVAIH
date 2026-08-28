@@ -7,8 +7,8 @@ import { AuthServices } from '../../services/auth';
 import { ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLink } from '@angular/router';
-import {FooterComponent} from '../../components/footer/footer';
-import { RoleService } from '../../services/role';
+import { FooterComponent } from '../../components/footer/footer';
+
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -20,6 +20,7 @@ export class HomeComponent implements OnInit {
 
   todosLosEventos: any[] = [];
   eventosFiltrados: any[] = [];
+  eventosProximos: any[] = [];
 
   nombreUsuario: string = '';
 
@@ -39,12 +40,10 @@ export class HomeComponent implements OnInit {
     private eventosService: EventosService,
     private authService: AuthServices,
     private cdr: ChangeDetectorRef,
-    private router: Router,
-    public roleService: RoleService 
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-
 
     this.authService.usuario$.subscribe(usuario => {
 
@@ -77,6 +76,7 @@ export class HomeComponent implements OnInit {
           Array.isArray(res) ? res : [];
 
         this.aplicarFiltros();
+        this.calcularProximosEventos();
 
       },
 
@@ -127,6 +127,31 @@ export class HomeComponent implements OnInit {
   }
 
 
+  filtrarPorCategoria(categoria: string): void {
+    this.filtroCategoria = categoria;
+    this.aplicarFiltros();
+  }
+
+
+  calcularProximosEventos(): void {
+
+    const hoy = new Date();
+
+    this.eventosProximos = [...this.todosLosEventos]
+      .filter(evento => {
+        const fecha = new Date(evento.date);
+        return !isNaN(fecha.getTime()) && fecha >= hoy;
+      })
+      .sort((a, b) =>
+        new Date(a.date).getTime() - new Date(b.date).getTime()
+      )
+      .slice(0, 5);
+
+    this.cdr.detectChanges();
+
+  }
+
+
   darLike(evento: any): void {
 
     const usuario = this.authService.obtenerUsuario();
@@ -149,11 +174,6 @@ export class HomeComponent implements OnInit {
       .subscribe({
 
         next: (respuesta: any) => {
-
-          console.log(
-            '❤️ Respuesta Like:',
-            respuesta
-          );
 
           evento.likes =
             respuesta.likes;
@@ -202,11 +222,6 @@ export class HomeComponent implements OnInit {
 
         next: (respuesta: any) => {
 
-          console.log(
-            '⭐ Respuesta Favorito:',
-            respuesta
-          );
-
           evento.favoritos =
             respuesta.favoritos;
 
@@ -247,21 +262,19 @@ export class HomeComponent implements OnInit {
     );
 
   }
+
   verMas(evento: any): void {
 
-  console.log('📦 Evento seleccionado:', evento);
-  console.log('🔎 ID del evento:', evento.id);
-
-  this.router.navigate(
-    ['/eventos', evento.id],
-    {
-      state: {
-        evento: evento
+    this.router.navigate(
+      ['/eventos', evento.id],
+      {
+        state: {
+          evento: evento
+        }
       }
-    }
-  );
+    );
 
-}
+  }
 
   usuarioTieneFavorito(evento: any): boolean {
 
