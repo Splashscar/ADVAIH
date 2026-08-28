@@ -1,10 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, HostListener, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Navbar } from '../../components/navbar/navbar';
 import { EventosService } from '../../services/eventos';
 import { AuthServices } from '../../services/auth';
-import { ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLink } from '@angular/router';
 import { FooterComponent } from '../../components/footer/footer';
@@ -29,18 +28,21 @@ export class HomeComponent implements OnInit {
 
   categorias: string[] = [
     'Todos',
-    'Tecnología',
-    'Diseño & Código',
-    'Conciertos',
+    'Musica',
+    'Tecnologia',
     'Deportes',
     'Cultura'
   ];
+
+  mostrarTodasCategorias: boolean = false;
+  categoriasVisiblesCantidad: number = 5;
 
   constructor(
     private eventosService: EventosService,
     private authService: AuthServices,
     private cdr: ChangeDetectorRef,
-    private router: Router
+    private router: Router,
+    private elementRef: ElementRef
   ) {}
 
   ngOnInit(): void {
@@ -130,6 +132,35 @@ export class HomeComponent implements OnInit {
   filtrarPorCategoria(categoria: string): void {
     this.filtroCategoria = categoria;
     this.aplicarFiltros();
+  }
+
+
+  get categoriasMostradas(): string[] {
+    return this.mostrarTodasCategorias
+      ? this.categorias
+      : this.categorias.slice(0, this.categoriasVisiblesCantidad);
+  }
+
+  toggleCategorias(event: Event): void {
+    event.stopPropagation();
+    this.mostrarTodasCategorias = !this.mostrarTodasCategorias;
+  }
+
+  @HostListener('document:click', ['$event'])
+  clickFuera(event: Event): void {
+
+    const wrapper =
+      this.elementRef.nativeElement.querySelector('.categorias-wrapper');
+
+    if (
+      this.mostrarTodasCategorias &&
+      wrapper &&
+      !wrapper.contains(event.target)
+    ) {
+      this.mostrarTodasCategorias = false;
+      this.cdr.detectChanges();
+    }
+
   }
 
 
