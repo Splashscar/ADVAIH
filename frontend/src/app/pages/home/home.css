@@ -57,6 +57,7 @@
     align-items: flex-start;
 }
 
+/* --- SIDEBARS --- */
 .sidebar-izq, .sidebar-der {
     position: sticky;
     top: 90px;
@@ -77,7 +78,7 @@
 
 .sidebar-card h4 {
     margin-bottom: 12px;
-    font-size: 14px;
+    font-size: 15px;
     color: #a0aec0;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -92,11 +93,11 @@
 
 .sidebar-lista a {
     display: block;
-    padding: 8px 10px;
+    padding: 10px 12px;
     border-radius: 8px;
     color: white;
     text-decoration: none;
-    font-size: 14px;
+    font-size: 15px;
     cursor: pointer;
     transition: .2s;
 }
@@ -114,6 +115,22 @@
 .sidebar-vacio {
     color: #a0aec0;
     font-size: 13px;
+}
+
+.btn-ver-mas {
+    margin-top: 8px;
+    background: transparent;
+    border: none;
+    color: #c084fc;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 6px 10px;
+    text-align: left;
+    width: 100%;
+}
+
+.btn-ver-mas:hover {
+    text-decoration: underline;
 }
 
 /* --- PRÓXIMOS EVENTOS --- */
@@ -304,10 +321,6 @@
 
 /* --- RESPONSIVE: en celular, solo el feed --- */
 @media (max-width: 1000px) {
-
-    .home-layout {
-        grid-template-columns: 1fr;
-    }
 
     .sidebar-izq, .sidebar-der {
         display: none;
