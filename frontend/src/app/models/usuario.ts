@@ -5,7 +5,7 @@ export interface Usuario {
 
   fotoURL?: string;
 
-  tipo_usuario?: 'usuario' | 'colaborador';
+  tipo_usuario?: 'usuario' | 'organizador';
 
   descripcion?: string;
 
