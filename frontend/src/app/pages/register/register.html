@@ -11,6 +11,7 @@
 
     </div>
 
+
     <div class="right-panel">
 
         <div class="header">
@@ -25,6 +26,7 @@
 
         </div>
 
+
         <h1>
             Crea tu cuenta
         </h1>
@@ -33,40 +35,96 @@
             Comparte tus eventos y haz crecer tu comunidad.
         </p>
 
+
         <div class="grid">
 
-            <input
-                type="text"
-                placeholder="Nombre completo"
-                [(ngModel)]="nombre">
+            <input type="text" placeholder="Nombre completo" [(ngModel)]="nombre">
 
-            <input
-                type="email"
-                placeholder="Correo electrónico"
-                [(ngModel)]="email">
 
-            <input
-                type="password"
-                placeholder="Contraseña"
-                [(ngModel)]="password">
+            <input type="email" placeholder="Correo electrónico" [(ngModel)]="email">
 
-            <input
-                type="password"
-                placeholder="Confirmar contraseña"
-                [(ngModel)]="confirmarPassword">
+
+
+            
+            <div class="password-container">
+
+                <input [type]="mostrarPassword ? 'text' : 'password'" placeholder="Contraseña" [(ngModel)]="password">
+
+                <span class="ojo-password" (click)="mostrarPassword = !mostrarPassword">
+
+                    {{ mostrarPassword ? '🙈' : '👁️' }}
+
+                </span>
+
+            </div>
+
+
+            <div class="password-container">
+
+                <input [type]="mostrarConfirmarPassword ? 'text' : 'password'" placeholder="Confirmar contraseña"
+                    [(ngModel)]="confirmarPassword">
+
+                <span class="ojo-password" (click)="mostrarConfirmarPassword = !mostrarConfirmarPassword">
+
+                    {{ mostrarConfirmarPassword ? '🙈' : '👁️' }}
+
+                </span>
+
+            </div>
+         
+
+
+
 
         </div>
 
-        <textarea placeholder="Descripción de tu organizador"></textarea>
 
-        <button (click)="registrar()">
+        <!-- ========================= -->
+        <!-- SELECCIÓN DE ROL -->
+        <!-- ========================= -->
+
+        <div class="tipo-usuario">
+
+            <h3>
+                ¿Cómo quieres utilizar ADVAIH?
+            </h3>
+
+
+            <label>
+
+                <input type="radio" name="tipo_usuario" value="usuario" [(ngModel)]="tipo_usuario">
+
+                👤 Usuario
+
+            </label>
+
+
+            <label>
+
+                <input type="radio" name="tipo_usuario" value="colaborador" [(ngModel)]="tipo_usuario">
+
+                🤝 Colaborador
+
+            </label>
+
+        </div>
+
+
+        <!-- ========================= -->
+        <!-- DESCRIPCIÓN COLABORADOR -->
+        <!-- ========================= -->
+
+        <textarea *ngIf="tipo_usuario === 'colaborador'" placeholder="Descripción de tu organizador"
+            [(ngModel)]="descripcion">
+        </textarea>
+
+
+        <button type="button" (click)="registrar()">
+
             Crear cuenta
+
         </button>
-        <p (click)="registrar()">   
-            HAZ CLICK AQUI
-        </p>
 
     </div>
-
 
 </div>
