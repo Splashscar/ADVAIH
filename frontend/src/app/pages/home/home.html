@@ -22,11 +22,11 @@
                 </ul>
             </div>
 
-            <div class="sidebar-card">
+            <div class="sidebar-card categorias-wrapper">
                 <h4>Categorías</h4>
                 <ul class="sidebar-lista">
-                    @for (categoria of categorias; track categoria) {
-                       <li>
+                    @for (categoria of categoriasMostradas; track categoria) {
+                        <li>
                             <a
                                 (click)="filtrarPorCategoria(categoria)"
                                 [class.activo]="filtroCategoria === categoria">
@@ -35,6 +35,12 @@
                         </li>
                     }
                 </ul>
+
+                @if (categorias.length > categoriasVisiblesCantidad) {
+                    <button class="btn-ver-mas" (click)="toggleCategorias($event)">
+                        {{ mostrarTodasCategorias ? 'Ver menos ▲' : 'Ver más ▼' }}
+                    </button>
+                }
             </div>
 
         </aside>
