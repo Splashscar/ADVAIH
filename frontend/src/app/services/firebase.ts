@@ -104,7 +104,10 @@ export class FirebaseService {
       const usuarioRef = doc(this.firestore, `usuarios/${usuario.uid}`);
       const usuarioExistente = await getDoc(usuarioRef);
       if (!usuarioExistente.exists()) {
-        await setDoc(usuarioRef, usuario);
+        await setDoc(usuarioRef, {
+          ...usuario,
+          tipo_usuario: 'usuario'
+        });
       } else {
         await setDoc(usuarioRef, { ultimaconexion: new Date() }, { merge: true });
       }
