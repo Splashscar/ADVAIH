@@ -1,94 +1,113 @@
 <div class="home-container">
 
     <app-navbar></app-navbar>
-    
+
     <div class="bienvenida" *ngIf="nombreUsuario">
         <h2>Bienvenido, {{ nombreUsuario }}</h2>
         <p>Nos alegra tenerte nuevamente en ADVAIH.</p>
     </div>
-    
-    <!-- 🔍 SECCIÓN DE BUSCADOR Y FILTROS -->
-    <div class="filtros-container" style="max-width: 1200px; margin: 20px auto; padding: 0 20px; display: flex; gap: 15px; flex-wrap: wrap;">
-        
-        <!-- Barra de Búsqueda por Texto -->
-        <div style="flex: 1; min-width: 280px;">
-            <input type="text" 
-                   [(ngModel)]="filtroTexto" 
-                   (input)="aplicarFiltros()" 
-                   placeholder="🔍 Buscar evento por título..." 
-                   style="width: 100%; padding: 12px; background: #1a203e; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; font-size: 14px;">
-        </div>
 
-        <!-- Selector por Categorías -->
-        <div style="min-width: 200px;">
-            <select [(ngModel)]="filtroCategoria" 
-                    (change)="aplicarFiltros()" 
-                    style="width: 100%; padding: 12px; background: #1a203e; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; font-size: 14px; cursor: pointer;">
-                <option value="">📁 Todas las Categorías</option>
-                <option value="Musica">Musica</option>
-                <option value="Tecnologia">Tecnologia</option>
-                <option value="Arte">Arte</option>
-                <option value="Deportes">Deportes</option>
-            </select>
-        </div>
+    <div class="home-layout">
+
+        <!-- ===================== SIDEBAR IZQUIERDA ===================== -->
+        <aside class="sidebar-izq">
+
+            <div class="sidebar-card">
+                <h4>Accesos rápidos</h4>
+                <ul class="sidebar-lista">
+                    <li><a routerLink="/crud-eventos">➕ Crear evento</a></li>
+                    <li><a routerLink="/perfil">👤 Mis eventos</a></li>
+                    <li><a routerLink="/favoritos">⭐ Favoritos</a></li>
+                    <li><a routerLink="/chats">💬 Chats</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-card">
+                <h4>Categorías</h4>
+                <ul class="sidebar-lista">
+                    @for (categoria of categorias; track categoria) {
+                       <li>
+                            <a
+                                (click)="filtrarPorCategoria(categoria)"
+                                [class.activo]="filtroCategoria === categoria">
+                                {{ categoria }}
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+
+        </aside>
+
+        <!-- ===================== FEED CENTRAL ===================== -->
+        <section class="feed-central">
+
+            <div class="filtros-container">
+                <input type="text"
+                       [(ngModel)]="filtroTexto"
+                       (input)="aplicarFiltros()"
+                       placeholder="🔍 Buscar evento por título...">
+            </div>
+
+            <div *ngIf="eventosFiltrados.length === 0" class="sin-resultados">
+                ❌ No se encontraron eventos que coincidan con tu búsqueda.
+            </div>
+
+            <div class="eventos-grid" *ngIf="eventosFiltrados.length > 0">
+                @for (evento of eventosFiltrados; track evento.id) {
+                    <div class="evento-card">
+                        <img [src]="evento.imageUrl" alt="Evento">
+                        <div class="evento-info">
+                            <h3>{{ evento.title }}</h3>
+                            <p>📍 {{ evento.location }}</p>
+                            <p>📅 {{ evento.date }}</p>
+                            <p class="categoria-tag">{{ evento.category }}</p>
+                            <p class="autor">Creado por: {{ evento.authorName }}</p>
+                            <div class="acciones-evento">
+                                <button class="btn-like" (click)="darLike(evento)">
+                                    <span *ngIf="usuarioDioLike(evento)">❤️</span>
+                                    <span *ngIf="!usuarioDioLike(evento)">🤍</span>
+                                    {{ evento.likes || 0 }}
+                                </button>
+                                <button class="btn-favorito" (click)="darFavorito(evento)">
+                                    {{ usuarioTieneFavorito(evento) ? '⭐' : '☆' }}
+                                </button>
+                            </div>
+                            <button (click)="verMas(evento)">Ver más</button>
+                        </div>
+                    </div>
+                }
+            </div>
+
+        </section>
+
+        <!-- ===================== SIDEBAR DERECHA ===================== -->
+        <aside class="sidebar-der">
+
+            <div class="sidebar-card">
+                <h4>Próximos eventos</h4>
+
+                <div *ngIf="eventosProximos.length === 0" class="sidebar-vacio">
+                    No hay eventos próximos.
+                </div>
+
+                <ul class="proximos-lista">
+                    @for (evento of eventosProximos; track evento.id) {
+                        <li (click)="verMas(evento)">
+                            <img [src]="evento.imageUrl" alt="Evento">
+                            <div>
+                                <span class="proximo-titulo">{{ evento.title }}</span>
+                                <span class="proximo-fecha">📅 {{ evento.date }}</span>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+
+        </aside>
+
     </div>
 
-    <!-- EVENTOS DESTACADOS -->
-    <section class="eventos-section">
-        <h2>Eventos Destacados</h2>
-
-        <!-- Mensaje por si no hay resultados -->
-        <div *ngIf="eventosFiltrados.length === 0" style="text-align: center; padding: 40px; color: #a0aec0;">
-            ❌ No se encontraron eventos que coincidan con tu búsqueda.
-        </div>
-
-        <div class="eventos-grid" *ngIf="eventosFiltrados.length > 0">
-            <!-- 👈 Cambiado a eventosFiltrados para que reaccione dinámicamente -->
-            @for (evento of eventosFiltrados; track evento.id) {
-                <div class="evento-card">
-                    <img [src]="evento.imageUrl" alt="Evento">
-                    <div class="evento-info">
-                        <h3>{{ evento.title }}</h3>
-                        <p>📍 {{ evento.location }}</p>
-                        <p>📅 {{ evento.date }}</p>
-                        <p style="display: inline-block; background: rgba(124, 58, 237, 0.2); color: #c084fc; padding: 2px 8px; border-radius: 4px; font-size: 12px;">
-                            {{ evento.category }}
-                        </p>
-                        <p class="autor" style="margin-top: 8px;">
-                            Creado por: {{ evento.authorName }}
-                        </p>
-                        <div class="acciones-evento">
-
-                            <button
-                                class="btn-like"
-                                (click)="darLike(evento)">
-
-                                <span *ngIf="usuarioDioLike(evento)">
-                                    ❤️
-                                </span>
-
-                                <span *ngIf="!usuarioDioLike(evento)">
-                                    🤍
-                                </span>
-
-                                {{ evento.likes || 0 }}
-
-                            </button>
-                            <button
-                                class="btn-favorito"
-                                (click)="darFavorito(evento)">
-
-                                {{ usuarioTieneFavorito(evento) ? '⭐' : '☆' }}
-
-                            </button>
-
-                        </div>
-                        <button (click)="verMas(evento)">Ver más</button>
-                    </div>
-                </div>
-            }
-        </div>
-    </section>
     <!-- BURBUJA ADVAIH IA -->
     <div
     class="ia-floating"

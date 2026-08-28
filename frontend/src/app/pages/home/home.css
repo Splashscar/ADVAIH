@@ -46,37 +46,171 @@
     margin-bottom: 10px;
 }
 
-/* --- GRID DE EVENTOS --- */
-.eventos-section {
-    padding: 50px;
+/* --- LAYOUT DE 3 COLUMNAS --- */
+.home-layout {
+    max-width: 1300px;
+    margin: 20px auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    align-items: flex-start;
 }
 
-.eventos-section h2 {
-    margin-bottom: 30px;
-    font-size: 2rem;
+.sidebar-izq, .sidebar-der {
+    position: sticky;
+    top: 90px;
+    width: 300px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: calc(100vh - 110px);
+    overflow-y: auto;
+}
+
+.sidebar-card {
+    background: #10152d;
+    border-radius: 16px;
+    padding: 24px;
+}
+
+.sidebar-card h4 {
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: #a0aec0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.sidebar-lista {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sidebar-lista a {
+    display: block;
+    padding: 8px 10px;
+    border-radius: 8px;
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.sidebar-lista a:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.sidebar-lista a.activo {
+    background: rgba(124, 58, 237, 0.2);
+    color: #c084fc;
+    font-weight: bold;
+}
+
+.sidebar-vacio {
+    color: #a0aec0;
+    font-size: 13px;
+}
+
+/* --- PRÓXIMOS EVENTOS --- */
+.proximos-lista {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.proximos-lista li {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 8px;
+    transition: .2s;
+}
+
+.proximos-lista li:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.proximos-lista img {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.proximo-titulo {
+    display: block;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 1.3;
+}
+
+.proximo-fecha {
+    display: block;
+    font-size: 12px;
+    color: #a0aec0;
+}
+
+/* --- FEED CENTRAL --- */
+.feed-central {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.filtros-container {
+    margin-bottom: 20px;
+}
+
+.filtros-container input {
+    width: 100%;
+    padding: 12px;
+    background: #1a203e;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+}
+
+.sin-resultados {
+    text-align: center;
+    padding: 40px;
+    color: #a0aec0;
 }
 
 .eventos-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
 }
 
 .evento-card {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
     background: #10152d;
-    border-radius: 20px;
+    border-radius: 16px;
     overflow: hidden;
-    transition: .3s;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: .2s;
 }
 
 .evento-card:hover {
-    transform: translateY(-8px);
+    border-color: rgba(124, 58, 237, 0.3);
 }
 
 .evento-card img {
     width: 100%;
-    height: 220px;
+    max-height: 260px;
     object-fit: cover;
+    display: block;
 }
 
 .evento-info {
@@ -92,6 +226,15 @@
     margin-bottom: 10px;
 }
 
+.categoria-tag {
+    display: inline-block;
+    background: rgba(124, 58, 237, 0.2);
+    color: #c084fc;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
 /* --- BOTONES Y ACCIONES --- */
 .evento-info button {
     width: 100%;
@@ -104,7 +247,6 @@
     font-weight: bold;
 }
 
-/* Contenedor Flex para Like y Favorito */
 .acciones-evento {
     display: flex;
     justify-content: space-between;
@@ -113,7 +255,6 @@
     margin-bottom: 15px;
 }
 
-/* Sobrescribimos el width de los botones dentro de acciones-evento */
 .acciones-evento button {
     width: 50%;
     display: flex;
@@ -161,6 +302,23 @@
     border: none;
 }
 
+/* --- RESPONSIVE: en celular, solo el feed --- */
+@media (max-width: 1000px) {
+
+    .home-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar-izq, .sidebar-der {
+        display: none;
+    }
+
+    .evento-card {
+        max-width: 100%;
+    }
+
+}
+
 /* =========================================
    BURBUJA ADVAIH IA
 ========================================= */
@@ -201,11 +359,6 @@
     box-shadow 0.25s ease;
 }
 
-
-/* =========================================
-   HOVER
-========================================= */
-
 .ia-floating:hover {
 
   transform: translateY(-5px) scale(1.03);
@@ -214,11 +367,6 @@
     0 15px 35px rgba(0, 0, 0, 0.5),
     0 0 35px rgba(124, 58, 237, 0.55);
 }
-
-
-/* =========================================
-   ICONO
-========================================= */
 
 .ia-floating-icon {
 
@@ -236,12 +384,9 @@
   font-size: 24px;
 
   flex-shrink: 0;
+
+  animation: ia-pulse 2.5s infinite;
 }
-
-
-/* =========================================
-   TEXTO
-========================================= */
 
 .ia-floating-text {
 
@@ -254,7 +399,6 @@
   line-height: 1.2;
 }
 
-
 .ia-floating-text strong {
 
   font-size: 14px;
@@ -262,24 +406,12 @@
   font-weight: 700;
 }
 
-
 .ia-floating-text span {
 
   font-size: 12px;
 
   color: rgba(255, 255, 255, 0.8);
 }
-
-
-/* =========================================
-   ANIMACIÓN SUAVE
-========================================= */
-
-.ia-floating-icon {
-
-  animation: ia-pulse 2.5s infinite;
-}
-
 
 @keyframes ia-pulse {
 
@@ -297,9 +429,8 @@
 
 }
 
-
 /* =========================================
-   RESPONSIVE
+   RESPONSIVE BURBUJA IA
 ========================================= */
 
 @media (max-width: 600px) {
