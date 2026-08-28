@@ -24,7 +24,7 @@ export class RegisterComponent {
   password = '';
   confirmarPassword = '';
 
-  tipo_usuario: 'usuario' | 'colaborador' = 'usuario';
+  tipo_usuario: 'usuario' | 'organizador' = 'usuario';
 
   descripcion = '';
 
@@ -99,7 +99,7 @@ export class RegisterComponent {
         tipo_usuario: this.tipo_usuario,
 
         descripcion:
-          this.tipo_usuario === 'colaborador'
+          this.tipo_usuario === 'organizador'
             ? this.descripcion.trim()
             : ''
 

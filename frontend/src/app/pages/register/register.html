@@ -101,7 +101,7 @@
 
             <label>
 
-                <input type="radio" name="tipo_usuario" value="colaborador" [(ngModel)]="tipo_usuario">
+                <input type="radio" name="tipo_usuario" value="organizador" [(ngModel)]="tipo_usuario">
 
                 🤝 Colaborador
 
@@ -114,7 +114,7 @@
         <!-- DESCRIPCIÓN COLABORADOR -->
         <!-- ========================= -->
 
-        <textarea *ngIf="tipo_usuario === 'colaborador'" placeholder="Descripción de tu organizador"
+        <textarea *ngIf="tipo_usuario === 'organizador'" placeholder="Descripción de tu organización"
             [(ngModel)]="descripcion">
         </textarea>
 

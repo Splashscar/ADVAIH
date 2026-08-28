@@ -30,6 +30,10 @@ urlpatterns = [
         'ia-recomendar/',
         views.recomendar_eventos_ia
     ),
+    path(
+        'admin/usuarios/<str:uid_objetivo>/rol/',
+        views.cambiar_rol_usuario
+    ),
 
 
 ]
