@@ -4,9 +4,12 @@ from config.firebase_config import initialize_firebase
 import json
 import cloudinary
 import cloudinary.uploader
+from .permissions import requiere_auth
 from google import genai
 from google.genai import types
+from firebase_admin import auth as firebase_auth
 import os
+
 
 db = initialize_firebase()
 
@@ -14,6 +17,7 @@ client = genai.Client(
     api_key=os.getenv("GEMINI_API_KEY")
 )
 
+ROLES_VALIDOS = ["usuario", "organizador", "administrador"]
 
 @csrf_exempt
 def listar_eventos(request):
@@ -960,3 +964,49 @@ Recuerda responder únicamente JSON válido.
             "eventos": []
 
         }, status=500)
+
+@csrf_exempt
+@requiere_auth(roles_permitidos=["administrador"])
+def cambiar_rol_usuario(request, uid_objetivo):
+
+    if request.method != "PATCH":
+        return JsonResponse({"error": "Método no permitido"}, status=405)
+
+    try:
+
+        data = json.loads(request.body)
+        nuevo_rol = (data.get("rol") or "").lower().strip()
+
+        if nuevo_rol not in ROLES_VALIDOS:
+            return JsonResponse(
+                {"error": f"Rol inválido. Debe ser uno de: {ROLES_VALIDOS}"},
+                status=400
+            )
+
+        if uid_objetivo == request.uid and nuevo_rol != "administrador":
+            return JsonResponse(
+                {"error": "No puedes cambiar tu propio rol de administrador"},
+                status=400
+            )
+
+        usuario_ref = db.collection("usuarios").document(uid_objetivo)
+        usuario_doc = usuario_ref.get()
+
+        if not usuario_doc.exists:
+            return JsonResponse({"error": "Usuario no encontrado"}, status=404)
+
+        usuario_ref.update({"tipo_usuario": nuevo_rol})
+
+        firebase_auth.set_custom_user_claims(
+            uid_objetivo,
+            {"role": nuevo_rol}
+        )
+
+        return JsonResponse({
+            "mensaje": "Rol actualizado correctamente",
+            "uid": uid_objetivo,
+            "nuevo_rol": nuevo_rol
+        })
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
