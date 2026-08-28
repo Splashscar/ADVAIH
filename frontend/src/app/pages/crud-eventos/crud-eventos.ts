@@ -21,6 +21,9 @@ export class CrudEventos implements OnInit {
   date = '';
   time = '';
 
+  // Fecha mínima permitida para crear eventos
+  fechaMinima = '';
+
   // Ubicación que finalmente se guardará
   location = '';
 
@@ -51,19 +54,36 @@ export class CrudEventos implements OnInit {
 
   ngOnInit(): void {
 
-  this.authService.usuario$.subscribe(usuario => {
+    // ==========================================
+    // FECHA MÍNIMA
+    // ==========================================
 
-    this.usuario = usuario;
+    const hoy = new Date();
 
-    console.log('Usuario:', usuario);
+    const año = hoy.getFullYear();
+    const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+    const dia = String(hoy.getDate()).padStart(2, '0');
 
-    if (this.usuario?.uid) {
-      this.cargarEventos();
-    }
+    this.fechaMinima = `${año}-${mes}-${dia}`;
 
-  });
 
-}
+    // ==========================================
+    // USUARIO
+    // ==========================================
+
+    this.authService.usuario$.subscribe(usuario => {
+
+      this.usuario = usuario;
+
+      console.log('Usuario:', usuario);
+
+      if (this.usuario?.uid) {
+        this.cargarEventos();
+      }
+
+    });
+
+  }
 
 
   // ==========================================
@@ -87,6 +107,7 @@ export class CrudEventos implements OnInit {
       this.crearEvento();
 
     }
+
   }
 
 
@@ -103,12 +124,14 @@ export class CrudEventos implements OnInit {
 
     }
 
+
     if (!this.description.trim()) {
 
       alert('⚠️ La descripción del evento es obligatoria.');
       return false;
 
     }
+
 
     if (!this.date) {
 
@@ -117,12 +140,52 @@ export class CrudEventos implements OnInit {
 
     }
 
+
     if (!this.time) {
 
       alert('⚠️ Selecciona una hora.');
       return false;
 
     }
+
+
+    // ==========================================
+    // VALIDAR FECHA Y HORA FUTURA
+    // ==========================================
+
+    const fechaEvento = new Date(
+      `${this.date}T${this.time}`
+    );
+
+    const ahora = new Date();
+
+
+    if (isNaN(fechaEvento.getTime())) {
+
+      alert(
+        '⚠️ La fecha o la hora seleccionada no es válida.'
+      );
+
+      return false;
+
+    }
+
+
+    // No permitir eventos pasados
+    if (fechaEvento <= ahora) {
+
+      alert(
+        '⚠️ El evento debe programarse para una fecha y hora futura.'
+      );
+
+      return false;
+
+    }
+
+
+    // ==========================================
+    // UBICACIÓN
+    // ==========================================
 
     const ubicacion = this.obtenerUbicacionFinal();
 
@@ -133,12 +196,22 @@ export class CrudEventos implements OnInit {
 
     }
 
+
+    // ==========================================
+    // CATEGORÍA
+    // ==========================================
+
     if (!this.category) {
 
       alert('⚠️ Selecciona una categoría.');
       return false;
 
     }
+
+
+    // ==========================================
+    // IMAGEN
+    // ==========================================
 
     // Imagen obligatoria únicamente al crear
     if (!this.eventoEditandoId && !this.selectedFile) {
@@ -148,7 +221,9 @@ export class CrudEventos implements OnInit {
 
     }
 
+
     return true;
+
   }
 
 
@@ -157,8 +232,10 @@ export class CrudEventos implements OnInit {
   // ==========================================
 
   obtenerUbicacionFinal(): string {
-  return this.location.trim();
-}
+
+    return this.location.trim();
+
+  }
 
 
   // ==========================================
@@ -174,13 +251,20 @@ export class CrudEventos implements OnInit {
       alert('⚠️ Selecciona una imagen.');
 
       return;
+
     }
+
 
     const formData = new FormData();
 
-    formData.append('image', this.selectedFile);
+    formData.append(
+      'image',
+      this.selectedFile
+    );
+
 
     console.log('📤 Subiendo imagen...');
+
 
     this.eventosService
       .subirImagen(formData)
@@ -188,26 +272,38 @@ export class CrudEventos implements OnInit {
 
         next: (respuesta: any) => {
 
-          console.log('✅ Imagen subida:', respuesta);
+          console.log(
+            '✅ Imagen subida:',
+            respuesta
+          );
+
 
           const ubicacionFinal =
             this.obtenerUbicacionFinal();
 
+
           const evento = {
 
-            title: this.title.trim(),
+            title:
+              this.title.trim(),
 
-            description: this.description.trim(),
+            description:
+              this.description.trim(),
 
-            date: this.date,
+            date:
+              this.date,
 
-            time: this.time,
+            time:
+              this.time,
 
-            location: ubicacionFinal,
+            location:
+              ubicacionFinal,
 
-            category: this.category,
+            category:
+              this.category,
 
-            imageUrl: respuesta.url,
+            imageUrl:
+              respuesta.url,
 
             authorId:
               this.usuario?.uid || '',
@@ -223,20 +319,26 @@ export class CrudEventos implements OnInit {
             authorPhoto:
               this.usuario?.photoURL || '',
 
-            likes: 0,
+            likes:
+              0,
 
-            usuariosLike: [],
+            usuariosLike:
+              [],
 
-            favoritos: 0,
+            favoritos:
+              0,
 
-            usuariosFavoritos: []
+            usuariosFavoritos:
+              []
 
           };
+
 
           console.log(
             '📤 Enviando evento:',
             evento
           );
+
 
           this.eventosService
             .crearEvento(evento)
@@ -249,9 +351,11 @@ export class CrudEventos implements OnInit {
                   res
                 );
 
+
                 alert(
                   '✅ Evento creado correctamente.'
                 );
+
 
                 this.cargarEventos();
 
@@ -259,19 +363,23 @@ export class CrudEventos implements OnInit {
 
               },
 
+
               error: (err) => {
 
                 console.error(
-                  '❌ Error creando evento:',
+                  '❌ Error creando:',
                   err
                 );
+
 
                 console.error(
                   'Respuesta:',
                   err.error
                 );
 
+
                 this.cargando = false;
+
 
                 alert(
                   '❌ No se pudo crear el evento.'
@@ -283,6 +391,7 @@ export class CrudEventos implements OnInit {
 
         },
 
+
         error: (err) => {
 
           console.error(
@@ -290,12 +399,15 @@ export class CrudEventos implements OnInit {
             err
           );
 
+
           console.error(
             'Respuesta:',
             err.error
           );
 
+
           this.cargando = false;
+
 
           alert(
             '❌ No se pudo subir la imagen.'
@@ -304,6 +416,7 @@ export class CrudEventos implements OnInit {
         }
 
       });
+
   }
 
 
@@ -318,37 +431,51 @@ export class CrudEventos implements OnInit {
       evento
     );
 
-    this.eventoEditandoId = evento.id;
+
+    this.eventoEditandoId =
+      evento.id;
+
 
     this.title =
       evento.title || '';
 
+
     this.description =
       evento.description || '';
+
 
     this.date =
       evento.date || '';
 
+
     this.time =
       evento.time || '';
 
+
     this.category =
       evento.category || '';
+
 
     // Restaurar ubicación
     this.location =
       evento.location || '';
 
+
     // Imagen actual
     this.previewImage =
       evento.imageUrl || null;
 
+
     // La imagen actual NO es un File
     this.selectedFile = null;
 
+
     window.scrollTo({
+
       top: 0,
+
       behavior: 'smooth'
+
     });
 
   }
@@ -364,16 +491,20 @@ export class CrudEventos implements OnInit {
       imageUrl?: string
     ) => {
 
+
       const evento: any = {
 
-        title: this.title.trim(),
+        title:
+          this.title.trim(),
 
         description:
           this.description.trim(),
 
-        date: this.date,
+        date:
+          this.date,
 
-        time: this.time,
+        time:
+          this.time,
 
         location:
           this.obtenerUbicacionFinal(),
@@ -383,6 +514,7 @@ export class CrudEventos implements OnInit {
 
       };
 
+
       if (imageUrl) {
 
         evento.imageUrl =
@@ -390,10 +522,12 @@ export class CrudEventos implements OnInit {
 
       }
 
+
       console.log(
         '📤 Actualizando evento:',
         evento
       );
+
 
       this.eventosService
         .actualizarEvento(
@@ -409,15 +543,18 @@ export class CrudEventos implements OnInit {
               res
             );
 
+
             alert(
               '✅ Evento actualizado correctamente.'
             );
+
 
             this.cargarEventos();
 
             this.limpiarFormulario();
 
           },
+
 
           error: (err) => {
 
@@ -426,7 +563,9 @@ export class CrudEventos implements OnInit {
               err
             );
 
+
             this.cargando = false;
+
 
             alert(
               '❌ No se pudo actualizar el evento.'
@@ -439,20 +578,26 @@ export class CrudEventos implements OnInit {
     };
 
 
-    // Si se seleccionó una nueva imagen
+    // ==========================================
+    // NUEVA IMAGEN
+    // ==========================================
+
     if (this.selectedFile) {
 
       const formData =
         new FormData();
+
 
       formData.append(
         'image',
         this.selectedFile
       );
 
+
       console.log(
         '📤 Subiendo nueva imagen...'
       );
+
 
       this.eventosService
         .subirImagen(formData)
@@ -465,11 +610,13 @@ export class CrudEventos implements OnInit {
               respuesta.url
             );
 
+
             actualizarDatos(
               respuesta.url
             );
 
           },
+
 
           error: (err) => {
 
@@ -478,7 +625,9 @@ export class CrudEventos implements OnInit {
               err
             );
 
+
             this.cargando = false;
+
 
             alert(
               '❌ No se pudo subir la nueva imagen.'
@@ -509,7 +658,9 @@ export class CrudEventos implements OnInit {
     )) {
 
       return;
+
     }
+
 
     this.eventosService
       .eliminarEvento(id)
@@ -521,9 +672,11 @@ export class CrudEventos implements OnInit {
             '✅ Evento eliminado correctamente.'
           );
 
+
           this.cargarEventos();
 
         },
+
 
         error: (err) => {
 
@@ -531,6 +684,7 @@ export class CrudEventos implements OnInit {
             '❌ Error eliminando:',
             err
           );
+
 
           alert(
             '❌ No se pudo eliminar el evento.'
@@ -549,48 +703,57 @@ export class CrudEventos implements OnInit {
 
   cargarEventos(): void {
 
-  this.eventosService
-    .obtenerEventos()
-    .subscribe({
+    this.eventosService
+      .obtenerEventos()
+      .subscribe({
 
-      next: (data: any) => {
+        next: (data: any) => {
 
-        console.log('📥 Todos los eventos:', data);
-
-        const todosLosEventos =
-          Array.isArray(data)
-            ? data
-            : [];
-
-        // Mostrar solamente los eventos creados
-        // por el usuario actualmente autenticado
-        this.eventos =
-          todosLosEventos.filter(
-            (evento: any) =>
-              evento.authorId === this.usuario?.uid
+          console.log(
+            '📥 Todos los eventos:',
+            data
           );
 
-        console.log(
-          '👤 Mis eventos:',
-          this.eventos
-        );
 
-        this.cdr.detectChanges();
+          const todosLosEventos =
+            Array.isArray(data)
+              ? data
+              : [];
 
-      },
 
-      error: (err) => {
+          // Mostrar solamente los eventos
+          // creados por el usuario actualmente autenticado
+          this.eventos =
+            todosLosEventos.filter(
+              (evento: any) =>
+                evento.authorId ===
+                this.usuario?.uid
+            );
 
-        console.error(
-          '❌ Error cargando eventos:',
-          err
-        );
 
-      }
+          console.log(
+            '👤 Mis eventos:',
+            this.eventos
+          );
 
-    });
 
-}
+          this.cdr.detectChanges();
+
+        },
+
+
+        error: (err) => {
+
+          console.error(
+            '❌ Error cargando eventos:',
+            err
+          );
+
+        }
+
+      });
+
+  }
 
 
   // ==========================================
@@ -602,9 +765,13 @@ export class CrudEventos implements OnInit {
     const file =
       event.target.files?.[0];
 
+
     if (!file) {
+
       return;
+
     }
+
 
     if (!file.type.startsWith('image/')) {
 
@@ -612,10 +779,13 @@ export class CrudEventos implements OnInit {
         '⚠️ Solo puedes seleccionar imágenes.'
       );
 
+
       event.target.value = '';
 
       return;
+
     }
+
 
     if (
       file.size >
@@ -626,24 +796,32 @@ export class CrudEventos implements OnInit {
         '⚠️ La imagen no puede superar los 5 MB.'
       );
 
+
       event.target.value = '';
 
       return;
+
     }
 
-    this.selectedFile = file;
+
+    this.selectedFile =
+      file;
+
 
     const reader =
       new FileReader();
+
 
     reader.onload = () => {
 
       this.previewImage =
         reader.result as string;
 
+
       this.cdr.detectChanges();
 
     };
+
 
     reader.readAsDataURL(file);
 
