@@ -15,10 +15,43 @@
             <div class="sidebar-card">
                 <h4>Accesos rápidos</h4>
                 <ul class="sidebar-lista">
-                    <li><a routerLink="/crud-eventos">➕ Crear evento</a></li>
-                    <li><a routerLink="/perfil">👤 Mis eventos</a></li>
-                    <li><a routerLink="/favoritos">⭐ Favoritos</a></li>
-                    <li><a routerLink="/chats">💬 Chats</a></li>
+                    <li><a routerLink="/crud-eventos">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            Crear evento
+                        </a></li>
+                    <li><a routerLink="/perfil">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="12" cy="8" r="4"></circle>
+                                <path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"></path>
+                            </svg>
+                            Mis eventos
+                        </a></li>
+
+                    <li><a routerLink="/favoritos">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path
+                                    d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l7.8-7.6a5.5 5.5 0 0 0 1-8.8z">
+                                </path>
+                            </svg>
+                            Favoritos
+                        </a></li>
+
+                    <li><a routerLink="/chats">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path
+                                    d="M21 11.5a8.4 8.4 0 0 1-9 8.5 9.2 9.2 0 0 1-4-.9L3 21l1.9-4.1A8.1 8.1 0 0 1 3 11.5a8.4 8.4 0 0 1 9-8.5 8.4 8.4 0 0 1 9 8.5z">
+                                </path>
+                            </svg>
+                            Chats
+                        </a></li>
+
                 </ul>
             </div>
 
@@ -26,20 +59,18 @@
                 <h4>Categorías</h4>
                 <ul class="sidebar-lista">
                     @for (categoria of categoriasMostradas; track categoria) {
-                        <li>
-                            <a
-                                (click)="filtrarPorCategoria(categoria)"
-                                [class.activo]="filtroCategoria === categoria">
-                                {{ categoria }}
-                            </a>
-                        </li>
+                    <li>
+                        <a (click)="filtrarPorCategoria(categoria)" [class.activo]="filtroCategoria === categoria">
+                            {{ categoria }}
+                        </a>
+                    </li>
                     }
                 </ul>
 
                 @if (categorias.length > categoriasVisiblesCantidad) {
-                    <button class="btn-ver-mas" (click)="toggleCategorias($event)">
-                        {{ mostrarTodasCategorias ? 'Ver menos ▲' : 'Ver más ▼' }}
-                    </button>
+                <button class="btn-ver-mas" (click)="toggleCategorias($event)">
+                    {{ mostrarTodasCategorias ? 'Ver menos ▲' : 'Ver más ▼' }}
+                </button>
                 }
             </div>
 
@@ -49,39 +80,86 @@
         <section class="feed-central">
 
             <div class="filtros-container">
-                <input type="text"
-                       [(ngModel)]="filtroTexto"
-                       (input)="aplicarFiltros()"
-                       placeholder="🔍 Buscar evento por título...">
+                <input type="text" [(ngModel)]="filtroTexto" (input)="aplicarFiltros()"
+                    placeholder=" Buscar evento por título...">
             </div>
 
             <div *ngIf="eventosFiltrados.length === 0" class="sin-resultados">
-                ❌ No se encontraron eventos que coincidan con tu búsqueda.
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <line x1="8" y1="8" x2="16" y2="16"></line>
+                    <line x1="16" y1="8" x2="8" y2="16"></line>
+                </svg>
+                No se encontraron eventos que coincidan con tu búsqueda.
+
             </div>
 
             <div class="eventos-grid" *ngIf="eventosFiltrados.length > 0">
                 @for (evento of eventosFiltrados; track evento.id) {
-                    <div class="evento-card">
-                        <img [src]="evento.imageUrl" alt="Evento">
-                        <div class="evento-info">
-                            <h3>{{ evento.title }}</h3>
-                            <p>📍 {{ evento.location }}</p>
-                            <p>📅 {{ evento.date }}</p>
-                            <p class="categoria-tag">{{ evento.category }}</p>
-                            <p class="autor">Creado por: {{ evento.authorName }}</p>
-                            <div class="acciones-evento">
-                                <button class="btn-like" (click)="darLike(evento)">
-                                    <span *ngIf="usuarioDioLike(evento)">❤️</span>
-                                    <span *ngIf="!usuarioDioLike(evento)">🤍</span>
-                                    {{ evento.likes || 0 }}
-                                </button>
-                                <button class="btn-favorito" (click)="darFavorito(evento)">
-                                    {{ usuarioTieneFavorito(evento) ? '⭐' : '☆' }}
-                                </button>
-                            </div>
-                            <button (click)="verMas(evento)">Ver más</button>
+                <div class="evento-card">
+                    <img [src]="evento.imageUrl" alt="Evento">
+                    <div class="evento-info">
+                        <h3>{{ evento.title }}</h3>
+                        <p>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0z"></path>
+                                <circle cx="12" cy="10" r="2.5"></circle>
+                            </svg>
+                            {{ evento.location }}
+                        </p>
+
+                        <p>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="3" y="4" width="18" height="17" rx="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            {{ evento.date }}
+                        </p>
+
+                        <p class="categoria-tag">{{ evento.category }}</p>
+                        <p class="autor">Creado por: {{ evento.authorName }}</p>
+                        <div class="acciones-evento">
+                            <button class="btn-like" (click)="darLike(evento)">
+                                <svg *ngIf="usuarioDioLike(evento)" width="18" height="18" viewBox="0 0 24 24"
+                                    fill="currentColor">
+                                    <path
+                                        d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l7.8-7.6a5.5 5.5 0 0 0 1-8.8z">
+                                    </path>
+                                </svg>
+
+                                <svg *ngIf="!usuarioDioLike(evento)" width="18" height="18" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2">
+                                    <path
+                                        d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l7.8-7.6a5.5 5.5 0 0 0 1-8.8z">
+                                    </path>
+                                </svg>
+
+                                {{ evento.likes || 0 }}
+                            </button>
+                            <button class="btn-favorito" (click)="darFavorito(evento)">
+                                <svg *ngIf="usuarioTieneFavorito(evento)" width="20" height="20" viewBox="0 0 24 24"
+                                    fill="currentColor">
+                                    <path
+                                        d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-2.9-5.6 2.9 1.1-6.2L3 9.6l6.2-.9L12 3z">
+                                    </path>
+                                </svg>
+
+                                <svg *ngIf="!usuarioTieneFavorito(evento)" width="20" height="20" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2">
+                                    <path
+                                        d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-2.9-5.6 2.9 1.1-6.2L3 9.6l6.2-.9L12 3z">
+                                    </path>
+                                </svg>
+
+                            </button>
                         </div>
+                        <button (click)="verMas(evento)">Ver más</button>
                     </div>
+                </div>
                 }
             </div>
 
@@ -99,13 +177,23 @@
 
                 <ul class="proximos-lista">
                     @for (evento of eventosProximos; track evento.id) {
-                        <li (click)="verMas(evento)">
-                            <img [src]="evento.imageUrl" alt="Evento">
-                            <div>
-                                <span class="proximo-titulo">{{ evento.title }}</span>
-                                <span class="proximo-fecha">📅 {{ evento.date }}</span>
-                            </div>
-                        </li>
+                    <li (click)="verMas(evento)">
+                        <img [src]="evento.imageUrl" alt="Evento">
+                        <div>
+                            <span class="proximo-titulo">{{ evento.title }}</span>
+                            <span class="proximo-fecha">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="17" rx="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                {{ evento.date }}
+                            </span>
+
+                        </div>
+                    </li>
                     }
                 </ul>
             </div>
@@ -115,19 +203,22 @@
     </div>
 
     <!-- BURBUJA ADVAIH IA -->
-    <div
-    class="ia-floating"
-    routerLink="/ia"
-    title="Hablar con ADVAIH IA"
-    >
-    <div class="ia-floating-icon">
-        🤖
-    </div>
+    <div class="ia-floating" routerLink="/ia" title="Hablar con ADVAIH IA">
+        <div class="ia-floating-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="4" y="5" width="16" height="14" rx="3"></rect>
+                <circle cx="9" cy="12" r="1" fill="currentColor"></circle>
+                <circle cx="15" cy="12" r="1" fill="currentColor"></circle>
+                <path d="M9 16h6"></path>
+                <path d="M12 2v3"></path>
+            </svg>
+        </div>
 
-    <div class="ia-floating-text">
-        <strong>ADVAIH IA</strong>
-        <span>¿Buscas un evento?</span>
-    </div>
+
+        <div class="ia-floating-text">
+            <strong>ADVAIH IA</strong>
+            <span>¿Buscas un evento?</span>
+        </div>
     </div>
 
     <app-footer></app-footer>

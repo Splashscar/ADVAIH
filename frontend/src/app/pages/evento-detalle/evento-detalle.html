@@ -7,8 +7,14 @@
 <div *ngIf="error" class="estado-error">
 
   <div class="error-icon">
-    ⚠️
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10.3 3.6L2.2 18a2 2 0 0 0 1.7 3h16.2a2 2 0 0 0 1.7-3L13.7 3.6a2 2 0 0 0-3.4 0z" />
+      <line x1="12" y1="9" x2="12" y2="13" />
+      <line x1="12" y1="17" x2="12.01" y2="17" />
+    </svg>
   </div>
+
 
   <h2>
     No se pudo cargar el evento
@@ -19,12 +25,14 @@
     al obtener la información.
   </p>
 
-  <button
-    class="btn-volver"
-    type="button"
-    (click)="volver()">
+  <button class="btn-volver" type="button" (click)="volver()">
 
-    ← Volver a eventos
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <line x1="19" y1="12" x2="5" y2="12" />
+      <polyline points="12 19 5 12 12 5" />
+    </svg>
+
 
   </button>
 
@@ -41,12 +49,14 @@
         BOTÓN VOLVER
   ========================= -->
 
-  <button
-    class="btn-regresar"
-    type="button"
-    (click)="volver()">
+  <button class="btn-regresar" type="button" (click)="volver()">
 
-    ← Volver
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <line x1="19" y1="12" x2="5" y2="12" />
+      <polyline points="12 19 5 12 12 5" />
+    </svg>
+
 
   </button>
 
@@ -63,19 +73,19 @@
 
     <div class="evento-imagen-container">
 
-      <img
-        *ngIf="evento.imageUrl"
-        [src]="imagenOptimizada(evento.imageUrl)"
-        [alt]="evento.title || 'Imagen del evento'"
-        class="evento-imagen"
-        loading="eager"
-        decoding="async">
+      <img *ngIf="evento.imageUrl" [src]="imagenOptimizada(evento.imageUrl)" [alt]="evento.title || 'Imagen del evento'"
+        class="evento-imagen" loading="eager" decoding="async">
 
-      <div
-        *ngIf="!evento.imageUrl"
-        class="imagen-placeholder">
+      <div *ngIf="!evento.imageUrl" class="imagen-placeholder">
 
-        <span>🎫</span>
+        <span>
+          <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 6h16v4a2 2 0 0 0 0 4v4H4v-4a2 2 0 0 0 0-4V6z" />
+            <line x1="12" y1="7" x2="12" y2="17" />
+          </svg>
+        </span>
+
 
         <p>
           Sin imagen disponible
@@ -97,9 +107,7 @@
             CATEGORÍA
       ========================= -->
 
-      <span
-        *ngIf="evento.category"
-        class="evento-categoria">
+      <span *ngIf="evento.category" class="evento-categoria">
 
         {{ evento.category }}
 
@@ -121,9 +129,7 @@
             DESCRIPCIÓN
       ========================= -->
 
-      <div
-        *ngIf="evento.description"
-        class="evento-descripcion">
+      <div *ngIf="evento.description" class="evento-descripcion">
 
         <h2>
           Descripción
@@ -147,13 +153,18 @@
               FECHA
         ========================= -->
 
-        <div
-          *ngIf="evento.date"
-          class="dato-evento">
+        <div *ngIf="evento.date" class="dato-evento">
 
           <div class="dato-icono">
-            📅
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="17" rx="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
           </div>
+
 
           <div>
 
@@ -174,12 +185,14 @@
               HORA
         ========================= -->
 
-        <div
-          *ngIf="evento.time"
-          class="dato-evento">
+        <div *ngIf="evento.time" class="dato-evento">
 
           <div class="dato-icono">
-            🕐
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9" />
+              <polyline points="12 7 12 12 15 14" />
+            </svg>
           </div>
 
           <div>
@@ -201,13 +214,16 @@
               UBICACIÓN
         ========================= -->
 
-        <div
-          *ngIf="evento.location"
-          class="dato-evento ubicacion-dato">
+        <div *ngIf="evento.location" class="dato-evento ubicacion-dato">
 
           <div class="dato-icono">
-            📍
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0z" />
+              <circle cx="12" cy="10" r="2.5" />
+            </svg>
           </div>
+
 
           <div class="ubicacion-contenido">
 
@@ -219,12 +235,17 @@
               {{ evento.location }}
             </strong>
 
-            <button
-              type="button"
-              class="btn-mapa"
-              (click)="abrirGoogleMaps()">
+            <button type="button" class="btn-mapa" (click)="abrirGoogleMaps()">
 
-              🗺️ Ver en Google Maps
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21 3 6" />
+                <line x1="9" y1="3" x2="9" y2="18" />
+                <line x1="15" y1="6" x2="15" y2="21" />
+              </svg>
+
+              Ver en Google Maps
+
 
             </button>
 
@@ -237,12 +258,14 @@
               ORGANIZADOR
         ========================= -->
 
-        <div
-          *ngIf="evento.authorName"
-          class="dato-evento">
+        <div *ngIf="evento.authorName" class="dato-evento">
 
           <div class="dato-icono">
-            👤
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="8" r="4" />
+              <path d="M4 21a8 8 0 0 1 16 0" />
+            </svg>
           </div>
 
           <div>
@@ -274,22 +297,31 @@
               BOTÓN ASISTENCIA
         ========================= -->
 
-        <button
-          type="button"
-          class="btn-asistencia"
-          [class.asistiendo]="estaAsistiendo"
-          [disabled]="procesandoAsistencia"
-          (click)="toggleAsistencia()">
+        <button type="button" class="btn-asistencia" [class.asistiendo]="estaAsistiendo"
+          [disabled]="procesandoAsistencia" (click)="toggleAsistencia()">
 
           <span>
 
-            {{ estaAsistiendo ? '✓' : '🎟️' }}
+            <span>
+
+              <span *ngIf="estaAsistiendo">✓</span>
+
+              <svg *ngIf="!estaAsistiendo" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+
+                <path d="M4 6h16v4a2 2 0 0 0 0 4v4H4v-4a2 2 0 0 0 0-4V6z" />
+                <line x1="12" y1="7" x2="12" y2="17" />
+
+              </svg>
+
+            </span>
+
 
           </span>
 
           {{ estaAsistiendo
-            ? 'No voy a asistir'
-            : 'Voy a asistir' }}
+          ? 'No voy a asistir'
+          : 'Voy a asistir' }}
 
         </button>
 
@@ -301,8 +333,15 @@
         <div class="contador-asistentes">
 
           <span>
-            👥
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="9" cy="8" r="3" />
+              <path d="M3 20a6 6 0 0 1 12 0" />
+              <path d="M16 5.5a3 3 0 0 1 0 5.8" />
+              <path d="M18 14a5 5 0 0 1 3 6" />
+            </svg>
           </span>
+
 
           <strong>
             {{ cantidadAsistentes }}
@@ -311,8 +350,8 @@
           <span>
 
             {{ cantidadAsistentes === 1
-              ? 'persona asistirá'
-              : 'personas asistirán' }}
+            ? 'persona asistirá'
+            : 'personas asistirán' }}
 
           </span>
 
@@ -327,9 +366,7 @@
             SOLO LA VE EL CREADOR
       ================================================= -->
 
-      <section
-        class="seccion-asistentes"
-        *ngIf="esCreador">
+      <section class="seccion-asistentes" *ngIf="esCreador">
 
 
         <!-- =========================
@@ -346,13 +383,24 @@
 
             <p>
 
-              👥 {{ asistentes.length }}
+            <p>
+
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="9" cy="8" r="3" />
+                <path d="M3 20a6 6 0 0 1 12 0" />
+                <path d="M16 5.5a3 3 0 0 1 0 5.8" />
+                <path d="M18 14a5 5 0 0 1 3 6" />
+              </svg>
+
+              {{ asistentes.length }}
 
               {{ asistentes.length === 1
-                ? 'asistente'
-                : 'asistentes' }}
+              ? 'asistente'
+              : 'asistentes' }}
 
             </p>
+
 
           </div>
 
@@ -363,13 +411,16 @@
               CARGANDO ASISTENTES
         ================================================= -->
 
-        <div
-          class="sin-asistentes"
-          *ngIf="!asistentesCargados">
+        <div class="sin-asistentes" *ngIf="!asistentesCargados">
 
           <span>
-            ⏳
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9" />
+              <polyline points="12 7 12 12 15 14" />
+            </svg>
           </span>
+
 
           <p>
             Cargando asistentes...
@@ -382,17 +433,13 @@
               LISTA DE ASISTENTES
         ================================================= -->
 
-        <div
-          class="lista-asistentes"
-          *ngIf="asistentesCargados && asistentes.length > 0">
+        <div class="lista-asistentes" *ngIf="asistentesCargados && asistentes.length > 0">
 
 
-          <div
-            class="asistente-item"
-            *ngFor="let asistente of asistentes">
+          <div class="asistente-item" *ngFor="let asistente of asistentes">
 
 
-            
+
 
 
             <!-- =========================
@@ -426,13 +473,18 @@
               SIN ASISTENTES
         ================================================= -->
 
-        <div
-          class="sin-asistentes"
-          *ngIf="asistentesCargados && asistentes.length === 0">
+        <div class="sin-asistentes" *ngIf="asistentesCargados && asistentes.length === 0">
 
           <span>
-            👥
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="9" cy="8" r="3" />
+              <path d="M3 20a6 6 0 0 1 12 0" />
+              <path d="M16 5.5a3 3 0 0 1 0 5.8" />
+              <path d="M18 14a5 5 0 0 1 3 6" />
+            </svg>
           </span>
+
 
           <p>
             Todavía no hay asistentes.
