@@ -213,12 +213,44 @@ async guardarUsuario(usuario: Usuario) {
   // =========================
 
   async crearChat(chatId: string, participantes: string[]) {
-    const chatRef = doc(this.firestore, `chats/${chatId}`);
-    const chatExistente = await getDoc(chatRef);
-    if (!chatExistente.exists()) {
-      await setDoc(chatRef, { participantes, creado: new Date() });
-    }
+
+  try {
+
+    const chatRef = doc(
+      this.firestore,
+      `chats/${chatId}`
+    );
+
+    // Crear el chat solamente si no existe.
+    // merge evita problemas si posteriormente se agregan más campos.
+    await setDoc(
+      chatRef,
+      {
+        participantes: participantes,
+        creado: serverTimestamp()
+      },
+      {
+        merge: true
+      }
+    );
+
+    console.log(
+      '✅ Chat creado/confirmado:',
+      chatId
+    );
+
+  } catch (error) {
+
+    console.error(
+      '❌ Error creando chat:',
+      error
+    );
+
+    throw error;
+
   }
+
+}
 
  async enviarMensaje(
   chatId: string,

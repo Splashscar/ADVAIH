@@ -173,69 +173,132 @@ export class ChatsComponent implements OnInit {
 
   async crearChat(usuario: any) {
 
-    if (!this.usuarioActual) {
+  if (!this.usuarioActual) {
 
-      return;
+    alert('Debes iniciar sesión para enviar mensajes');
 
-    }
+    return;
 
-
-    if (
-      usuario.uid ===
-      this.usuarioActual.uid
-    ) {
-
-      alert(
-        'No puedes enviarte mensajes a ti mismo'
-      );
-
-      return;
-
-    }
+  }
 
 
-    const participantes = [
+  if (!this.usuarioActual.uid) {
 
-      this.usuarioActual.uid,
+    console.error(
+      '❌ El usuario actual no tiene UID:',
+      this.usuarioActual
+    );
 
-      usuario.uid
+    return;
 
-    ].sort();
+  }
 
 
-    const chatId =
-      participantes.join('_');
+  if (!usuario?.uid) {
+
+    console.error(
+      '❌ El usuario seleccionado no tiene UID:',
+      usuario
+    );
+
+    return;
+
+  }
+
+
+  if (
+    usuario.uid ===
+    this.usuarioActual.uid
+  ) {
+
+    alert(
+      'No puedes enviarte mensajes a ti mismo'
+    );
+
+    return;
+
+  }
+
+
+  // =========================================================
+  // PARTICIPANTES
+  // =========================================================
+
+  const participantes = [
+
+    this.usuarioActual.uid,
+
+    usuario.uid
+
+  ].sort();
+
+
+  // =========================================================
+  // ID ÚNICO DEL CHAT
+  // =========================================================
+
+  const chatId =
+    participantes.join('_');
+
+
+  console.log(
+    '👤 Usuario actual:',
+    this.usuarioActual.uid
+  );
+
+  console.log(
+    '👤 Usuario destino:',
+    usuario.uid
+  );
+
+  console.log(
+    '👥 Participantes:',
+    participantes
+  );
+
+  console.log(
+    '💬 Chat ID:',
+    chatId
+  );
+
+
+  try {
+
+    // =======================================================
+    // CREAR O CONFIRMAR CHAT
+    // =======================================================
+
+    await this.firebaseService.crearChat(
+      chatId,
+      participantes
+    );
 
 
     console.log(
-      'Chat ID:',
+      '✅ Chat listo:',
       chatId
     );
 
 
-    try {
+    // =======================================================
+    // ABRIR CHAT
+    // =======================================================
 
-      await this.firebaseService
-        .crearChat(
-          chatId,
-          participantes
-        );
+    await this.router.navigate([
+      '/chats',
+      chatId
+    ]);
 
 
-      this.router.navigate([
-        '/chats',
-        chatId
-      ]);
+  } catch (error) {
 
-    } catch (error) {
-
-      console.error(
-        '❌ Error creando chat:',
-        error
-      );
-
-    }
+    console.error(
+      '❌ Error creando chat:',
+      error
+    );
 
   }
+
+}
 
 }
