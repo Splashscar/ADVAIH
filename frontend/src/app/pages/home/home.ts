@@ -1,30 +1,69 @@
-import { Component, OnInit, ElementRef, HostListener, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ElementRef,
+  HostListener,
+  ChangeDetectorRef
+} from '@angular/core';
+
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
 import { Navbar } from '../../components/navbar/navbar';
 import { EventosService } from '../../services/eventos';
 import { AuthServices } from '../../services/auth';
+
 import { Router } from '@angular/router';
 import { RouterLink } from '@angular/router';
+
 import { FooterComponent } from '../../components/footer/footer';
+
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, Navbar, RouterLink, FooterComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    Navbar,
+    RouterLink,
+    FooterComponent
+  ],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
 export class HomeComponent implements OnInit {
 
+  // =========================================================
+  // EVENTOS
+  // =========================================================
+
   todosLosEventos: any[] = [];
+
   eventosFiltrados: any[] = [];
+
   eventosProximos: any[] = [];
+
+
+  // =========================================================
+  // USUARIO
+  // =========================================================
 
   nombreUsuario: string = '';
 
+
+  // =========================================================
+  // FILTROS
+  // =========================================================
+
   filtroTexto: string = '';
+
   filtroCategoria: string = 'Todos';
+
+
+  // =========================================================
+  // CATEGORÍAS
+  // =========================================================
 
   categorias: string[] = [
     'Todos',
@@ -35,7 +74,13 @@ export class HomeComponent implements OnInit {
   ];
 
   mostrarTodasCategorias: boolean = false;
+
   categoriasVisiblesCantidad: number = 5;
+
+
+  // =========================================================
+  // CONSTRUCTOR
+  // =========================================================
 
   constructor(
     private eventosService: EventosService,
@@ -44,6 +89,11 @@ export class HomeComponent implements OnInit {
     private router: Router,
     private elementRef: ElementRef
   ) {}
+
+
+  // =========================================================
+  // INICIO
+  // =========================================================
 
   ngOnInit(): void {
 
@@ -65,8 +115,13 @@ export class HomeComponent implements OnInit {
     });
 
     this.cargarEventos();
+
   }
 
+
+  // =========================================================
+  // CARGAR EVENTOS
+  // =========================================================
 
   cargarEventos(): void {
 
@@ -74,13 +129,61 @@ export class HomeComponent implements OnInit {
 
       next: (res: any) => {
 
-        this.todosLosEventos =
+        const eventos =
           Array.isArray(res) ? res : [];
 
+
+        // -----------------------------------------------------
+        // FECHA Y HORA ACTUAL
+        // -----------------------------------------------------
+
+        const ahora = new Date();
+
+
+        // -----------------------------------------------------
+        // FILTRAR EVENTOS PASADOS
+        // Y ORDENAR DEL MÁS PRÓXIMO AL MÁS LEJANO
+        // -----------------------------------------------------
+
+        this.todosLosEventos = eventos
+
+          .filter(evento => {
+
+            const fechaEvento =
+              new Date(evento.date);
+
+            return (
+              !isNaN(fechaEvento.getTime()) &&
+              fechaEvento >= ahora
+            );
+
+          })
+
+          .sort((a, b) => {
+
+            return (
+              new Date(a.date).getTime() -
+              new Date(b.date).getTime()
+            );
+
+          });
+
+
+        // -----------------------------------------------------
+        // APLICAR FILTROS
+        // -----------------------------------------------------
+
         this.aplicarFiltros();
+
+
+        // -----------------------------------------------------
+        // CALCULAR PRÓXIMOS EVENTOS
+        // -----------------------------------------------------
+
         this.calcularProximosEventos();
 
       },
+
 
       error: (err) => {
 
@@ -96,96 +199,174 @@ export class HomeComponent implements OnInit {
   }
 
 
+  // =========================================================
+  // FILTROS
+  // =========================================================
+
   aplicarFiltros(): void {
 
     this.eventosFiltrados =
       this.todosLosEventos.filter(evento => {
+
+
+        // -----------------------------------------------------
+        // FILTRO POR CATEGORÍA
+        // -----------------------------------------------------
 
         const cumpleCategoria =
           !this.filtroCategoria ||
           this.filtroCategoria === 'Todos' ||
           evento.category === this.filtroCategoria;
 
+
+        // -----------------------------------------------------
+        // FILTRO POR TEXTO
+        // -----------------------------------------------------
+
         const texto =
           this.filtroTexto.toLowerCase();
+
 
         const titulo =
           (evento.title || '').toLowerCase();
 
+
         const ubicacion =
           (evento.location || '').toLowerCase();
+
 
         const cumpleBusqueda =
           !texto ||
           titulo.includes(texto) ||
           ubicacion.includes(texto);
 
-        return cumpleCategoria && cumpleBusqueda;
+
+        return (
+          cumpleCategoria &&
+          cumpleBusqueda
+        );
 
       });
+
+
+    // Mantener el orden por fecha
+    this.eventosFiltrados.sort((a, b) => {
+
+      return (
+        new Date(a.date).getTime() -
+        new Date(b.date).getTime()
+      );
+
+    });
+
 
     this.cdr.detectChanges();
 
   }
 
 
+  // =========================================================
+  // FILTRAR POR CATEGORÍA
+  // =========================================================
+
   filtrarPorCategoria(categoria: string): void {
+
     this.filtroCategoria = categoria;
+
     this.aplicarFiltros();
+
   }
 
+
+  // =========================================================
+  // CATEGORÍAS MOSTRADAS
+  // =========================================================
 
   get categoriasMostradas(): string[] {
+
     return this.mostrarTodasCategorias
       ? this.categorias
-      : this.categorias.slice(0, this.categoriasVisiblesCantidad);
+      : this.categorias.slice(
+          0,
+          this.categoriasVisiblesCantidad
+        );
+
   }
 
+
+  // =========================================================
+  // VER MÁS / MENOS CATEGORÍAS
+  // =========================================================
+
   toggleCategorias(event: Event): void {
+
     event.stopPropagation();
-    this.mostrarTodasCategorias = !this.mostrarTodasCategorias;
+
+    this.mostrarTodasCategorias =
+      !this.mostrarTodasCategorias;
+
   }
+
+
+  // =========================================================
+  // CERRAR CATEGORÍAS AL HACER CLICK AFUERA
+  // =========================================================
 
   @HostListener('document:click', ['$event'])
   clickFuera(event: Event): void {
 
     const wrapper =
-      this.elementRef.nativeElement.querySelector('.categorias-wrapper');
+      this.elementRef.nativeElement
+        .querySelector('.categorias-wrapper');
+
 
     if (
       this.mostrarTodasCategorias &&
       wrapper &&
       !wrapper.contains(event.target)
     ) {
+
       this.mostrarTodasCategorias = false;
+
       this.cdr.detectChanges();
+
     }
 
   }
 
 
+  // =========================================================
+  // PRÓXIMOS EVENTOS
+  // =========================================================
+
   calcularProximosEventos(): void {
 
-    const hoy = new Date();
+    /*
+     * todosLosEventos ya contiene únicamente
+     * eventos futuros y además está ordenado
+     * por fecha.
+     *
+     * Por eso simplemente tomamos los primeros 5.
+     */
 
-    this.eventosProximos = [...this.todosLosEventos]
-      .filter(evento => {
-        const fecha = new Date(evento.date);
-        return !isNaN(fecha.getTime()) && fecha >= hoy;
-      })
-      .sort((a, b) =>
-        new Date(a.date).getTime() - new Date(b.date).getTime()
-      )
-      .slice(0, 5);
+    this.eventosProximos =
+      this.todosLosEventos.slice(0, 5);
+
 
     this.cdr.detectChanges();
 
   }
 
 
+  // =========================================================
+  // LIKE
+  // =========================================================
+
   darLike(evento: any): void {
 
-    const usuario = this.authService.obtenerUsuario();
+    const usuario =
+      this.authService.obtenerUsuario();
+
 
     if (!usuario) {
 
@@ -196,6 +377,7 @@ export class HomeComponent implements OnInit {
       return;
 
     }
+
 
     this.eventosService
       .toggleLike(
@@ -212,9 +394,11 @@ export class HomeComponent implements OnInit {
           evento.usuariosLike =
             respuesta.usuariosLike;
 
+
           this.cdr.detectChanges();
 
         },
+
 
         error: (err) => {
 
@@ -230,9 +414,15 @@ export class HomeComponent implements OnInit {
   }
 
 
+  // =========================================================
+  // FAVORITOS
+  // =========================================================
+
   darFavorito(evento: any): void {
 
-    const usuario = this.authService.obtenerUsuario();
+    const usuario =
+      this.authService.obtenerUsuario();
+
 
     if (!usuario) {
 
@@ -243,6 +433,7 @@ export class HomeComponent implements OnInit {
       return;
 
     }
+
 
     this.eventosService
       .toggleFavorito(
@@ -259,9 +450,11 @@ export class HomeComponent implements OnInit {
           evento.usuariosFavoritos =
             respuesta.usuariosFavoritos;
 
+
           this.cdr.detectChanges();
 
         },
+
 
         error: (err) => {
 
@@ -277,14 +470,20 @@ export class HomeComponent implements OnInit {
   }
 
 
+  // =========================================================
+  // VERIFICAR SI EL USUARIO DIO LIKE
+  // =========================================================
+
   usuarioDioLike(evento: any): boolean {
 
     const usuario =
       this.authService.obtenerUsuario();
 
+
     if (!usuario) {
       return false;
     }
+
 
     return (
       evento.usuariosLike?.includes(
@@ -293,6 +492,11 @@ export class HomeComponent implements OnInit {
     );
 
   }
+
+
+  // =========================================================
+  // VER EVENTO
+  // =========================================================
 
   verMas(evento: any): void {
 
@@ -307,14 +511,21 @@ export class HomeComponent implements OnInit {
 
   }
 
+
+  // =========================================================
+  // VERIFICAR SI EL USUARIO TIENE FAVORITO
+  // =========================================================
+
   usuarioTieneFavorito(evento: any): boolean {
 
     const usuario =
       this.authService.obtenerUsuario();
 
+
     if (!usuario) {
       return false;
     }
+
 
     return (
       evento.usuariosFavoritos?.includes(
