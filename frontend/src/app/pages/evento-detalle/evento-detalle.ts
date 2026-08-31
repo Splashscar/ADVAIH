@@ -1,20 +1,28 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Auth } from '@angular/fire/auth';
-
+import { Navbar } from '../../components/navbar/navbar';
 import { FooterComponent } from '../../components/footer/footer';
 import { EventosService } from '../../services/eventos';
 import { AsistentesService } from '../../services/asistentes';
+import { Subscription } from 'rxjs';
+import {
+  ChangeDetectorRef
+} from '@angular/core';
 
 @Component({
   selector: 'app-evento-detalle',
   standalone: true,
-  imports: [CommonModule, FooterComponent],
+  imports: [
+    CommonModule,
+    FooterComponent,
+    Navbar
+  ],
   templateUrl: './evento-detalle.html',
   styleUrl: './evento-detalle.css'
 })
-export class EventoDetalleComponent implements OnInit {
+export class EventoDetalleComponent implements OnInit, OnDestroy {
 
   evento: any = null;
 
@@ -24,11 +32,19 @@ export class EventoDetalleComponent implements OnInit {
 
   estaAsistiendo = false;
 
+  asistentesCargados = false;
+
   procesandoAsistencia = false;
 
   asistentes: any[] = [];
 
   esCreador = false;
+
+  private asistenciaSubscription?: Subscription;
+
+  private estadoAsistenciaSubscription?: Subscription;
+
+  private eventoSubscription?: Subscription;
 
 
   constructor(
@@ -36,9 +52,14 @@ export class EventoDetalleComponent implements OnInit {
     private router: Router,
     private eventosService: EventosService,
     private asistentesService: AsistentesService,
-    private auth: Auth
+    private auth: Auth,
+    private cdr: ChangeDetectorRef
   ) { }
 
+
+  // =========================================================
+  // INICIO
+  // =========================================================
 
   ngOnInit(): void {
 
@@ -74,7 +95,7 @@ export class EventoDetalleComponent implements OnInit {
 
 
     // ========================================
-    // 2. SI NO VIENE DE HOME, BUSCAR POR ID
+    // 2. BUSCAR EVENTO POR ID
     // ========================================
 
     const id = this.route.snapshot.paramMap.get('id');
@@ -98,47 +119,47 @@ export class EventoDetalleComponent implements OnInit {
 
 
     // ========================================
-    // 3. CONSULTA DE RESPALDO
+    // 3. CARGAR EVENTO
     // ========================================
 
-    this.eventosService.obtenerEvento(id).subscribe({
+    this.eventoSubscription =
+      this.eventosService.obtenerEvento(id).subscribe({
 
-      next: (evento: any) => {
+        next: (evento: any) => {
 
-        console.log(
-          '📦 Evento cargado desde backend:',
-          evento
-        );
+          console.log(
+            '📦 Evento cargado desde Firestore:',
+            evento
+          );
 
 
-        if (!evento) {
+          if (!evento) {
+
+            this.error = true;
+
+            return;
+          }
+
+
+          this.evento = evento;
+
+          this.cargarAsistencia();
+
+        },
+
+
+        error: (error) => {
+
+          console.error(
+            '❌ Error cargando evento:',
+            error
+          );
 
           this.error = true;
 
-          return;
         }
 
-
-        this.evento = evento;
-
-        // Cargar asistencia y contador
-        this.cargarAsistencia();
-
-      },
-
-
-      error: (error) => {
-
-        console.error(
-          '❌ Error cargando evento:',
-          error
-        );
-
-        this.error = true;
-
-      }
-
-    });
+      });
 
   }
 
@@ -149,150 +170,183 @@ export class EventoDetalleComponent implements OnInit {
 
   private cargarAsistencia(): void {
 
+  if (!this.evento?.id) {
 
-
-    if (!this.evento?.id) {
-
-      console.warn(
-        '⚠️ No se puede cargar asistencia: evento sin ID'
-      );
-
-      return;
-    }
-
-
-    console.log(
-      '👥 Cargando asistentes del evento:',
-      this.evento.id
+    console.warn(
+      '⚠️ No se puede cargar asistencia: evento sin ID'
     );
-    const usuario = this.auth.currentUser;
 
-    this.esCreador =
-      !!usuario &&
-      usuario.uid === this.evento.authorId;
+    return;
+  }
 
-    console.log(
-      '👑 ¿Es creador?:',
-      this.esCreador
-    );
-    if (this.esCreador) {
-      this.cargarListaAsistentes();
-    }
+  console.log(
+    '🚀 CARGANDO ASISTENCIA DESDE FIRESTORE:',
+    this.evento.id
+  );
 
 
-    // ========================================
-    // CONTADOR
-    // ========================================
+  // =====================================================
+  // ESCUCHAR EL EVENTO EN TIEMPO REAL
+  // =====================================================
 
-    this.asistentesService
-      .obtenerCantidad(this.evento.id)
-      .subscribe({
+  this.asistentesService
+    .obtenerCantidad(this.evento.id)
+    .subscribe({
 
-        next: (cantidad) => {
+      next: (cantidad) => {
 
-          console.log(
-            '🔢 Cantidad de asistentes:',
-            cantidad
-          );
+        console.log(
+          '🔥 CANTIDAD RECIBIDA DESDE FIRESTORE:',
+          cantidad
+        );
 
-          this.cantidadAsistentes = cantidad;
+        this.cantidadAsistentes = cantidad;
 
-        },
+        console.log(
+          '🟢 VARIABLE DEL COMPONENTE:',
+          this.cantidadAsistentes
+        );
 
-        error: (error) => {
+        // Forzar actualización visual
+        this.cdr.detectChanges();
 
-          console.error(
-            '❌ Error obteniendo asistentes:',
-            error
-          );
+      },
 
-        }
+      error: (error) => {
 
-      });
+        console.error(
+          '❌ Error obteniendo cantidad:',
+          error
+        );
+
+      }
+
+    });
 
 
-    // ========================================
-    // ESTADO DEL USUARIO
-    // ========================================
+  // =====================================================
+  // SABER SI EL USUARIO ASISTE
+  // =====================================================
 
-    this.asistentesService
-      .estaAsistiendo(this.evento.id)
-      .subscribe({
+  this.asistentesService
+    .estaAsistiendo(this.evento.id)
+    .subscribe({
 
-        next: (asistiendo) => {
+      next: (asistiendo) => {
 
-          console.log(
-            '🎟️ ¿Usuario está asistiendo?:',
-            asistiendo
-          );
+        console.log(
+          '🎟️ ¿Usuario está asistiendo?:',
+          asistiendo
+        );
 
-          this.estaAsistiendo = asistiendo;
+        this.estaAsistiendo = asistiendo;
 
-        },
+        this.cdr.detectChanges();
 
-        error: (error) => {
+      },
 
-          console.error(
-            '❌ Error comprobando asistencia:',
-            error
-          );
+      error: (error) => {
 
-        }
+        console.error(
+          '❌ Error comprobando asistencia:',
+          error
+        );
 
-      });
+      }
+
+    });
+
+
+  // =====================================================
+  // SABER SI ES EL CREADOR
+  // =====================================================
+
+  const usuario = this.auth.currentUser;
+
+  this.esCreador =
+    !!usuario &&
+    usuario.uid === this.evento.authorId;
+
+
+  console.log(
+    '👑 ¿Es creador?:',
+    this.esCreador
+  );
+
+
+  // =====================================================
+  // CARGAR LISTA SI ES CREADOR
+  // =====================================================
+
+  if (this.esCreador) {
+
+    this.cargarListaAsistentes();
 
   }
 
-  // ========================================
+}
+
+
+  // =========================================================
   // CARGAR LISTA DE ASISTENTES
-  // ========================================
+  // =========================================================
 
   private cargarListaAsistentes(): void {
 
-    if (!this.evento?.id) {
-
-      return;
-
-    }
-
-    console.log(
-      '👥 Cargando lista de asistentes:',
-      this.evento.id
-    );
-
-
-    this.asistentesService
-      .obtenerAsistentes(this.evento.id)
-      .subscribe({
-
-        next: (asistentes) => {
-
-          console.log(
-            '👥 Lista de asistentes:',
-            asistentes
-          );
-
-          this.asistentes = asistentes;
-
-        },
-
-        error: (error) => {
-
-          console.error(
-            '❌ Error cargando lista de asistentes:',
-            error
-          );
-
-        }
-
-      });
-
+  if (!this.evento?.id) {
+    return;
   }
 
+  console.log(
+    '👥 Cargando lista de asistentes:',
+    this.evento.id
+  );
 
-  // ========================================
+  this.asistentesCargados = false;
+
+  this.asistentesService
+    .obtenerAsistentes(this.evento.id)
+    .subscribe({
+
+      next: (asistentes) => {
+
+        console.log(
+          '🔥 ASISTENTES RECIBIDOS:',
+          asistentes
+        );
+
+        this.asistentes = asistentes || [];
+
+        console.log(
+          '🟢 ASISTENTES EN COMPONENTE:',
+          this.asistentes
+        );
+
+        this.asistentesCargados = true;
+
+      },
+
+      error: (error) => {
+
+        console.error(
+          '❌ Error cargando asistentes:',
+          error
+        );
+
+        this.asistentes = [];
+
+        this.asistentesCargados = true;
+
+      }
+
+    });
+
+}
+
+
+  // =========================================================
   // TOGGLE ASISTENCIA
-  // ========================================
+  // =========================================================
 
   async toggleAsistencia(): Promise<void> {
 
@@ -320,10 +374,13 @@ export class EventoDetalleComponent implements OnInit {
       if (this.estaAsistiendo) {
 
         await this.asistentesService
-          .cancelarAsistencia(this.evento.id);
+          .cancelarAsistencia(
+            this.evento.id
+          );
 
 
         this.estaAsistiendo = false;
+
 
         console.log(
           '❌ Asistencia cancelada'
@@ -336,19 +393,21 @@ export class EventoDetalleComponent implements OnInit {
       // REGISTRAR ASISTENCIA
       // ====================================
 
-      // ====================================
-      // REGISTRAR ASISTENCIA
-      // ====================================
-
       else {
 
         await this.asistentesService.asistir(
+
           this.evento.id,
+
           this.evento.authorId,
+
           this.evento.title
+
         );
 
+
         this.estaAsistiendo = true;
+
 
         console.log(
           '✅ Asistencia registrada'
@@ -358,34 +417,18 @@ export class EventoDetalleComponent implements OnInit {
 
 
       // ====================================
-      // ACTUALIZAR CONTADOR REAL
+      // IMPORTANTE
       // ====================================
-
-      this.asistentesService
-        .obtenerCantidad(this.evento.id)
-        .subscribe({
-
-          next: (cantidad) => {
-
-            console.log(
-              '🔄 Contador actualizado:',
-              cantidad
-            );
-
-            this.cantidadAsistentes = cantidad;
-
-          },
-
-          error: (error) => {
-
-            console.error(
-              '❌ Error actualizando contador:',
-              error
-            );
-
-          }
-
-        });
+      //
+      // Ya NO necesitamos volver a llamar
+      // obtenerCantidad() manualmente.
+      //
+      // obtenerCantidad() está escuchando
+      // Firestore en tiempo real.
+      //
+      // Cuando cambia "asistentes", el contador
+      // se actualiza automáticamente.
+      // ========================================
 
     }
 
@@ -409,39 +452,51 @@ export class EventoDetalleComponent implements OnInit {
   }
 
 
-  // ========================================
+  // =========================================================
   // VOLVER
-  // ========================================
+  // =========================================================
 
   volver(): void {
 
-    this.router.navigate(['/home']);
+    this.router.navigate([
+      '/home'
+    ]);
 
   }
-  // ========================================
-// ABRIR UBICACIÓN EN GOOGLE MAPS
-// ========================================
 
-abrirGoogleMaps(): void {
 
-  if (!this.evento?.location) {
-    return;
+  // =========================================================
+  // GOOGLE MAPS
+  // =========================================================
+
+  abrirGoogleMaps(): void {
+
+    if (!this.evento?.location) {
+
+      return;
+
+    }
+
+
+    const url =
+      'https://www.google.com/maps/search/?api=1&query=' +
+      encodeURIComponent(
+        this.evento.location
+      );
+
+
+    window.open(
+      url,
+      '_blank',
+      'noopener,noreferrer'
+    );
+
   }
 
-  const url =
-    'https://www.google.com/maps/search/?api=1&query=' +
-    encodeURIComponent(this.evento.location);
 
-  window.open(
-    url,
-    '_blank',
-    'noopener,noreferrer'
-  );
-}
-
-  // ========================================
+  // =========================================================
   // OPTIMIZAR IMAGEN DE CLOUDINARY
-  // ========================================
+  // =========================================================
 
   imagenOptimizada(url: string): string {
 
@@ -456,6 +511,21 @@ abrirGoogleMaps(): void {
       '/upload/',
       '/upload/f_auto,q_auto,w_1000/'
     );
+
+  }
+
+
+  // =========================================================
+  // DESTRUIR COMPONENTE
+  // =========================================================
+
+  ngOnDestroy(): void {
+
+    this.asistenciaSubscription?.unsubscribe();
+
+    this.estadoAsistenciaSubscription?.unsubscribe();
+
+    this.eventoSubscription?.unsubscribe();
 
   }
 

@@ -39,24 +39,42 @@ export class FirebaseService {
     return collectionData(eventosRef, { idField: 'id' }) as Observable<any[]>;
   }
   async obtenerEventoUnaVez(id: string): Promise<any | null> {
-  const eventoRef = doc(this.firestore, `events/${id}`);
-  const snapshot = await getDoc(eventoRef);
+    const eventoRef = doc(this.firestore, `events/${id}`);
+    const snapshot = await getDoc(eventoRef);
 
-  if (!snapshot.exists()) {
-    return null;
+    if (!snapshot.exists()) {
+      return null;
+    }
+
+    return {
+      id: snapshot.id,
+      ...snapshot.data()
+    };
   }
-
-  return {
-    id: snapshot.id,
-    ...snapshot.data()
-  };
-}
 
   async crearEvento(evento: any) {
-    const eventosRef = collection(this.firestore, 'events');
-    const nuevoEvento = { ...evento, likes: 0, usuariosLike: [] };
-    return await addDoc(eventosRef, nuevoEvento);
-  }
+
+  const eventosRef =
+    collection(this.firestore, 'events');
+
+  const nuevoEvento = {
+
+    ...evento,
+
+    likes: 0,
+
+    usuariosLike: [],
+
+    asistentes: []
+
+  };
+
+  return await addDoc(
+    eventosRef,
+    nuevoEvento
+  );
+
+}
 
   async eliminarEvento(id: string) {
     const eventoDoc = doc(this.firestore, `events/${id}`);
@@ -101,87 +119,87 @@ export class FirebaseService {
 
 
 
-async guardarUsuario(usuario: Usuario) {
+  async guardarUsuario(usuario: Usuario) {
 
-  try {
+    try {
 
-    const usuarioRef = doc(
-      this.firestore,
-      `usuarios/${usuario.uid}`
-    );
-
-    const usuarioExistente =
-      await getDoc(usuarioRef);
-
-
-    // =========================
-    // CREAR USUARIO
-    // =========================
-
-    if (!usuarioExistente.exists()) {
-
-      await setDoc(
-        usuarioRef,
-        {
-          ...usuario,
-
-          tipo_usuario:
-            usuario.tipo_usuario || 'usuario',
-
-          descripcion:
-            usuario.descripcion || '',
-
-          fotoURL:
-            usuario.fotoURL || '',
-
-          FechaCreacion:
-            usuario.FechaCreacion || new Date(),
-
-          ultimaconexion:
-            new Date()
-        }
+      const usuarioRef = doc(
+        this.firestore,
+        `usuarios/${usuario.uid}`
       );
 
-      console.log(
-        '✅ Usuario guardado en Firestore'
+      const usuarioExistente =
+        await getDoc(usuarioRef);
+
+
+      // =========================
+      // CREAR USUARIO
+      // =========================
+
+      if (!usuarioExistente.exists()) {
+
+        await setDoc(
+          usuarioRef,
+          {
+            ...usuario,
+
+            tipo_usuario:
+              usuario.tipo_usuario || 'usuario',
+
+            descripcion:
+              usuario.descripcion || '',
+
+            fotoURL:
+              usuario.fotoURL || '',
+
+            FechaCreacion:
+              usuario.FechaCreacion || new Date(),
+
+            ultimaconexion:
+              new Date()
+          }
+        );
+
+        console.log(
+          '✅ Usuario guardado en Firestore'
+        );
+
+      }
+
+      // =========================
+      // USUARIO YA EXISTENTE
+      // =========================
+
+      else {
+
+        await setDoc(
+          usuarioRef,
+          {
+            ultimaconexion: new Date()
+          },
+          {
+            merge: true
+          }
+        );
+
+        console.log(
+          '🔄 Usuario actualizado'
+        );
+
+      }
+
+    } catch (error) {
+
+      console.error(
+        '❌ Error guardando usuario',
+        error
       );
+
+      throw error;
 
     }
-
-    // =========================
-    // USUARIO YA EXISTENTE
-    // =========================
-
-    else {
-
-      await setDoc(
-        usuarioRef,
-        {
-          ultimaconexion: new Date()
-        },
-        {
-          merge: true
-        }
-      );
-
-      console.log(
-        '🔄 Usuario actualizado'
-      );
-
-    }
-
-  } catch (error) {
-
-    console.error(
-      '❌ Error guardando usuario',
-      error
-    );
-
-    throw error;
 
   }
-
-}
 
 
 
@@ -214,181 +232,181 @@ async guardarUsuario(usuario: Usuario) {
 
   async crearChat(chatId: string, participantes: string[]) {
 
-  try {
+    try {
+
+      const chatRef = doc(
+        this.firestore,
+        `chats/${chatId}`
+      );
+
+      // Crear el chat solamente si no existe.
+      // merge evita problemas si posteriormente se agregan más campos.
+      await setDoc(
+        chatRef,
+        {
+          participantes: participantes,
+          creado: serverTimestamp()
+        },
+        {
+          merge: true
+        }
+      );
+
+      console.log(
+        '✅ Chat creado/confirmado:',
+        chatId
+      );
+
+    } catch (error) {
+
+      console.error(
+        '❌ Error creando chat:',
+        error
+      );
+
+      throw error;
+
+    }
+
+  }
+
+  async enviarMensaje(
+    chatId: string,
+    texto: string,
+    emisor: string
+  ) {
+
+    // =========================
+    // 1. GUARDAR MENSAJE
+    // =========================
+
+    const mensajesRef = collection(
+      this.firestore,
+      `chats/${chatId}/mensajes`
+    );
+
+    await addDoc(
+      mensajesRef,
+      {
+        texto: texto,
+        emisor: emisor,
+        fecha: serverTimestamp()
+      }
+    );
+
+
+    // =========================
+    // 2. OBTENER CHAT
+    // =========================
 
     const chatRef = doc(
       this.firestore,
       `chats/${chatId}`
     );
 
-    // Crear el chat solamente si no existe.
-    // merge evita problemas si posteriormente se agregan más campos.
-    await setDoc(
-      chatRef,
+    const chatSnapshot = await getDoc(chatRef);
+
+    if (!chatSnapshot.exists()) {
+
+      console.error(
+        '❌ No existe el chat:',
+        chatId
+      );
+
+      return;
+    }
+
+
+    // =========================
+    // 3. OBTENER PARTICIPANTES
+    // =========================
+
+    const chatData: any =
+      chatSnapshot.data();
+
+    const participantes: string[] =
+      chatData.participantes || [];
+
+
+    console.log(
+      '👥 Participantes:',
+      participantes
+    );
+
+
+    // =========================
+    // 4. BUSCAR DESTINATARIO
+    // =========================
+
+    const destinatario =
+      participantes.find(
+        uid => uid !== emisor
+      );
+
+
+    if (!destinatario) {
+
+      console.error(
+        '❌ No se encontró destinatario'
+      );
+
+      return;
+    }
+
+
+    console.log(
+      '📨 Destinatario:',
+      destinatario
+    );
+    const emisorRef = doc(
+      this.firestore,
+      `usuarios/${emisor}`
+    );
+
+    const emisorSnapshot = await getDoc(emisorRef);
+
+    let nombreEmisor = 'Usuario';
+    let fotoEmisor = '';
+
+    if (emisorSnapshot.exists()) {
+
+      const datosEmisor: any =
+        emisorSnapshot.data();
+
+      nombreEmisor =
+        datosEmisor.nombre || 'Usuario';
+
+      fotoEmisor =
+        datosEmisor.fotoURL || '';
+
+    }
+
+    // =========================
+    // 5. CREAR NOTIFICACIÓN
+    // =========================
+
+    await this.crearNotificacion(
+      destinatario,
       {
-        participantes: participantes,
-        creado: serverTimestamp()
-      },
-      {
-        merge: true
+        tipo: 'mensaje',
+
+        titulo: nombreEmisor,
+
+        texto: texto,
+
+        fotoURL: fotoEmisor,
+
+        chatId: chatId,
+
+        emisor: emisor
       }
     );
 
+
     console.log(
-      '✅ Chat creado/confirmado:',
-      chatId
+      '🔔 Notificación creada'
     );
-
-  } catch (error) {
-
-    console.error(
-      '❌ Error creando chat:',
-      error
-    );
-
-    throw error;
-
   }
-
-}
-
- async enviarMensaje(
-  chatId: string,
-  texto: string,
-  emisor: string
-) {
-
-  // =========================
-  // 1. GUARDAR MENSAJE
-  // =========================
-
-  const mensajesRef = collection(
-    this.firestore,
-    `chats/${chatId}/mensajes`
-  );
-
-  await addDoc(
-    mensajesRef,
-    {
-      texto: texto,
-      emisor: emisor,
-      fecha: serverTimestamp()
-    }
-  );
-
-
-  // =========================
-  // 2. OBTENER CHAT
-  // =========================
-
-  const chatRef = doc(
-    this.firestore,
-    `chats/${chatId}`
-  );
-
-  const chatSnapshot = await getDoc(chatRef);
-
-  if (!chatSnapshot.exists()) {
-
-    console.error(
-      '❌ No existe el chat:',
-      chatId
-    );
-
-    return;
-  }
-
-
-  // =========================
-  // 3. OBTENER PARTICIPANTES
-  // =========================
-
-  const chatData: any =
-    chatSnapshot.data();
-
-  const participantes: string[] =
-    chatData.participantes || [];
-
-
-  console.log(
-    '👥 Participantes:',
-    participantes
-  );
-
-
-  // =========================
-  // 4. BUSCAR DESTINATARIO
-  // =========================
-
-  const destinatario =
-    participantes.find(
-      uid => uid !== emisor
-    );
-
-
-  if (!destinatario) {
-
-    console.error(
-      '❌ No se encontró destinatario'
-    );
-
-    return;
-  }
-
-
-  console.log(
-    '📨 Destinatario:',
-    destinatario
-  );
-  const emisorRef = doc(
-  this.firestore,
-  `usuarios/${emisor}`
-);
-
-const emisorSnapshot = await getDoc(emisorRef);
-
-let nombreEmisor = 'Usuario';
-let fotoEmisor = '';
-
-if (emisorSnapshot.exists()) {
-
-  const datosEmisor: any =
-    emisorSnapshot.data();
-
-  nombreEmisor =
-    datosEmisor.nombre || 'Usuario';
-
-  fotoEmisor =
-    datosEmisor.fotoURL || '';
-
-}
-
-  // =========================
-  // 5. CREAR NOTIFICACIÓN
-  // =========================
-
-  await this.crearNotificacion(
-  destinatario,
-  {
-    tipo: 'mensaje',
-
-    titulo: nombreEmisor,
-
-    texto: texto,
-
-    fotoURL: fotoEmisor,
-
-    chatId: chatId,
-
-    emisor: emisor
-  }
-);
-
-
-  console.log(
-    '🔔 Notificación creada'
-  );
-}
 
   obtenerMensajes(chatId: string) {
     const mensajesRef = collection(this.firestore, `chats/${chatId}/mensajes`);
@@ -396,66 +414,101 @@ if (emisorSnapshot.exists()) {
     return collectionData(q, { idField: 'id' });
   }
   // =========================
-// NOTIFICACIONES
-// =========================
+  // NOTIFICACIONES
+  // =========================
 
-async crearNotificacion(
-  uidDestino: string,
-  notificacion: any
-) {
+  async crearNotificacion(
+    uidDestino: string,
+    notificacion: any
+  ) {
 
-  const notificacionesRef = collection(
-    this.firestore,
-    `notificaciones/${uidDestino}/items`
-  );
+    const notificacionesRef = collection(
+      this.firestore,
+      `notificaciones/${uidDestino}/items`
+    );
 
-  return await addDoc(
-    notificacionesRef,
-    {
-      ...notificacion,
-      leida: false,
-      fecha: serverTimestamp()
+    return await addDoc(
+      notificacionesRef,
+      {
+        ...notificacion,
+        leida: false,
+        fecha: serverTimestamp()
+      }
+    );
+  }
+
+
+  obtenerNotificaciones(uid: string) {
+
+    const notificacionesRef = collection(
+      this.firestore,
+      `notificaciones/${uid}/items`
+    );
+
+    const q = query(
+      notificacionesRef,
+      orderBy('fecha', 'desc')
+    );
+
+    return collectionData(
+      q,
+      { idField: 'id' }
+    );
+  }
+
+
+  async marcarNotificacionLeida(
+    uid: string,
+    notificacionId: string
+  ) {
+
+    const notificacionRef = doc(
+      this.firestore,
+      `notificaciones/${uid}/items/${notificacionId}`
+    );
+
+    return await updateDoc(
+      notificacionRef,
+      {
+        leida: true
+      }
+    );
+  }
+
+  // =========================================================
+  // ASISTENCIAS DE EVENTOS
+  // =========================================================
+
+  async obtenerAsistentes(eventoId: string): Promise<string[]> {
+
+    const eventoRef = doc(
+      this.firestore,
+      `events/${eventoId}`
+    );
+
+    const snapshot = await getDoc(eventoRef);
+
+    if (!snapshot.exists()) {
+      return [];
     }
-  );
-}
+
+    const datos: any = snapshot.data();
+
+    return datos.asistentes || [];
+  }
 
 
-obtenerNotificaciones(uid: string) {
+  // =========================================================
+  // CANTIDAD DE ASISTENTES
+  // =========================================================
 
-  const notificacionesRef = collection(
-    this.firestore,
-    `notificaciones/${uid}/items`
-  );
+  async obtenerCantidadAsistentes(
+    eventoId: string
+  ): Promise<number> {
 
-  const q = query(
-    notificacionesRef,
-    orderBy('fecha', 'desc')
-  );
+    const asistentes =
+      await this.obtenerAsistentes(eventoId);
 
-  return collectionData(
-    q,
-    { idField: 'id' }
-  );
-}
-
-
-async marcarNotificacionLeida(
-  uid: string,
-  notificacionId: string
-) {
-
-  const notificacionRef = doc(
-    this.firestore,
-    `notificaciones/${uid}/items/${notificacionId}`
-  );
-
-  return await updateDoc(
-    notificacionRef,
-    {
-      leida: true
-    }
-  );
-}
-
-
+    return asistentes.length;
+  }
 }

@@ -1,23 +1,30 @@
 import { Injectable, inject } from '@angular/core';
+
 import {
   Firestore,
   collection,
   collectionData,
   doc,
   docData,
-  setDoc,
-  deleteDoc
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+  getDoc
 } from '@angular/fire/firestore';
 
-import { FirebaseService } from './firebase';
 import { Auth, authState } from '@angular/fire/auth';
 
 import {
   Observable,
   of,
   switchMap,
-  map
+  map,
+  forkJoin,
+  combineLatest
 } from 'rxjs';
+
+import { FirebaseService } from './firebase';
+
 
 @Injectable({
   providedIn: 'root'
@@ -30,47 +37,177 @@ export class AsistentesService {
 
   constructor(
     private firebaseService: FirebaseService
-  ) {}
+  ) { }
 
 
   // =========================================================
-  // OBTENER ASISTENTES
+  // OBTENER EVENTO
   // =========================================================
 
-  obtenerAsistentes(eventoId: string): Observable<any[]> {
+  private obtenerEvento(eventoId: string): Observable<any> {
 
-    const asistentesRef = collection(
+    const eventoRef = doc(
       this.firestore,
-      `events/${eventoId}/asistentes`
+      `events/${eventoId}`
     );
 
-    return collectionData(
-      asistentesRef,
-      {
-        idField: 'uid'
-      }
-    ) as Observable<any[]>;
+    return docData(eventoRef);
 
   }
 
 
   // =========================================================
-  // CONTADOR
+  // OBTENER LISTA DE ASISTENTES
+  // =========================================================
+
+  // =========================================================
+  // OBTENER LISTA DE ASISTENTES CON DATOS DEL USUARIO
+  // =========================================================
+
+  // =========================================================
+// OBTENER DATOS DE LOS ASISTENTES
+// =========================================================
+
+obtenerAsistentes(eventoId: string): Observable<any[]> {
+
+  return this.obtenerEvento(eventoId).pipe(
+
+    switchMap((evento: any) => {
+
+      const uids: string[] =
+        evento?.asistentes || [];
+
+      console.log(
+        '👥 UIDs de asistentes:',
+        uids
+      );
+
+      // No hay asistentes
+      if (uids.length === 0) {
+
+        return of([]);
+
+      }
+
+      // =========================================
+      // BUSCAR CADA USUARIO DIRECTAMENTE
+      // =========================================
+
+      const consultas =
+        uids.map(uid => {
+
+          const usuarioRef = doc(
+            this.firestore,
+            `usuarios/${uid}`
+          );
+
+          return docData(usuarioRef, {
+            idField: 'uid'
+          }).pipe(
+
+            map((usuario: any) => {
+
+              if (!usuario) {
+
+                console.warn(
+                  '⚠️ No se encontró usuario:',
+                  uid
+                );
+
+                return null;
+
+              }
+
+              console.log(
+                '👤 Asistente encontrado:',
+                usuario
+              );
+
+              console.log(
+                '🆔 UID:',
+                uid
+              );
+
+              console.log(
+                '📝 Nombre:',
+                usuario.nombre
+              );
+
+              console.log(
+                '📧 Email:',
+                usuario.email
+              );
+
+              return {
+                ...usuario,
+                uid: uid
+              };
+
+            })
+
+          );
+
+        });
+
+
+      // =========================================
+      // ESPERAR A TODOS LOS USUARIOS
+      // =========================================
+
+      return combineLatest(consultas).pipe(
+
+        map((usuarios) => {
+
+          const resultado =
+            usuarios.filter(
+              usuario => usuario !== null
+            );
+
+          console.log(
+            '🔥🔥🔥 ASISTENTES COMPLETOS:',
+            resultado
+          );
+
+          return resultado;
+
+        })
+
+      );
+
+    })
+
+  );
+
+}
+
+
+
+
+  // =========================================================
+  // OBTENER CANTIDAD DE ASISTENTES
   // =========================================================
 
   obtenerCantidad(eventoId: string): Observable<number> {
 
-    return this.obtenerAsistentes(eventoId).pipe(
+    const eventoRef = doc(
+      this.firestore,
+      `events/${eventoId}`
+    );
 
-      map(asistentes => {
+    return docData(eventoRef).pipe(
+
+      map((evento: any) => {
+
+        const asistentes =
+          evento?.asistentes || [];
 
         console.log(
-          '👥 Asistentes encontrados:',
+          '👥 Asistentes actuales:',
           asistentes
         );
 
         console.log(
-          '🔢 Cantidad:',
+          '🔢 Cantidad de asistentes:',
           asistentes.length
         );
 
@@ -80,6 +217,47 @@ export class AsistentesService {
 
     );
 
+  }
+
+  // =========================================================
+  // OBTENER CANTIDAD DE ASISTENTES UNA SOLA VEZ
+  // =========================================================
+
+  async obtenerCantidadUnaVez(eventoId: string): Promise<number> {
+
+    const eventoRef = doc(
+      this.firestore,
+      `events/${eventoId}`
+    );
+
+    const snapshot = await getDoc(eventoRef);
+
+    if (!snapshot.exists()) {
+
+      console.warn(
+        '⚠️ El evento no existe:',
+        eventoId
+      );
+
+      return 0;
+    }
+
+    const evento: any = snapshot.data();
+
+    const asistentes =
+      evento?.asistentes || [];
+
+    console.log(
+      '👥 Asistentes obtenidos al abrir evento:',
+      asistentes
+    );
+
+    console.log(
+      '🔢 Cantidad inicial:',
+      asistentes.length
+    );
+
+    return asistentes.length;
   }
 
 
@@ -97,14 +275,23 @@ export class AsistentesService {
           return of(false);
         }
 
-        const asistenteRef = doc(
+        const eventoRef = doc(
           this.firestore,
-          `events/${eventoId}/asistentes/${usuario.uid}`
+          `events/${eventoId}`
         );
 
-        return docData(asistenteRef).pipe(
+        return docData(eventoRef).pipe(
 
-          map(asistente => !!asistente)
+          map((evento: any) => {
+
+            const asistentes =
+              evento?.asistentes || [];
+
+            return asistentes.includes(
+              usuario.uid
+            );
+
+          })
 
         );
 
@@ -157,51 +344,34 @@ export class AsistentesService {
 
 
     // =======================================================
-    // REFERENCIA DEL ASISTENTE
+    // REFERENCIA DEL EVENTO
     // =======================================================
 
-    const asistenteRef = doc(
+    const eventoRef = doc(
       this.firestore,
-      `events/${eventoId}/asistentes/${usuario.uid}`
-    );
-
-
-    console.log(
-      '📍 Ruta asistencia:',
-      `events/${eventoId}/asistentes/${usuario.uid}`
+      `events/${eventoId}`
     );
 
 
     // =======================================================
-    // GUARDAR ASISTENCIA
+    // AGREGAR UID A ASISTENTES
     // =======================================================
 
-    await setDoc(
-      asistenteRef,
+    await updateDoc(
+      eventoRef,
       {
-
-        uid: usuario.uid,
-
-        nombre:
-          usuario.displayName || '',
-
-        email:
-          usuario.email || '',
-
-        fechaRegistro:
-          new Date()
-
+        asistentes: arrayUnion(usuario.uid)
       }
     );
 
 
     console.log(
-      '✅ Asistencia creada correctamente'
+      '✅ Asistencia guardada en el evento'
     );
 
 
     // =======================================================
-    // CREAR NOTIFICACIÓN PARA EL CREADOR
+    // NOTIFICACIÓN AL CREADOR
     // =======================================================
 
     if (
@@ -210,11 +380,8 @@ export class AsistentesService {
     ) {
 
       await this.firebaseService.crearNotificacion(
-
         creadorId,
-
         {
-
           tipo: 'asistencia',
 
           titulo:
@@ -228,9 +395,7 @@ export class AsistentesService {
 
           usuarioId:
             usuario.uid
-
         }
-
       );
 
 
@@ -261,6 +426,10 @@ export class AsistentesService {
       this.auth.currentUser;
 
 
+    // =======================================================
+    // VERIFICAR USUARIO
+    // =======================================================
+
     if (!usuario) {
 
       throw new Error(
@@ -270,19 +439,31 @@ export class AsistentesService {
     }
 
 
-    const asistenteRef = doc(
+    // =======================================================
+    // REFERENCIA DEL EVENTO
+    // =======================================================
+
+    const eventoRef = doc(
       this.firestore,
-      `events/${eventoId}/asistentes/${usuario.uid}`
+      `events/${eventoId}`
     );
 
 
-    await deleteDoc(
-      asistenteRef
+    // =======================================================
+    // ELIMINAR UID DEL ARRAY DE ASISTENTES
+    // =======================================================
+
+    await updateDoc(
+      eventoRef,
+      {
+        asistentes:
+          arrayRemove(usuario.uid)
+      }
     );
 
 
     console.log(
-      '❌ Asistencia cancelada correctamente'
+      '❌ Asistencia eliminada del evento'
     );
 
   }
