@@ -16,7 +16,14 @@
     <div class="ia-header-left">
 
       <div class="ia-header-icon">
-        🤖
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="6" width="16" height="14" rx="3"></rect>
+          <line x1="12" y1="2" x2="12" y2="6"></line>
+          <circle cx="9" cy="12" r="1"></circle>
+          <circle cx="15" cy="12" r="1"></circle>
+          <path d="M8 16h8"></path>
+        </svg>
       </div>
 
       <div>
@@ -36,19 +43,22 @@
 
     <!-- LIMPIAR CHAT -->
 
-    <button
-      type="button"
-      class="btn-limpiar"
-      *ngIf="mensajesChat.length > 0"
-      (click)="limpiarChat()"
-      title="Borrar historial"
-    >
+    <button type="button" class="btn-limpiar" *ngIf="mensajesChat.length > 0" (click)="limpiarChat()"
+      title="Borrar historial">
 
-      🗑️
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="3 6 5 6 21 6"></polyline>
+        <path d="M19 6l-1 14H6L5 6"></path>
+        <path d="M10 11v5"></path>
+        <path d="M14 11v5"></path>
+        <path d="M9 6V3h6v3"></path>
+      </svg>
 
       <span>
         Limpiar
       </span>
+
 
     </button>
 
@@ -59,27 +69,34 @@
   <!-- CHAT -->
   <!-- ===================================================== -->
 
-  <main
-    class="chat-container"
-    [class.chat-vacio]="mensajesChat.length === 0"
-  >
+  <main class="chat-container" [class.chat-vacio]="mensajesChat.length === 0">
 
 
     <!-- =================================================== -->
     <!-- CHAT VACÍO -->
     <!-- =================================================== -->
 
-    <div
-      class="chat-bienvenida"
-      *ngIf="mensajesChat.length === 0"
-    >
+    <div class="chat-bienvenida" *ngIf="mensajesChat.length === 0">
 
-      <div class="bienvenida-icon">
-        🤖
-      </div>
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <rect x="4" y="6" width="16" height="14" rx="3"></rect>
+        <line x1="12" y1="2" x2="12" y2="6"></line>
+        <circle cx="9" cy="12" r="1"></circle>
+        <circle cx="15" cy="12" r="1"></circle>
+        <path d="M8 16h8"></path>
+      </svg>
+
 
       <h2>
-        ¡Hola! 👋
+        ¡Hola!
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 11V7a2 2 0 0 0-4 0v3"></path>
+          <path d="M14 10V5a2 2 0 0 0-4 0v6"></path>
+          <path d="M10 10V7a2 2 0 0 0-4 0v7"></path>
+          <path d="M6 14l-1-1a2 2 0 0 0-3 3l5 5h7a7 7 0 0 0 7-7v-4a2 2 0 0 0-4 0"></path>
+        </svg>
       </h2>
 
       <p>
@@ -91,32 +108,48 @@
 
       <div class="ejemplos">
 
-        <button
-          type="button"
-          (click)="mensaje = '¿Qué eventos de tecnología hay?'"
-        >
-          💻 Eventos de tecnología
+        <button type="button" (click)="mensaje = '¿Qué eventos de tecnología hay?'">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="13" rx="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+          </svg>
+          Eventos de tecnología
+
         </button>
 
-        <button
-          type="button"
-          (click)="mensaje = 'Muéstrame eventos deportivos'"
-        >
-          ⚽ Eventos deportivos
+        <button type="button" (click)="mensaje = 'Muéstrame eventos deportivos'">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"></circle>
+            <polygon points="12 7 16 10 14.5 15 9.5 15 8 10"></polygon>
+          </svg>
+          Eventos deportivos
+
         </button>
 
-        <button
-          type="button"
-          (click)="mensaje = '¿Qué eventos de arte hay?'"
-        >
-          🎨 Eventos de arte
+        <button type="button" (click)="mensaje = '¿Qué eventos de arte hay?'">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3a9 9 0 0 0 0 18h1.5a1.5 1.5 0 0 0 0-3H12a1.5 1.5 0 0 1 0-3h2a7 7 0 0 0 0-14z"></path>
+            <circle cx="7" cy="10" r="1"></circle>
+            <circle cx="10" cy="6.5" r="1"></circle>
+            <circle cx="15" cy="7" r="1"></circle>
+          </svg>
+          Eventos de arte
+
         </button>
 
-        <button
-          type="button"
-          (click)="mensaje = 'Quiero encontrar eventos de música'"
-        >
-          🎵 Eventos de música
+        <button type="button" (click)="mensaje = 'Quiero encontrar eventos de música'">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18V5l11-2v13"></path>
+            <circle cx="6" cy="18" r="3"></circle>
+            <circle cx="17" cy="16" r="3"></circle>
+          </svg>
+          Eventos de música
+
         </button>
 
       </div>
@@ -128,24 +161,16 @@
     <!-- HISTORIAL -->
     <!-- =================================================== -->
 
-    <div
-      class="historial"
-      *ngIf="mensajesChat.length > 0"
-    >
+    <div class="historial" *ngIf="mensajesChat.length > 0">
 
-      <ng-container
-        *ngFor="let mensajeChat of mensajesChat"
-      >
+      <ng-container *ngFor="let mensajeChat of mensajesChat">
 
 
         <!-- =============================================== -->
         <!-- MENSAJE USUARIO -->
         <!-- =============================================== -->
 
-        <div
-          class="mensaje mensaje-usuario"
-          *ngIf="mensajeChat.tipo === 'usuario'"
-        >
+        <div class="mensaje mensaje-usuario" *ngIf="mensajeChat.tipo === 'usuario'">
 
           <div class="mensaje-contenido usuario-contenido">
 
@@ -156,8 +181,13 @@
           </div>
 
           <div class="mensaje-avatar usuario-avatar">
-            👤
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="8" r="4"></circle>
+              <path d="M4 21a8 8 0 0 1 16 0"></path>
+            </svg>
           </div>
+
 
         </div>
 
@@ -166,14 +196,20 @@
         <!-- MENSAJE IA -->
         <!-- =============================================== -->
 
-        <div
-          class="mensaje mensaje-ia"
-          *ngIf="mensajeChat.tipo === 'ia'"
-        >
+        <div class="mensaje mensaje-ia" *ngIf="mensajeChat.tipo === 'ia'">
 
-          <div class="mensaje-avatar ia-avatar">
-            🤖
+          <div class="ia-header-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="4" y="6" width="16" height="14" rx="3"></rect>
+              <line x1="12" y1="2" x2="12" y2="6"></line>
+              <circle cx="9" cy="12" r="1"></circle>
+              <circle cx="15" cy="12" r="1"></circle>
+              <path d="M8 16h8"></path>
+            </svg>
           </div>
+
+
 
 
           <div class="mensaje-columna">
@@ -195,26 +231,28 @@
             <!-- EVENTOS DE ESTA RESPUESTA -->
             <!-- =========================================== -->
 
-            <div
-              class="respuesta-eventos"
-              *ngIf="
+            <div class="respuesta-eventos" *ngIf="
                 mensajeChat.eventos &&
                 mensajeChat.eventos.length > 0
-              "
-            >
+              ">
 
               <div class="eventos-encontrados">
 
-                ✨
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 3l1.5 5.5L19 10l-5.5 1.5L12 17l-1.5-5.5L5 10l5.5-1.5L12 3z"></path>
+                  <path d="M19 16l.7 2.3L22 19l-2.3.7L19 22l-.7-2.3L16 19l2.3-.7L19 16z"></path>
+                </svg>
 
                 {{
-                  mensajeChat.eventos.length
+                mensajeChat.eventos.length
                 }}
 
+
                 {{
-                  mensajeChat.eventos.length === 1
-                    ? 'evento encontrado'
-                    : 'eventos encontrados'
+                mensajeChat.eventos.length === 1
+                ? 'evento encontrado'
+                : 'eventos encontrados'
                 }}
 
               </div>
@@ -222,19 +260,23 @@
 
               <section class="eventos-ia">
 
-                <article
-                  class="evento-ia-card"
-                  *ngFor="
+                <article class="evento-ia-card" *ngFor="
                     let evento of mensajeChat.eventos
-                  "
-                >
+                  ">
 
                   <!-- CABECERA -->
 
                   <div class="evento-ia-header">
 
                     <div class="evento-icono">
-                      📅
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="17" rx="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                      </svg>
+
                     </div>
 
                     <div class="evento-titulo">
@@ -261,7 +303,14 @@
                     <div class="evento-dato">
 
                       <span class="dato-icono">
-                        📅
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <rect x="3" y="4" width="18" height="17" rx="2"></rect>
+                          <line x1="16" y1="2" x2="16" y2="6"></line>
+                          <line x1="8" y1="2" x2="8" y2="6"></line>
+                          <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+
                       </span>
 
                       <div>
@@ -281,13 +330,15 @@
 
                     <!-- HORA -->
 
-                    <div
-                      class="evento-dato"
-                      *ngIf="evento.hora"
-                    >
+                    <div class="evento-dato" *ngIf="evento.hora">
 
                       <span class="dato-icono">
-                        🕐
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="12" cy="12" r="9"></circle>
+                          <polyline points="12 7 12 12 15 14"></polyline>
+                        </svg>
+
                       </span>
 
                       <div>
@@ -310,7 +361,12 @@
                     <div class="evento-dato">
 
                       <span class="dato-icono">
-                        📍
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0z"></path>
+                          <circle cx="12" cy="10" r="2.5"></circle>
+                        </svg>
+
                       </span>
 
                       <div>
@@ -330,12 +386,17 @@
 
                     <!-- DESCRIPCIÓN -->
 
-                    <div
-                      class="evento-dato evento-descripcion"
-                    >
+                    <div class="evento-dato evento-descripcion">
 
                       <span class="dato-icono">
-                        📝
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                          <polyline points="14 2 14 8 20 8"></polyline>
+                          <line x1="8" y1="13" x2="16" y2="13"></line>
+                          <line x1="8" y1="17" x2="16" y2="17"></line>
+                        </svg>
+
                       </span>
 
                       <div>
@@ -355,10 +416,7 @@
 
                     <!-- CREADOR -->
 
-                    <div
-                      class="evento-dato"
-                      *ngIf="evento.creador"
-                    >
+                    <div class="evento-dato" *ngIf="evento.creador">
 
                       <span class="dato-icono">
                         👤
@@ -385,19 +443,19 @@
 
                   <div class="evento-ia-footer">
 
-                    <button
-                      type="button"
-                      class="btn-ver-evento"
-                      [routerLink]="[
+                    <button type="button" class="btn-ver-evento" [routerLink]="[
                         '/eventos',
                         evento.id
-                      ]"
-                    >
+                      ]">
 
                       Ver evento
 
                       <span>
-                        →
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <line x1="5" y1="12" x2="19" y2="12"></line>
+                          <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
                       </span>
 
                     </button>
@@ -421,10 +479,7 @@
       <!-- IA PENSANDO -->
       <!-- =============================================== -->
 
-      <div
-        class="mensaje mensaje-ia"
-        *ngIf="cargando"
-      >
+      <div class="mensaje mensaje-ia" *ngIf="cargando">
 
         <div class="mensaje-avatar ia-avatar">
           🤖
@@ -469,24 +524,20 @@
 
     <div class="input-container">
 
-      <input
-        type="text"
-        [(ngModel)]="mensaje"
-        (keyup.enter)="enviarMensaje()"
-        placeholder="Pregúntame por algún evento..."
-        [disabled]="cargando"
-      />
+      <input type="text" [(ngModel)]="mensaje" (keyup.enter)="enviarMensaje()"
+        placeholder="Pregúntame por algún evento..." [disabled]="cargando" />
 
 
-      <button
-        type="button"
-        (click)="enviarMensaje()"
-        [disabled]="cargando || !mensaje.trim()"
-      >
+      <button type="button" (click)="enviarMensaje()" [disabled]="cargando || !mensaje.trim()">
 
         <span *ngIf="!cargando">
-          ➤
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9"></polygon>
+          </svg>
         </span>
+
 
         <span *ngIf="cargando">
           ...

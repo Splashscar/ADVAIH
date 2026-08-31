@@ -1,202 +1,218 @@
-    <nav class="navbar">
+<nav class="navbar">
 
-        <div class="navbar-logo">
-            <a routerLink="/home">ADVAIH</a>
-        </div>
-
-        <ul class="navbar-links">
-
-            <li>
-                <a routerLink="/home">Inicio</a>
-            </li>
-
-            <li>
-                <a routerLink="/crud-eventos">Crear Evento</a>
-            </li>
-            <li>
-                <a routerLink="/perfil">Mi Perfil</a>
-            </li>
-            <li>
-                <a routerLink="/chats">Chats</a>
-            </li>
-            <li *ngIf="roleService.esOrganizador() || roleService.esAdministrador()">
-                <a routerLink="/dashboard">Dashboard</a>
-            </li>
-
-            <li *ngIf="roleService.esAdministrador()">
-                <a routerLink="/admin-panel">Panel Admin</a>
-            </li>
-            <li class="notificaciones-wrapper">
-
-    <button
-        class="btn-notificaciones"
-        (click)="toggleNotificaciones()">
-
-        🔔
-
-        <span
-            class="badge-notificaciones"
-            *ngIf="noLeidas > 0">
-
-            {{ noLeidas }}
-
-        </span>
-
-    </button>
-
-
-    <div 
-    class="notificaciones-menu" 
-    *ngIf="mostrarNotificaciones">
-
-    <!-- CABECERA -->
-    <div class="notificaciones-titulo">
-
-        <strong>
-            Notificaciones
-        </strong>
-
-        <span *ngIf="noLeidas > 0">
-            {{ noLeidas }} nuevas
-        </span>
-
+    <div class="navbar-logo">
+        <a routerLink="/home">ADVAIH</a>
     </div>
 
+    <ul class="navbar-links">
 
-    <!-- NOTIFICACIONES -->
-    <div 
-        class="notificacion-item"
+        <li>
+            <a routerLink="/home">Inicio</a>
+        </li>
 
-        *ngFor="
-            let notificacion of notificaciones
-            | slice:0:5
-        "
+        <li>
+            <a routerLink="/crud-eventos">Crear Evento</a>
+        </li>
+        <li>
+            <a routerLink="/perfil">Mi Perfil</a>
+        </li>
+        <li>
+            <a routerLink="/chats">Chats</a>
+        </li>
+        <li *ngIf="roleService.esOrganizador() || roleService.esAdministrador()">
+            <a routerLink="/dashboard">Dashboard</a>
+        </li>
 
-        [class.no-leida]="!notificacion.leida"
+        <li *ngIf="roleService.esAdministrador()">
+            <a routerLink="/admin-panel">Panel Admin</a>
+        </li>
+        <li class="notificaciones-wrapper">
 
-        (click)="abrirNotificacion(notificacion)"
-    >
+            <button class="btn-notificaciones" (click)="toggleNotificaciones()">
 
-        <!-- ICONO -->
-        <div class="notificacion-icono">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
 
-    <img
-        *ngIf="
-            notificacion.tipo === 'mensaje' &&
-            notificacion.fotoURL
-        "
-        [src]="notificacion.fotoURL"
-        alt="Foto de perfil"
-    >
+                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+                    <path d="M10 21h4"></path>
 
-    <span
-        *ngIf="
-            notificacion.tipo === 'mensaje' &&
-            !notificacion.fotoURL
-        "
-    >
-        👤
-    </span>
+                </svg>
 
-    <span
-        *ngIf="notificacion.tipo === 'asistencia'"
-    >
-        🎟️
-    </span>
+                <span class="badge-notificaciones" *ngIf="noLeidas > 0">
 
-</div>
+                    {{ noLeidas }}
 
-
-        <!-- INFORMACIÓN -->
-<div class="notificacion-texto">
-
-    <!-- ========================= -->
-    <!-- MENSAJE -->
-    <!-- ========================= -->
-
-    <ng-container
-        *ngIf="notificacion.tipo === 'mensaje'">
-
-        <strong>
-            {{ notificacion.titulo }}
-        </strong>
-
-        <p>
-            Te ha enviado un mensaje
-        </p>
-
-        <span class="notificacion-preview">
-            "{{ notificacion.texto }}"
-        </span>
-
-    </ng-container>
-
-
-    <!-- ========================= -->
-    <!-- ASISTENCIA -->
-    <!-- ========================= -->
-
-    <ng-container
-        *ngIf="notificacion.tipo === 'asistencia'">
-
-        <strong>
-            🎟️ Nueva asistencia
-        </strong>
-
-        <p>
-            {{ notificacion.texto }}
-        </p>
-
-    </ng-container>
-
-</div>
-
-
-        <!-- INDICADOR DE NO LEÍDA -->
-        <div
-            class="notificacion-punto"
-            *ngIf="!notificacion.leida">
-
-        </div>
-
-    </div>
-
-
-    <!-- SIN NOTIFICACIONES -->
-    <div 
-        class="sin-notificaciones" 
-        *ngIf="notificaciones.length === 0">
-
-        <div class="sin-notificaciones-icono">
-            🔔
-        </div>
-
-        <p>
-            No tienes notificaciones
-        </p>
-
-    </div>
-
-</div>
-
-</li>
-
-            
-
-        </ul>
-
-        <div class="navbar-user">
-
-            <span>{{ nombreUsuario }}</span>
-
-            <button
-                class="btn-logout"
-                (click)="cerrarSesion()">
-
-                Cerrar Sesión
+                </span>
 
             </button>
 
-        </div>
 
-    </nav>
+            <div class="notificaciones-menu" *ngIf="mostrarNotificaciones">
+
+                <!-- CABECERA -->
+                <div class="notificaciones-titulo">
+
+                    <strong>
+                        Notificaciones
+                    </strong>
+
+                    <span *ngIf="noLeidas > 0">
+                        {{ noLeidas }} nuevas
+                    </span>
+
+                </div>
+
+
+                <!-- NOTIFICACIONES -->
+                <div class="notificacion-item" *ngFor="
+            let notificacion of notificaciones
+            | slice:0:5
+        " [class.no-leida]="!notificacion.leida" (click)="abrirNotificacion(notificacion)">
+
+                    <!-- ICONO -->
+                    <div class="notificacion-icono">
+
+                        <img *ngIf="
+            notificacion.tipo === 'mensaje' &&
+            notificacion.fotoURL
+        " [src]="notificacion.fotoURL" alt="Foto de perfil">
+
+                        <span *ngIf="
+        notificacion.tipo === 'mensaje' &&
+        !notificacion.fotoURL
+    ">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+
+                                <circle cx="12" cy="8" r="4"></circle>
+                                <path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"></path>
+
+                            </svg>
+                        </span>
+
+
+                        <span *ngIf="notificacion.tipo === 'asistencia'">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+
+                                <path
+                                    d="M3 8a3 3 0 0 0 0 6v3a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-3a3 3 0 0 0 0-6V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v3z">
+                                </path>
+                                <path d="M13 5v2"></path>
+                                <path d="M13 11v2"></path>
+                                <path d="M13 17v2"></path>
+
+                            </svg>
+                        </span>
+
+                    </div>
+
+
+                    <!-- INFORMACIÓN -->
+                    <div class="notificacion-texto">
+
+                        <!-- ========================= -->
+                        <!-- MENSAJE -->
+                        <!-- ========================= -->
+
+                        <ng-container *ngIf="notificacion.tipo === 'mensaje'">
+
+                            <strong>
+                                {{ notificacion.titulo }}
+                            </strong>
+
+                            <p>
+                                Te ha enviado un mensaje
+                            </p>
+
+                            <span class="notificacion-preview">
+                                "{{ notificacion.texto }}"
+                            </span>
+
+                        </ng-container>
+
+
+                        <!-- ========================= -->
+                        <!-- ASISTENCIA -->
+                        <!-- ========================= -->
+
+                        <ng-container *ngIf="notificacion.tipo === 'asistencia'">
+
+                            <strong>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    style="vertical-align: middle; margin-right: 5px;">
+
+                                    <path
+                                        d="M3 8a3 3 0 0 0 0 6v3a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-3a3 3 0 0 0 0-6V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v3z">
+                                    </path>
+                                    <path d="M13 5v2"></path>
+                                    <path d="M13 11v2"></path>
+                                    <path d="M13 17v2"></path>
+
+                                </svg>
+
+                                Nueva asistencia
+                            </strong>
+
+
+                            <p>
+                                {{ notificacion.texto }}
+                            </p>
+
+                        </ng-container>
+
+                    </div>
+
+
+                    <!-- INDICADOR DE NO LEÍDA -->
+                    <div class="notificacion-punto" *ngIf="!notificacion.leida">
+
+                    </div>
+
+                </div>
+
+
+                <!-- SIN NOTIFICACIONES -->
+                <div class="sin-notificaciones" *ngIf="notificaciones.length === 0">
+
+                    <div class="sin-notificaciones-icono">
+
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+
+                            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+                            <path d="M10 21h4"></path>
+
+                        </svg>
+
+                    </div>
+
+
+                    <p>
+                        No tienes notificaciones
+                    </p>
+
+                </div>
+
+            </div>
+
+        </li>
+
+
+
+    </ul>
+
+    <div class="navbar-user">
+
+        <span>{{ nombreUsuario }}</span>
+
+        <button class="btn-logout" (click)="cerrarSesion()">
+
+            Cerrar Sesión
+
+        </button>
+
+    </div>
+
+</nav>
