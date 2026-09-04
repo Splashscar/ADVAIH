@@ -8,6 +8,7 @@ from .permissions import requiere_auth
 from google import genai
 from google.genai import types
 from firebase_admin import auth as firebase_auth
+from datetime import datetime
 import os
 
 
@@ -378,6 +379,11 @@ def recomendar_eventos_ia(request):
 
 
 
+        fecha_actual = datetime.now().strftime("%Y-%m-%d")
+        dia_semana_actual = datetime.now().strftime("%A")
+
+
+
         documentos = db.collection("events").stream()
 
         eventos = []
@@ -451,7 +457,7 @@ def recomendar_eventos_ia(request):
 
 
 
-        instrucciones = """
+        instrucciones = f"""
 
 Eres ADVAIH IA, el asistente inteligente de la plataforma ADVAIH.
 
@@ -459,6 +465,24 @@ ADVAIH es una plataforma para descubrir y crear eventos.
 
 Tu función es ayudar al usuario a descubrir eventos disponibles
 cuando realmente esté buscando un evento.
+
+=========================================================
+FECHA ACTUAL
+=========================================================
+
+Hoy es: {fecha_actual} ({dia_semana_actual})
+
+Usa esta fecha como referencia para entender expresiones
+como "hoy", "mañana", "este fin de semana", "esta semana",
+"el próximo mes", etc.
+
+Al recomendar eventos, PRIORIZA los que aún no han ocurrido
+(fecha igual o posterior a hoy), salvo que el usuario pida
+explícitamente ver eventos pasados.
+
+Si todos los eventos disponibles en el contexto ya pasaron,
+indícalo claramente en tu respuesta en vez de recomendarlos
+como si fueran próximos.
 
 =========================================================
 REGLAS DE INTENCIÓN
@@ -620,19 +644,19 @@ NO agregues explicaciones fuera del JSON.
 
 Utiliza exactamente esta estructura:
 
-{
+{{
     "respuesta": "texto breve",
     "buscar_eventos": false,
     "eventos_ids": []
-}
+}}
 
 Cuando encuentre eventos:
 
-{
+{{
     "respuesta": "Encontré algunos eventos que podrían interesarte.",
     "buscar_eventos": true,
     "eventos_ids": ["ID1", "ID2"]
-}
+}}
 
 =========================================================
 SEGURIDAD
@@ -661,6 +685,8 @@ dentro de ADVAIH.
 
 
         prompt = f"""
+
+FECHA DE HOY: {fecha_actual}
 
 EVENTOS DISPONIBLES:
 
@@ -997,10 +1023,13 @@ def cambiar_rol_usuario(request, uid_objetivo):
 
         usuario_ref.update({"tipo_usuario": nuevo_rol})
 
-        firebase_auth.set_custom_user_claims(
-            uid_objetivo,
-            {"role": nuevo_rol}
-        )
+        try:
+            firebase_auth.set_custom_user_claims(
+                uid_objetivo,
+                {"role": nuevo_rol}
+            )
+        except Exception as e:
+            print("⚠️ No se pudo setear el custom claim:", str(e))
 
         return JsonResponse({
             "mensaje": "Rol actualizado correctamente",
