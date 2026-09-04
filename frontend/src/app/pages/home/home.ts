@@ -18,7 +18,6 @@ import { RouterLink } from '@angular/router';
 
 import { FooterComponent } from '../../components/footer/footer';
 
-
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -97,6 +96,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
 
+    // 🔥 Escuchar automáticamente los cambios de sesión
     this.authService.usuario$.subscribe(usuario => {
 
       if (usuario) {
@@ -110,10 +110,19 @@ export class HomeComponent implements OnInit {
           usuario.email ||
           'Usuario';
 
+      } else {
+
+        this.nombreUsuario = '';
+
       }
+
+      // 🔥 Actualizar la interfaz inmediatamente
+      this.cdr.detectChanges();
 
     });
 
+
+    // Cargar eventos
     this.cargarEventos();
 
   }
@@ -148,11 +157,6 @@ export class HomeComponent implements OnInit {
         this.todosLosEventos = eventos
 
           .filter(evento => {
-
-            /*
-             * Se mantiene el comportamiento actual.
-             * El evento utiliza su fecha y hora.
-             */
 
             const fechaEvento =
               new Date(
@@ -222,7 +226,6 @@ export class HomeComponent implements OnInit {
     this.eventosFiltrados =
       this.todosLosEventos.filter(evento => {
 
-
         // -----------------------------------------------------
         // FILTRO POR CATEGORÍA
         // -----------------------------------------------------
@@ -263,7 +266,10 @@ export class HomeComponent implements OnInit {
       });
 
 
-    // Mantener el orden por fecha y hora
+    // ---------------------------------------------------------
+    // MANTENER ORDEN POR FECHA Y HORA
+    // ---------------------------------------------------------
+
     this.eventosFiltrados.sort((a, b) => {
 
       const fechaA =
@@ -281,6 +287,7 @@ export class HomeComponent implements OnInit {
     });
 
 
+    // 🔥 Actualizar vista
     this.cdr.detectChanges();
 
   }
@@ -326,6 +333,8 @@ export class HomeComponent implements OnInit {
     this.mostrarTodasCategorias =
       !this.mostrarTodasCategorias;
 
+    this.cdr.detectChanges();
+
   }
 
 
@@ -361,14 +370,6 @@ export class HomeComponent implements OnInit {
   // =========================================================
 
   calcularProximosEventos(): void {
-
-    /*
-     * todosLosEventos ya contiene únicamente
-     * eventos futuros y además está ordenado
-     * por fecha y hora.
-     *
-     * Por eso simplemente tomamos los primeros 5.
-     */
 
     this.eventosProximos =
       this.todosLosEventos.slice(0, 5);
