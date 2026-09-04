@@ -117,25 +117,52 @@
 
         <div class="imagen-section">
 
-            <label for="imagen">
+            <label>
                 {{ eventoEditandoId
                 ? 'Cambiar imagen'
                 : 'Imagen del evento'
                 }}
             </label>
 
-            <input id="imagen" type="file" accept="image/*" (change)="onFileSelected($event)">
-
             <small *ngIf="eventoEditandoId">
                 Selecciona una nueva imagen solamente si deseas cambiarla.
             </small>
 
+            <!-- ZONA DE ARRASTRAR / CLIC -->
 
-            <!-- PREVISUALIZACIÓN -->
+            <div class="dropzone" [class.dropzone-activa]="arrastrandoImagen" [class.dropzone-con-imagen]="previewImage"
+                (click)="inputImagen.click()" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
+                (drop)="onDrop($event)">
 
-            <div class="preview-container" *ngIf="previewImage">
+                <input #inputImagen type="file" accept="image/*" (change)="onFileSelected($event)" hidden>
 
-                <img [src]="previewImage" class="preview-image" alt="Vista previa de la imagen del evento">
+                <!-- SIN IMAGEN -->
+
+                <div class="dropzone-vacio" *ngIf="!previewImage">
+
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+
+                    <p><strong>Haz clic para subir</strong> o arrastra una imagen aquí</p>
+                    <span>PNG, JPG hasta 5MB</span>
+
+                </div>
+
+                <!-- CON IMAGEN -->
+
+                <div class="dropzone-preview" *ngIf="previewImage">
+
+                    <img [src]="previewImage" class="preview-image" alt="Vista previa de la imagen del evento">
+
+                    <button type="button" class="btn-quitar-imagen" (click)="quitarImagen(); $event.stopPropagation()">
+                        ✕ Quitar imagen
+                    </button>
+
+                </div>
 
             </div>
 
