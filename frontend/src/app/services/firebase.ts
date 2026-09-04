@@ -40,6 +40,7 @@ export class FirebaseService {
     const eventosRef = collection(this.firestore, 'events');
     return collectionData(eventosRef, { idField: 'id' }) as Observable<any[]>;
   }
+
   async obtenerEventoUnaVez(id: string): Promise<any | null> {
     const eventoRef = doc(this.firestore, `events/${id}`);
     const snapshot = await getDoc(eventoRef);
@@ -85,10 +86,27 @@ export class FirebaseService {
 
   async toggleLike(eventoId: string, uid: string, dioLike: boolean) {
     const eventoRef = doc(this.firestore, `events/${eventoId}`);
+
     if (dioLike) {
-      await updateDoc(eventoRef, { usuariosLike: arrayRemove(uid), likes: increment(-1) });
+
+      await updateDoc(
+        eventoRef,
+        {
+          usuariosLike: arrayRemove(uid),
+          likes: increment(-1)
+        }
+      );
+
     } else {
-      await updateDoc(eventoRef, { usuariosLike: arrayUnion(uid), likes: increment(1) });
+
+      await updateDoc(
+        eventoRef,
+        {
+          usuariosLike: arrayUnion(uid),
+          likes: increment(1)
+        }
+      );
+
     }
   }
 
@@ -101,38 +119,67 @@ export class FirebaseService {
   // FAVORITOS
   // =========================
 
-  async toggleFavorito(eventoId: string, uid: string, esFavorito: boolean) {
-    const favoritoRef = doc(this.firestore, `usuarios/${uid}/favoritos/${eventoId}`);
+  async toggleFavorito(
+    eventoId: string,
+    uid: string,
+    esFavorito: boolean
+  ) {
+
+    const favoritoRef =
+      doc(
+        this.firestore,
+        `usuarios/${uid}/favoritos/${eventoId}`
+      );
+
     if (esFavorito) {
+
       await deleteDoc(favoritoRef);
+
     } else {
-      await setDoc(favoritoRef, { eventoId, fecha: new Date() });
+
+      await setDoc(
+        favoritoRef,
+        {
+          eventoId,
+          fecha: new Date()
+        }
+      );
+
     }
+
   }
 
   obtenerFavoritos(uid: string) {
-    const favoritosRef = collection(this.firestore, `usuarios/${uid}/favoritos`);
-    return collectionData(favoritosRef, { idField: 'id' });
+
+    const favoritosRef =
+      collection(
+        this.firestore,
+        `usuarios/${uid}/favoritos`
+      );
+
+    return collectionData(
+      favoritosRef,
+      { idField: 'id' }
+    );
+
   }
 
   // =========================
   // USUARIOS
   // =========================
 
-
-
   async guardarUsuario(usuario: Usuario) {
 
     try {
 
-      const usuarioRef = doc(
-        this.firestore,
-        `usuarios/${usuario.uid}`
-      );
+      const usuarioRef =
+        doc(
+          this.firestore,
+          `usuarios/${usuario.uid}`
+        );
 
       const usuarioExistente =
         await getDoc(usuarioRef);
-
 
       // =========================
       // CREAR USUARIO
@@ -203,23 +250,46 @@ export class FirebaseService {
 
   }
 
-
-
-
   obtenerUsuarios(): Observable<Usuario[]> {
-    const usuariosRef = collection(this.firestore, 'usuarios');
-    return collectionData(usuariosRef, { idField: 'id' }) as Observable<Usuario[]>;
+
+    const usuariosRef =
+      collection(
+        this.firestore,
+        'usuarios'
+      );
+
+    return collectionData(
+      usuariosRef,
+      { idField: 'id' }
+    ) as Observable<Usuario[]>;
+
   }
 
   obtenerUsuario(uid: string) {
-    const usuarioRef = doc(this.firestore, `usuarios/${uid}`);
-    return docData(usuarioRef, { idField: 'id' });
-  }
-
-  async actualizarPerfil(uid: string, datos: any) {
 
     const usuarioRef =
-      doc(this.firestore, `usuarios/${uid}`);
+      doc(
+        this.firestore,
+        `usuarios/${uid}`
+      );
+
+    return docData(
+      usuarioRef,
+      { idField: 'id' }
+    );
+
+  }
+
+  async actualizarPerfil(
+    uid: string,
+    datos: any
+  ) {
+
+    const usuarioRef =
+      doc(
+        this.firestore,
+        `usuarios/${uid}`
+      );
 
     return await updateDoc(
       usuarioRef,
@@ -229,17 +299,21 @@ export class FirebaseService {
   }
 
   // =========================
-  // CHAT (Nuevas funcionalidades)
+  // CHAT
   // =========================
 
-  async crearChat(chatId: string, participantes: string[]) {
+  async crearChat(
+    chatId: string,
+    participantes: string[]
+  ) {
 
     try {
 
-      const chatRef = doc(
-        this.firestore,
-        `chats/${chatId}`
-      );
+      const chatRef =
+        doc(
+          this.firestore,
+          `chats/${chatId}`
+        );
 
       // Crear el chat solamente si no existe.
       // merge evita problemas si posteriormente se agregan más campos.
@@ -282,10 +356,11 @@ export class FirebaseService {
     // 1. GUARDAR MENSAJE
     // =========================
 
-    const mensajesRef = collection(
-      this.firestore,
-      `chats/${chatId}/mensajes`
-    );
+    const mensajesRef =
+      collection(
+        this.firestore,
+        `chats/${chatId}/mensajes`
+      );
 
     await addDoc(
       mensajesRef,
@@ -296,17 +371,18 @@ export class FirebaseService {
       }
     );
 
-
     // =========================
     // 2. OBTENER CHAT
     // =========================
 
-    const chatRef = doc(
-      this.firestore,
-      `chats/${chatId}`
-    );
+    const chatRef =
+      doc(
+        this.firestore,
+        `chats/${chatId}`
+      );
 
-    const chatSnapshot = await getDoc(chatRef);
+    const chatSnapshot =
+      await getDoc(chatRef);
 
     if (!chatSnapshot.exists()) {
 
@@ -316,8 +392,8 @@ export class FirebaseService {
       );
 
       return;
-    }
 
+    }
 
     // =========================
     // 3. OBTENER PARTICIPANTES
@@ -329,12 +405,10 @@ export class FirebaseService {
     const participantes: string[] =
       chatData.participantes || [];
 
-
     console.log(
       '👥 Participantes:',
       participantes
     );
-
 
     // =========================
     // 4. BUSCAR DESTINATARIO
@@ -345,7 +419,6 @@ export class FirebaseService {
         uid => uid !== emisor
       );
 
-
     if (!destinatario) {
 
       console.error(
@@ -353,19 +426,22 @@ export class FirebaseService {
       );
 
       return;
-    }
 
+    }
 
     console.log(
       '📨 Destinatario:',
       destinatario
     );
-    const emisorRef = doc(
-      this.firestore,
-      `usuarios/${emisor}`
-    );
 
-    const emisorSnapshot = await getDoc(emisorRef);
+    const emisorRef =
+      doc(
+        this.firestore,
+        `usuarios/${emisor}`
+      );
+
+    const emisorSnapshot =
+      await getDoc(emisorRef);
 
     let nombreEmisor = 'Usuario';
     let fotoEmisor = '';
@@ -404,17 +480,33 @@ export class FirebaseService {
       }
     );
 
-
     console.log(
       '🔔 Notificación creada'
     );
+
   }
 
   obtenerMensajes(chatId: string) {
-    const mensajesRef = collection(this.firestore, `chats/${chatId}/mensajes`);
-    const q = query(mensajesRef, orderBy('fecha'));
-    return collectionData(q, { idField: 'id' });
+
+    const mensajesRef =
+      collection(
+        this.firestore,
+        `chats/${chatId}/mensajes`
+      );
+
+    const q =
+      query(
+        mensajesRef,
+        orderBy('fecha')
+      );
+
+    return collectionData(
+      q,
+      { idField: 'id' }
+    );
+
   }
+
   // =========================
   // NOTIFICACIONES
   // =========================
@@ -424,50 +516,56 @@ export class FirebaseService {
     notificacion: any
   ) {
 
-    const notificacionesRef = collection(
-      this.firestore,
-      `notificaciones/${uidDestino}/items`
-    );
+    const notificacionesRef =
+      collection(
+        this.firestore,
+        `notificaciones/${uidDestino}/items`
+      );
 
     return await addDoc(
       notificacionesRef,
       {
         ...notificacion,
+
         leida: false,
+
         fecha: serverTimestamp()
       }
     );
-  }
 
+  }
 
   obtenerNotificaciones(uid: string) {
 
-    const notificacionesRef = collection(
-      this.firestore,
-      `notificaciones/${uid}/items`
-    );
+    const notificacionesRef =
+      collection(
+        this.firestore,
+        `notificaciones/${uid}/items`
+      );
 
-    const q = query(
-      notificacionesRef,
-      orderBy('fecha', 'desc')
-    );
+    const q =
+      query(
+        notificacionesRef,
+        orderBy('fecha', 'desc')
+      );
 
     return collectionData(
       q,
       { idField: 'id' }
     );
-  }
 
+  }
 
   async marcarNotificacionLeida(
     uid: string,
     notificacionId: string
   ) {
 
-    const notificacionRef = doc(
-      this.firestore,
-      `notificaciones/${uid}/items/${notificacionId}`
-    );
+    const notificacionRef =
+      doc(
+        this.firestore,
+        `notificaciones/${uid}/items/${notificacionId}`
+      );
 
     return await updateDoc(
       notificacionRef,
@@ -475,30 +573,98 @@ export class FirebaseService {
         leida: true
       }
     );
+
+  }
+
+  // =====================================================
+  // MARCAR TODAS LAS NOTIFICACIONES DE UN CHAT COMO LEÍDAS
+  // =====================================================
+
+  async marcarNotificacionesChatLeidas(
+    uid: string,
+    chatId: string
+  ) {
+
+    const notificacionesRef =
+      collection(
+        this.firestore,
+        `notificaciones/${uid}/items`
+      );
+
+    const q =
+      query(
+        notificacionesRef,
+        where('chatId', '==', chatId)
+      );
+
+    const snapshot =
+      await getDocs(q);
+
+    const actualizaciones =
+      snapshot.docs
+        .filter(docSnap => {
+
+          const datos: any =
+            docSnap.data();
+
+          return (
+            datos.tipo === 'mensaje' &&
+            datos.leida === false
+          );
+
+        })
+        .map(docSnap =>
+
+          updateDoc(
+            doc(
+              this.firestore,
+              `notificaciones/${uid}/items/${docSnap.id}`
+            ),
+            {
+              leida: true
+            }
+          )
+
+        );
+
+    await Promise.all(
+      actualizaciones
+    );
+
+    console.log(
+      '✅ Notificaciones del chat marcadas como leídas:',
+      chatId
+    );
+
   }
 
   // =========================================================
   // ASISTENCIAS DE EVENTOS
   // =========================================================
 
-  async obtenerAsistentes(eventoId: string): Promise<string[]> {
+  async obtenerAsistentes(
+    eventoId: string
+  ): Promise<string[]> {
 
-    const eventoRef = doc(
-      this.firestore,
-      `events/${eventoId}`
-    );
+    const eventoRef =
+      doc(
+        this.firestore,
+        `events/${eventoId}`
+      );
 
-    const snapshot = await getDoc(eventoRef);
+    const snapshot =
+      await getDoc(eventoRef);
 
     if (!snapshot.exists()) {
       return [];
     }
 
-    const datos: any = snapshot.data();
+    const datos: any =
+      snapshot.data();
 
     return datos.asistentes || [];
-  }
 
+  }
 
   // =========================================================
   // CANTIDAD DE ASISTENTES
@@ -509,45 +675,69 @@ export class FirebaseService {
   ): Promise<number> {
 
     const asistentes =
-      await this.obtenerAsistentes(eventoId);
+      await this.obtenerAsistentes(
+        eventoId
+      );
 
     return asistentes.length;
+
   }
 
-  async obtenerChatsUsuario(uid: string): Promise<any[]> {
-    const chatsRef = collection(this.firestore, 'chats');
+  async obtenerChatsUsuario(
+    uid: string
+  ): Promise<any[]> {
 
-    const q = query(
-      chatsRef,
-      where('participantes', 'array-contains', uid)
-    );
+    const chatsRef =
+      collection(
+        this.firestore,
+        'chats'
+      );
 
-    const snapshot = await getDocs(q);
+    const q =
+      query(
+        chatsRef,
+        where(
+          'participantes',
+          'array-contains',
+          uid
+        )
+      );
+
+    const snapshot =
+      await getDocs(q);
 
     const chats: any[] = [];
 
     for (const documento of snapshot.docs) {
-      const chat = documento.data();
 
-      const mensajesRef = collection(
-        this.firestore,
-        `chats/${documento.id}/mensajes`
-      );
+      const chat =
+        documento.data();
 
-      const mensajesQuery = query(
-        mensajesRef,
-        orderBy('fecha', 'desc'),
-        limit(1)
-      );
+      const mensajesRef =
+        collection(
+          this.firestore,
+          `chats/${documento.id}/mensajes`
+        );
 
-      const mensajesSnapshot = await getDocs(mensajesQuery);
+      const mensajesQuery =
+        query(
+          mensajesRef,
+          orderBy('fecha', 'desc'),
+          limit(1)
+        );
+
+      const mensajesSnapshot =
+        await getDocs(
+          mensajesQuery
+        );
 
       // 🚨 Si nunca hubo mensajes, NO es una conversación
       if (mensajesSnapshot.empty) {
         continue;
       }
 
-      const mensajeDoc = mensajesSnapshot.docs[0];
+      const mensajeDoc =
+        mensajesSnapshot.docs[0];
 
       const ultimoMensaje = {
         id: mensajeDoc.id,
@@ -556,21 +746,35 @@ export class FirebaseService {
 
       chats.push({
         id: documento.id,
+
         ...chat,
+
         ultimoMensaje
       });
+
     }
 
     // Ordenar por mensaje más reciente
     chats.sort((a, b) => {
-      const fechaA = a.ultimoMensaje?.fecha?.toMillis?.() || 0;
-      const fechaB = b.ultimoMensaje?.fecha?.toMillis?.() || 0;
+
+      const fechaA =
+        a.ultimoMensaje
+          ?.fecha
+          ?.toMillis?.() || 0;
+
+      const fechaB =
+        b.ultimoMensaje
+          ?.fecha
+          ?.toMillis?.() || 0;
 
       return fechaB - fechaA;
+
     });
 
     return chats;
+
   }
+
   obtenerOtroParticipante(
     participantes: string[],
     uidActual: string
@@ -581,4 +785,5 @@ export class FirebaseService {
     ) || null;
 
   }
+
 }
