@@ -1,414 +1,594 @@
-/* =========================
-   CONTENEDOR
-========================= */
-
 .chat-container {
-
-    max-width: 1000px;
-
-    margin: 35px auto;
-
-    padding: 20px;
+  max-width: 1000px;
+  margin: 35px auto;
+  padding: 20px;
 }
 
 
-/* =========================
-   ENCABEZADO
-========================= */
+/* =========================================
+   HEADER
+========================================= */
 
 .chat-header {
-
-    margin-bottom: 25px;
+  margin-bottom: 25px;
 }
 
 .chat-header h1 {
-
-    color: #ffffff;
-
-    font-size: 32px;
-
-    margin: 0 0 6px 0;
+  color: #ffffff;
+  font-size: 32px;
+  margin: 0 0 6px;
 }
 
 .chat-header p {
-
-    color: #9ca3af;
-
-    margin: 0;
-
-    font-size: 15px;
+  color: #9ca3af;
+  margin: 0;
+  font-size: 15px;
 }
 
 
-/* =========================
+/* =========================================
    BUSCADOR
-========================= */
+========================================= */
 
 .buscador-container {
-
-    position: relative;
-
-    margin-bottom: 25px;
+  position: relative;
+  margin-bottom: 30px;
 }
 
 .buscador-container input {
+  width: 100%;
+  box-sizing: border-box;
 
-    width: 100%;
+  padding: 16px 45px;
 
-    box-sizing: border-box;
+  background: #111827;
 
-    padding: 15px 45px 15px 45px;
+  border: 1px solid #26324a;
 
-    background: #111827;
+  border-radius: 14px;
 
-    border: 1px solid #26324a;
+  color: white;
 
-    border-radius: 12px;
+  font-size: 15px;
 
-    color: white;
+  outline: none;
 
-    font-size: 15px;
-
-    outline: none;
-
-    transition: 0.2s;
+  transition: 0.2s;
 }
 
 .buscador-container input::placeholder {
-
-    color: #6b7280;
+  color: #6b7280;
 }
 
 .buscador-container input:focus {
+  border-color: #6366f1;
 
-    border-color: #6366f1;
-
-    box-shadow:
-        0 0 0 3px rgba(99, 102, 241, 0.12);
+  box-shadow:
+    0 0 0 3px rgba(99, 102, 241, 0.12);
 }
 
-
-/* ICONO BUSCADOR */
 
 .buscador-icono {
+  position: absolute;
 
-    position: absolute;
+  left: 16px;
+  top: 50%;
 
-    left: 16px;
+  transform: translateY(-50%);
 
-    top: 50%;
-
-    transform: translateY(-50%);
-
-    font-size: 18px;
-
-    z-index: 2;
+  color: #9ca3af;
 }
 
 
-/* BOTÓN LIMPIAR */
-
 .btn-limpiar {
+  position: absolute;
 
-    position: absolute;
+  right: 12px;
+  top: 50%;
 
-    right: 12px;
+  transform: translateY(-50%);
 
-    top: 50%;
+  width: 30px;
+  height: 30px;
 
-    transform: translateY(-50%);
+  border: none;
 
-    width: 30px;
+  border-radius: 50%;
 
-    height: 30px;
+  background: #374151;
 
-    border: none;
+  color: #d1d5db;
 
-    border-radius: 50%;
+  cursor: pointer;
 
-    background: #374151;
+  font-size: 20px;
 
-    color: #d1d5db;
+  line-height: 1;
 
-    cursor: pointer;
-
-    transition: 0.2s;
+  transition: 0.2s;
 }
 
 .btn-limpiar:hover {
-
-    background: #4b5563;
-
-    color: white;
+  background: #4b5563;
+  color: white;
 }
 
 
-/* =========================
-   LISTA
-========================= */
+/* =========================================
+   SECCIÓN
+========================================= */
 
-.lista-usuarios {
+.seccion {
+  margin-bottom: 35px;
+}
 
-    display: flex;
+.seccion-header {
+  display: flex;
 
-    flex-direction: column;
+  align-items: center;
 
-    gap: 12px;
+  justify-content: space-between;
+
+  margin-bottom: 15px;
+}
+
+.seccion-header h2 {
+  margin: 0;
+
+  color: white;
+
+  font-size: 20px;
+}
+
+.seccion-header span {
+  color: #9ca3af;
+
+  font-size: 13px;
 }
 
 
-/* =========================
-   TARJETA USUARIO
-========================= */
+/* =========================================
+   LISTA CHATS
+========================================= */
 
-.usuario-card {
+.lista-chats {
+  display: flex;
 
-    display: flex;
+  flex-direction: column;
 
-    align-items: center;
-
-    gap: 16px;
-
-    background: #111827;
-
-    border: 1px solid rgba(255,255,255,0.04);
-
-    padding: 16px;
-
-    border-radius: 14px;
-
-    transition:
-        transform 0.2s,
-        background 0.2s,
-        border 0.2s;
-
-    min-height: 72px;
+  gap: 10px;
 }
 
 
-.usuario-card:hover {
+/* =========================================
+   CHAT CARD
+========================================= */
 
-    transform: translateY(-2px);
+.chat-card {
+  display: flex;
 
-    background: #151e30;
+  align-items: center;
 
-    border-color:
-        rgba(99,102,241,0.25);
+  gap: 15px;
+
+  padding: 15px;
+
+  background: #111827;
+
+  border: 1px solid rgba(255,255,255,0.05);
+
+  border-radius: 15px;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s,
+    background 0.2s,
+    border-color 0.2s;
+}
+
+.chat-card:hover {
+  transform: translateY(-2px);
+
+  background: #151e30;
+
+  border-color:
+    rgba(99,102,241,0.3);
 }
 
 
-/* =========================
+/* =========================================
    FOTO
-========================= */
+========================================= */
 
 .usuario-foto {
+  width: 55px;
+  height: 55px;
 
-    width: 58px;
+  border-radius: 50%;
 
-    height: 58px;
+  object-fit: cover;
 
-    border-radius: 50%;
+  flex-shrink: 0;
 
-    object-fit: cover;
-
-    flex-shrink: 0;
-
-    border: 2px solid #273449;
+  border: 2px solid #273449;
 }
 
 
-/* =========================
-   INFORMACIÓN
-========================= */
+/* =========================================
+   INFO CHAT
+========================================= */
+
+.chat-info {
+  flex: 1;
+
+  min-width: 0;
+}
+
+.chat-info-top {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+}
+
+.chat-info h3 {
+  color: white;
+
+  margin: 0 0 5px;
+
+  font-size: 16px;
+
+  font-weight: 600;
+}
+
+.ultimo-mensaje {
+  margin: 0;
+
+  color: #9ca3af;
+
+  font-size: 14px;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+.ultimo-mensaje strong {
+  color: #c4b5fd;
+}
+
+.sin-mensaje {
+  margin: 0;
+
+  color: #64748b;
+
+  font-size: 13px;
+
+  font-style: italic;
+}
+
+
+/* =========================================
+   FLECHA
+========================================= */
+
+.chat-flecha {
+  color: #6366f1;
+
+  font-size: 22px;
+
+  opacity: 0.7;
+
+  transition: 0.2s;
+}
+
+.chat-card:hover .chat-flecha {
+  opacity: 1;
+
+  transform: translateX(3px);
+}
+
+
+/* =========================================
+   USUARIOS BUSCADOS
+========================================= */
+
+.lista-usuarios {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+
+.usuario-card {
+  display: flex;
+
+  align-items: center;
+
+  gap: 16px;
+
+  background: #111827;
+
+  border: 1px solid rgba(255,255,255,0.04);
+
+  padding: 16px;
+
+  border-radius: 14px;
+
+  transition:
+    transform 0.2s,
+    background 0.2s,
+    border 0.2s;
+}
+
+.usuario-card:hover {
+  transform: translateY(-2px);
+
+  background: #151e30;
+
+  border-color:
+    rgba(99,102,241,0.25);
+}
+
 
 .info {
+  flex: 1;
 
-    flex: 1;
-
-    min-width: 0;
+  min-width: 0;
 }
 
 .info h3 {
+  color: white;
 
-    color: white;
+  margin: 0 0 5px;
 
-    margin: 0 0 5px 0;
+  font-size: 17px;
 
-    font-size: 17px;
-
-    font-weight: 600;
+  font-weight: 600;
 }
 
 .info p {
+  color: #9ca3af;
 
-    color: #9ca3af;
+  margin: 0;
 
-    margin: 0;
+  font-size: 14px;
 
-    font-size: 14px;
+  overflow: hidden;
 
-    overflow: hidden;
+  text-overflow: ellipsis;
 
-    text-overflow: ellipsis;
-
-    white-space: nowrap;
+  white-space: nowrap;
 }
 
 
-/* =========================
-   BOTÓN MENSAJE
-========================= */
+/* =========================================
+   BOTÓN
+========================================= */
 
 .btn-mensaje {
+  display: flex;
 
-    display: flex;
+  align-items: center;
 
-    align-items: center;
+  justify-content: center;
 
-    justify-content: center;
+  gap: 7px;
 
-    gap: 7px;
+  background: #6366f1;
 
-    background: #6366f1;
+  color: white;
 
-    color: white;
+  border: none;
 
-    border: none;
+  border-radius: 9px;
 
-    border-radius: 9px;
+  padding: 10px 17px;
 
-    padding: 10px 17px;
+  font-size: 14px;
 
-    font-size: 14px;
+  font-weight: 600;
 
-    font-weight: 600;
+  cursor: pointer;
 
-    cursor: pointer;
+  transition:
+    background 0.2s,
+    transform 0.2s,
+    box-shadow 0.2s;
 
-    transition:
-        background 0.2s,
-        transform 0.2s,
-        box-shadow 0.2s;
-
-    flex-shrink: 0;
+  flex-shrink: 0;
 }
-
 
 .btn-mensaje:hover {
+  background: #4f46e5;
 
-    background: #4f46e5;
+  transform: translateY(-1px);
 
-    transform: translateY(-1px);
-
-    box-shadow:
-        0 5px 15px rgba(79,70,229,0.25);
+  box-shadow:
+    0 5px 15px rgba(79,70,229,0.25);
 }
 
 
-.btn-mensaje:active {
-
-    transform: scale(0.97);
-}
-
-
-/* =========================
+/* =========================================
    SIN RESULTADOS
-========================= */
+========================================= */
 
 .sin-resultados {
+  text-align: center;
 
-    text-align: center;
+  padding: 50px 20px;
 
-    padding: 60px 20px;
+  background: #111827;
 
-    background: #111827;
+  border-radius: 14px;
 
-    border-radius: 14px;
-
-    border: 1px solid rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.04);
 }
 
 .sin-resultados-icono {
+  font-size: 40px;
 
-    font-size: 40px;
-
-    margin-bottom: 12px;
+  margin-bottom: 12px;
 }
 
 .sin-resultados h3 {
+  color: white;
 
-    color: white;
-
-    margin: 0 0 8px 0;
+  margin: 0 0 8px;
 }
 
 .sin-resultados p {
+  color: #9ca3af;
 
-    color: #9ca3af;
-
-    margin: 0;
+  margin: 0;
 }
 
 
-/* =========================
+/* =========================================
+   SIN CHATS
+========================================= */
+
+.sin-chats {
+  text-align: center;
+
+  padding: 70px 20px;
+
+  background: #111827;
+
+  border: 1px solid rgba(255,255,255,0.04);
+
+  border-radius: 18px;
+}
+
+.sin-chats-icono {
+  font-size: 48px;
+
+  margin-bottom: 15px;
+}
+
+.sin-chats h2 {
+  color: white;
+
+  margin: 0 0 10px;
+
+  font-size: 20px;
+}
+
+.sin-chats p {
+  max-width: 500px;
+
+  margin: auto;
+
+  color: #9ca3af;
+
+  line-height: 1.6;
+}
+
+
+/* =========================================
+   CARGANDO
+========================================= */
+
+.cargando {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 60px 20px;
+
+  color: #9ca3af;
+}
+
+.spinner {
+  width: 30px;
+
+  height: 30px;
+
+  border: 3px solid #26324a;
+
+  border-top-color: #6366f1;
+
+  border-radius: 50%;
+
+  animation: girar 0.8s linear infinite;
+
+  margin-bottom: 15px;
+}
+
+@keyframes girar {
+
+  to {
+    transform: rotate(360deg);
+  }
+
+}
+
+
+/* =========================================
    RESPONSIVE
-========================= */
+========================================= */
 
 @media (max-width: 600px) {
 
-    .chat-container {
+  .chat-container {
+    margin: 20px auto;
 
-        margin: 20px auto;
+    padding: 15px;
+  }
 
-        padding: 15px;
-    }
+  .chat-header h1 {
+    font-size: 27px;
+  }
 
+  .chat-card {
+    padding: 13px;
 
-    .chat-header h1 {
+    gap: 12px;
+  }
 
-        font-size: 27px;
-    }
+  .usuario-foto {
+    width: 50px;
+    height: 50px;
+  }
 
+  .chat-info h3 {
+    font-size: 15px;
+  }
 
-    .usuario-card {
+  .ultimo-mensaje {
+    font-size: 12px;
+  }
 
-        padding: 13px;
+  .usuario-card {
+    padding: 13px;
+  }
 
-        gap: 12px;
-    }
+  .info h3 {
+    font-size: 15px;
+  }
 
+  .info p {
+    font-size: 12px;
+  }
 
-    .usuario-foto {
+  .btn-mensaje {
+    padding: 9px 11px;
 
-        width: 50px;
+    font-size: 0;
+  }
 
-        height: 50px;
-    }
-
-
-    .info h3 {
-
-        font-size: 15px;
-    }
-
-
-    .info p {
-
-        font-size: 12px;
-    }
-
-
-    .btn-mensaje {
-
-        padding: 9px 11px;
-
-        font-size: 0;
-    }
-
-
-    .btn-mensaje span:first-child {
-
-        font-size: 18px;
-    }
+  .btn-mensaje span:first-child {
+    font-size: 18px;
+  }
 
 }

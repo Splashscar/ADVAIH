@@ -3,112 +3,301 @@
 <div class="chat-container">
 
   <div class="chat-header">
+
     <div>
       <h1>Chats</h1>
-      <p>Busca una persona para iniciar una conversación</p>
+
+      <p>
+        Tus conversaciones y contactos
+      </p>
     </div>
+
   </div>
 
+
+  <!-- ========================================== -->
   <!-- BUSCADOR -->
+  <!-- ========================================== -->
+
   <div class="buscador-container">
 
     <span class="buscador-icono">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-        stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="11" cy="11" r="7"></circle>
-        <line x1="16.5" y1="16.5" x2="21" y2="21"></line>
+
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+
+        <circle
+          cx="11"
+          cy="11"
+          r="7"
+        ></circle>
+
+        <line
+          x1="16.5"
+          y1="16.5"
+          x2="21"
+          y2="21"
+        ></line>
+
       </svg>
+
     </span>
 
-    <input type="text" [(ngModel)]="filtro" placeholder="Buscar por nombre o correo...">
 
-    <button *ngIf="filtro" class="btn-limpiar" (click)="filtro = ''">
+    <input
+      type="text"
+      [(ngModel)]="filtro"
+      placeholder="Buscar personas..."
+    />
 
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-        stroke-linecap="round">
-        <line x1="6" y1="6" x2="18" y2="18"></line>
-        <line x1="18" y1="6" x2="6" y2="18"></line>
-      </svg>
+
+    <button
+      *ngIf="filtro"
+      class="btn-limpiar"
+      (click)="limpiarBusqueda()"
+    >
+
+      ×
 
     </button>
-
 
   </div>
 
 
-  <!-- RESULTADOS -->
 
-  <div class="lista-usuarios">
+  <!-- ========================================== -->
+  <!-- BUSCANDO USUARIOS -->
+  <!-- ========================================== -->
 
-    <div class="usuario-card" *ngFor="let usuario of usuariosFiltrados">
+  <section
+    *ngIf="filtro"
+    class="seccion"
+  >
 
-      <!-- FOTO -->
-      <img [src]="
-          usuario.fotoURL ||
-          'https://static.vecteezy.com/system/resources/previews/018/765/757/non_2x/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg'
-        " alt="Foto de perfil" class="usuario-foto">
+    <div class="seccion-header">
+
+      <h2>
+        Buscar personas
+      </h2>
+
+      <span>
+        {{ usuariosFiltrados.length }}
+      </span>
+
+    </div>
 
 
-      <!-- INFORMACIÓN -->
-      <div class="info">
+    <div class="lista-usuarios">
+
+      <div
+        class="usuario-card"
+        *ngFor="let usuario of usuariosFiltrados"
+      >
+
+        <img
+          [src]="
+            usuario.fotoURL ||
+            'https://static.vecteezy.com/system/resources/previews/018/765/757/non_2x/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg'
+          "
+          alt="Foto de perfil"
+          class="usuario-foto"
+        />
+
+
+        <div class="info">
+
+          <h3>
+            {{ usuario.nombre || 'Usuario' }}
+          </h3>
+
+          <p>
+            {{ usuario.email }}
+          </p>
+
+        </div>
+
+
+        <button
+          class="btn-mensaje"
+          (click)="crearChat(usuario)"
+        >
+
+          <span>💬</span>
+
+          <span>Mensaje</span>
+
+        </button>
+
+      </div>
+
+
+      <div
+        class="sin-resultados"
+        *ngIf="usuariosFiltrados.length === 0"
+      >
+
+        <div class="sin-resultados-icono">
+          🔎
+        </div>
 
         <h3>
-          {{ usuario.nombre || 'Usuario' }}
+          No encontramos usuarios
         </h3>
 
         <p>
-          {{ usuario.email }}
+          Intenta buscar con otro nombre o correo.
         </p>
 
       </div>
 
+    </div>
 
-      <!-- BOTÓN -->
-      <button class="btn-mensaje" (click)="crearChat(usuario)">
+  </section>
 
-        <span>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 11.5a8.4 8.4 0 0 1-9 8.5
-             9.2 9.2 0 0 1-4-.9L3 21l1.9-4.1
-             A8.1 8.1 0 0 1 3 11.5
-             a8.4 8.4 0 0 1 9-8.5
-             8.4 8.4 0 0 1 9 8.5z">
-            </path>
-          </svg>
-        </span>
 
-        <span>Mensaje</span>
 
-      </button>
+  <!-- ========================================== -->
+  <!-- CHATS RECIENTES -->
+  <!-- ========================================== -->
+
+  <section
+    *ngIf="!filtro"
+    class="seccion"
+  >
+
+    <div class="seccion-header">
+
+      <h2>
+        Conversaciones recientes
+      </h2>
 
     </div>
 
 
-    <!-- SIN RESULTADOS -->
+    <!-- CARGANDO -->
 
-    <div class="sin-resultados" *ngIf="usuariosFiltrados.length === 0">
+    <div
+      class="cargando"
+      *ngIf="cargandoChats"
+    >
 
-      <div class="sin-resultados-icono">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-          stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="10.5" cy="10.5" r="6.5"></circle>
-          <line x1="15.5" y1="15.5" x2="21" y2="21"></line>
-          <line x1="8" y1="10.5" x2="13" y2="10.5"></line>
-        </svg>
-      </div>
-
-
-      <h3>No encontramos usuarios</h3>
+      <div class="spinner"></div>
 
       <p>
-        Intenta buscar con otro nombre o correo.
+        Cargando conversaciones...
       </p>
 
     </div>
 
-  </div>
 
-  <app-footer></app-footer>
+    <!-- CHATS -->
+
+    <div
+      class="lista-chats"
+      *ngIf="
+        !cargandoChats &&
+        chatsRecientes.length > 0
+      "
+    >
+
+      <div
+        class="chat-card"
+        *ngFor="let chat of chatsRecientes"
+        (click)="abrirChat(chat)"
+      >
+
+        <!-- FOTO -->
+
+        <img
+          [src]="
+            chat.usuario.fotoURL ||
+            'https://static.vecteezy.com/system/resources/previews/018/765/757/non_2x/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg'
+          "
+          alt="Foto de perfil"
+          class="usuario-foto"
+        />
+
+
+        <!-- INFORMACIÓN -->
+
+        <div class="chat-info">
+
+          <div class="chat-info-top">
+
+            <h3>
+              {{ chat.usuario.nombre || 'Usuario' }}
+            </h3>
+
+          </div>
+
+
+          <p
+            *ngIf="chat.ultimoMensaje"
+            class="ultimo-mensaje"
+          >
+
+            <strong
+              *ngIf="
+                chat.ultimoMensaje.emisor ===
+                usuarioActual?.uid
+              "
+            >
+              Tú:
+            </strong>
+
+            {{ chat.ultimoMensaje.texto }}
+
+          </p>
+
+
+        </div>
+
+
+        <div class="chat-flecha">
+          →
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- SIN CHATS -->
+
+    <div
+      class="sin-chats"
+      *ngIf="
+        !cargandoChats &&
+        chatsRecientes.length === 0
+      "
+    >
+
+      <div class="sin-chats-icono">
+        💬
+      </div>
+
+      <h2>
+        Aún no tienes conversaciones
+      </h2>
+
+      <p>
+        Busca a una persona arriba para comenzar
+        una nueva conversación.
+      </p>
+
+    </div>
+
+  </section>
+
 
 </div>
+
+<app-footer></app-footer>
