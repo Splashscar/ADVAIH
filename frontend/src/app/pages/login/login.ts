@@ -196,7 +196,7 @@ export class LoginComponent {
 
 
   // 🧼 Método auxiliar para resetear los textos de error limpiamente
-  private limpiarErrores() {
+  private  limpiarErrores() {
 
     this.errorEmail = '';
 
