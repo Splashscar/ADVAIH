@@ -1,7 +1,9 @@
 import {
   Component,
   OnInit,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  ViewChild,
+  ElementRef
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
@@ -35,6 +37,8 @@ export class ChatConversacion implements OnInit {
 
   mensajes: any[] = [];
 
+  @ViewChild('scrollContainer') scrollContainer!: ElementRef;
+
   cargando = true;
 
   constructor(
@@ -42,7 +46,7 @@ export class ChatConversacion implements OnInit {
     private firebaseService: FirebaseService,
     private authService: AuthServices,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
 
@@ -91,6 +95,7 @@ export class ChatConversacion implements OnInit {
                   );
 
                   this.cdr.detectChanges();
+                  this.scrollAlFinal();
 
                 },
 
@@ -136,6 +141,9 @@ export class ChatConversacion implements OnInit {
           );
 
           this.cdr.detectChanges();
+          this.scrollAlFinal();
+          this.scrollPaginaAlFinal(); 
+        
 
         },
 
@@ -153,44 +161,71 @@ export class ChatConversacion implements OnInit {
       });
 
   }
+  private scrollAlFinal(): void {
+
+    setTimeout(() => {
+
+      try {
+        this.scrollContainer.nativeElement.scrollTop =
+          this.scrollContainer.nativeElement.scrollHeight;
+      } catch (error) {
+        // aún no existe el contenedor
+      }
+
+    }, 0);
+
+  }
+
+  private scrollPaginaAlFinal(): void {
+
+    setTimeout(() => {
+
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: 'smooth'
+      });
+
+    }, 100);
+
+  }
 
   async enviar() {
 
-  if (!this.usuarioActual) {
-    return;
+    if (!this.usuarioActual) {
+      return;
+    }
+
+    const texto = this.mensaje.trim();
+
+    if (!texto) {
+      return;
+    }
+
+    try {
+
+      await this.firebaseService.enviarMensaje(
+        this.chatId,
+        texto,
+        this.usuarioActual.uid
+      );
+
+      console.log('✅ Mensaje enviado');
+
+      // Limpiar el campo
+      this.mensaje = '';
+
+      // Actualizar Angular
+      this.cdr.detectChanges();
+
+    } catch (error) {
+
+      console.error(
+        'ERROR ENVIANDO:',
+        error
+      );
+
+    }
+
   }
-
-  const texto = this.mensaje.trim();
-
-  if (!texto) {
-    return;
-  }
-
-  try {
-
-    await this.firebaseService.enviarMensaje(
-      this.chatId,
-      texto,
-      this.usuarioActual.uid
-    );
-
-    console.log('✅ Mensaje enviado');
-
-    // Limpiar el campo
-    this.mensaje = '';
-
-    // Actualizar Angular
-    this.cdr.detectChanges();
-
-  } catch (error) {
-
-    console.error(
-      'ERROR ENVIANDO:',
-      error
-    );
-
-  }
-
-}
 
 }
