@@ -1,4 +1,5 @@
 /* --- ESTILOS BASE --- */
+
 * {
     margin: 0;
     padding: 0;
@@ -12,7 +13,9 @@
     font-family: 'Segoe UI', sans-serif;
 }
 
+
 /* --- HERO Y BIENVENIDA --- */
+
 .hero {
     text-align: center;
     padding: 80px 20px;
@@ -46,7 +49,9 @@
     margin-bottom: 10px;
 }
 
+
 /* --- LAYOUT DE 3 COLUMNAS --- */
+
 .home-layout {
     max-width: 1300px;
     margin: 20px auto;
@@ -57,8 +62,11 @@
     align-items: flex-start;
 }
 
+
 /* --- SIDEBARS --- */
-.sidebar-izq, .sidebar-der {
+
+.sidebar-izq,
+.sidebar-der {
     position: sticky;
     top: 90px;
     width: 300px;
@@ -133,7 +141,9 @@
     text-decoration: underline;
 }
 
+
 /* --- PRÓXIMOS EVENTOS --- */
+
 .proximos-lista {
     list-style: none;
     display: flex;
@@ -176,7 +186,24 @@
     color: #a0aec0;
 }
 
+
+/* AGREGADO: HORA EN PRÓXIMOS EVENTOS */
+
+.proximo-hora {
+    display: block;
+    font-size: 12px;
+    color: #a0aec0;
+    margin-top: 3px;
+}
+
+.proximo-hora svg {
+    vertical-align: middle;
+    margin-right: 3px;
+}
+
+
 /* --- FEED CENTRAL --- */
+
 .feed-central {
     max-width: 500px;
     margin: 0 auto;
@@ -243,6 +270,19 @@
     margin-bottom: 10px;
 }
 
+
+/* AGREGADO: HORA DEL EVENTO */
+
+.evento-hora {
+    color: #cfcfcf;
+}
+
+.evento-hora svg {
+    vertical-align: middle;
+    margin-right: 4px;
+}
+
+
 .categoria-tag {
     display: inline-block;
     background: rgba(124, 58, 237, 0.2);
@@ -252,7 +292,9 @@
     font-size: 12px;
 }
 
+
 /* --- BOTONES Y ACCIONES --- */
+
 .evento-info button {
     width: 100%;
     padding: 12px;
@@ -285,7 +327,9 @@
     border: 1px solid rgba(124, 58, 237, 0.4) !important;
 }
 
+
 /* --- NAVBAR Y OTROS --- */
+
 .navbar {
     height: 70px;
     background: #0f172a;
@@ -310,7 +354,8 @@
     background: #dc2626;
 }
 
-.btn-crear-evento, .btn-perfil-nav {
+.btn-crear-evento,
+.btn-perfil-nav {
     margin-top: 15px;
     padding: 12px 25px;
     border-radius: 10px;
@@ -319,10 +364,13 @@
     border: none;
 }
 
-/* --- RESPONSIVE: en celular, solo el feed --- */
+
+/* --- RESPONSIVE --- */
+
 @media (max-width: 1000px) {
 
-    .sidebar-izq, .sidebar-der {
+    .sidebar-izq,
+    .sidebar-der {
         display: none;
     }
 
@@ -332,115 +380,117 @@
 
 }
 
+
 /* =========================================
    BURBUJA ADVAIH IA
 ========================================= */
 
 .ia-floating {
-  position: fixed;
+    position: fixed;
 
-  right: 25px;
-  bottom: 25px;
+    right: 25px;
+    bottom: 25px;
 
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
 
-  gap: 12px;
+    gap: 12px;
 
-  padding: 10px 18px 10px 10px;
+    padding: 10px 18px 10px 10px;
 
-  background: linear-gradient(
-    135deg,
-    #7c3aed,
-    #3b82f6
-  );
+    background: linear-gradient(
+        135deg,
+        #7c3aed,
+        #3b82f6
+    );
 
-  color: white;
+    color: white;
 
-  border-radius: 50px;
+    border-radius: 50px;
 
-  cursor: pointer;
+    cursor: pointer;
 
-  z-index: 999;
+    z-index: 999;
 
-  box-shadow:
-    0 10px 30px rgba(0, 0, 0, 0.4),
-    0 0 25px rgba(124, 58, 237, 0.35);
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.4),
+        0 0 25px rgba(124, 58, 237, 0.35);
 
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease;
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
 }
 
 .ia-floating:hover {
 
-  transform: translateY(-5px) scale(1.03);
+    transform: translateY(-5px) scale(1.03);
 
-  box-shadow:
-    0 15px 35px rgba(0, 0, 0, 0.5),
-    0 0 35px rgba(124, 58, 237, 0.55);
+    box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.5),
+        0 0 35px rgba(124, 58, 237, 0.55);
 }
 
 .ia-floating-icon {
 
-  width: 45px;
-  height: 45px;
+    width: 45px;
+    height: 45px;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-  background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.15);
 
-  border-radius: 50%;
+    border-radius: 50%;
 
-  font-size: 24px;
+    font-size: 24px;
 
-  flex-shrink: 0;
+    flex-shrink: 0;
 
-  animation: ia-pulse 2.5s infinite;
+    animation: ia-pulse 2.5s infinite;
 }
 
 .ia-floating-text {
 
-  display: flex;
+    display: flex;
 
-  flex-direction: column;
+    flex-direction: column;
 
-  gap: 3px;
+    gap: 3px;
 
-  line-height: 1.2;
+    line-height: 1.2;
 }
 
 .ia-floating-text strong {
 
-  font-size: 14px;
+    font-size: 14px;
 
-  font-weight: 700;
+    font-weight: 700;
 }
 
 .ia-floating-text span {
 
-  font-size: 12px;
+    font-size: 12px;
 
-  color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.8);
 }
 
 @keyframes ia-pulse {
 
-  0% {
-    transform: scale(1);
-  }
+    0% {
+        transform: scale(1);
+    }
 
-  50% {
-    transform: scale(1.08);
-  }
+    50% {
+        transform: scale(1.08);
+    }
 
-  100% {
-    transform: scale(1);
-  }
+    100% {
+        transform: scale(1);
+    }
 
 }
+
 
 /* =========================================
    RESPONSIVE BURBUJA IA
@@ -448,35 +498,35 @@
 
 @media (max-width: 600px) {
 
-  .ia-floating {
+    .ia-floating {
 
-    right: 15px;
-    bottom: 15px;
+        right: 15px;
+        bottom: 15px;
 
-    width: 55px;
-    height: 55px;
+        width: 55px;
+        height: 55px;
 
-    padding: 0;
+        padding: 0;
 
-    justify-content: center;
+        justify-content: center;
 
-    border-radius: 50%;
-  }
-
-
-  .ia-floating-text {
-    display: none;
-  }
+        border-radius: 50%;
+    }
 
 
-  .ia-floating-icon {
+    .ia-floating-text {
+        display: none;
+    }
 
-    width: 55px;
-    height: 55px;
 
-    background: transparent;
+    .ia-floating-icon {
 
-    font-size: 25px;
-  }
+        width: 55px;
+        height: 55px;
+
+        background: transparent;
+
+        font-size: 25px;
+    }
 
 }

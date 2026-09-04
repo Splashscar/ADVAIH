@@ -149,8 +149,15 @@ export class HomeComponent implements OnInit {
 
           .filter(evento => {
 
+            /*
+             * Se mantiene el comportamiento actual.
+             * El evento utiliza su fecha y hora.
+             */
+
             const fechaEvento =
-              new Date(evento.date);
+              new Date(
+                `${evento.date}T${evento.time || '00:00'}`
+              );
 
             return (
               !isNaN(fechaEvento.getTime()) &&
@@ -161,10 +168,17 @@ export class HomeComponent implements OnInit {
 
           .sort((a, b) => {
 
-            return (
-              new Date(a.date).getTime() -
-              new Date(b.date).getTime()
-            );
+            const fechaA =
+              new Date(
+                `${a.date}T${a.time || '00:00'}`
+              ).getTime();
+
+            const fechaB =
+              new Date(
+                `${b.date}T${b.time || '00:00'}`
+              ).getTime();
+
+            return fechaA - fechaB;
 
           });
 
@@ -249,13 +263,20 @@ export class HomeComponent implements OnInit {
       });
 
 
-    // Mantener el orden por fecha
+    // Mantener el orden por fecha y hora
     this.eventosFiltrados.sort((a, b) => {
 
-      return (
-        new Date(a.date).getTime() -
-        new Date(b.date).getTime()
-      );
+      const fechaA =
+        new Date(
+          `${a.date}T${a.time || '00:00'}`
+        ).getTime();
+
+      const fechaB =
+        new Date(
+          `${b.date}T${b.time || '00:00'}`
+        ).getTime();
+
+      return fechaA - fechaB;
 
     });
 
@@ -344,7 +365,7 @@ export class HomeComponent implements OnInit {
     /*
      * todosLosEventos ya contiene únicamente
      * eventos futuros y además está ordenado
-     * por fecha.
+     * por fecha y hora.
      *
      * Por eso simplemente tomamos los primeros 5.
      */
