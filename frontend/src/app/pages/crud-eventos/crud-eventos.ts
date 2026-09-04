@@ -760,70 +760,88 @@ export class CrudEventos implements OnInit {
   // IMAGEN
   // ==========================================
 
+  arrastrandoImagen = false;
+
   onFileSelected(event: any): void {
 
     const file =
       event.target.files?.[0];
 
-
     if (!file) {
-
       return;
-
     }
 
+    this.procesarArchivo(file);
+
+    event.target.value = '';
+
+  }
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.arrastrandoImagen = true;
+  }
+
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.arrastrandoImagen = false;
+  }
+
+  onDrop(event: DragEvent): void {
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    this.arrastrandoImagen = false;
+
+    const file = event.dataTransfer?.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    this.procesarArchivo(file);
+
+  }
+
+  private procesarArchivo(file: File): void {
 
     if (!file.type.startsWith('image/')) {
 
-      alert(
-        '⚠️ Solo puedes seleccionar imágenes.'
-      );
-
-
-      event.target.value = '';
-
+      alert('⚠️ Solo puedes seleccionar imágenes.');
       return;
 
     }
 
+    if (file.size > 5 * 1024 * 1024) {
 
-    if (
-      file.size >
-      5 * 1024 * 1024
-    ) {
-
-      alert(
-        '⚠️ La imagen no puede superar los 5 MB.'
-      );
-
-
-      event.target.value = '';
-
+      alert('⚠️ La imagen no puede superar los 5 MB.');
       return;
 
     }
 
+    this.selectedFile = file;
 
-    this.selectedFile =
-      file;
-
-
-    const reader =
-      new FileReader();
-
+    const reader = new FileReader();
 
     reader.onload = () => {
 
-      this.previewImage =
-        reader.result as string;
-
+      this.previewImage = reader.result as string;
 
       this.cdr.detectChanges();
 
     };
 
-
     reader.readAsDataURL(file);
+
+  }
+
+  quitarImagen(): void {
+
+    this.selectedFile = null;
+    this.previewImage = null;
 
   }
 

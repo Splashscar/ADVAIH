@@ -112,36 +112,95 @@ textarea::placeholder {
 }
 
 /* =========================
-   INPUT DE ARCHIVO
+   ZONA DE IMAGEN (drag & drop)
 ========================= */
 
 .imagen-section {
     margin-top: 5px;
+    margin-bottom: 15px;
 }
 
-.imagen-section input[type="file"] {
+.dropzone {
+    border: 2px dashed rgba(124, 58, 237, 0.4);
+    border-radius: 12px;
     background: #1e293b;
-    padding: 10px;
+    padding: 30px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: .2s;
 }
 
-/* =========================
-   PREVISUALIZACIÓN
-========================= */
+.dropzone:hover {
+    border-color: #7c3aed;
+    background: #24304a;
+}
 
-.preview-container {
-    margin-top: 15px;
-    text-align: center;
+.dropzone-activa {
+    border-color: #7c3aed;
+    background: rgba(124, 58, 237, 0.1);
+}
+
+.dropzone-con-imagen {
+    padding: 15px;
+    cursor: default;
+}
+
+.dropzone-vacio {
+    color: #94a3b8;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.dropzone-vacio svg {
+    color: #7c3aed;
+    margin-bottom: 5px;
+}
+
+.dropzone-vacio p {
+    margin: 0;
+    color: #cbd5e1;
+    font-size: 14px;
+}
+
+.dropzone-vacio span {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.dropzone-preview {
+    position: relative;
+    display: inline-block;
 }
 
 .preview-image {
-    width: 200px;
-    height: 120px;
+    width: 100%;
+    max-width: 300px;
+    height: 180px;
 
     object-fit: cover;
 
-    border-radius: 12px;
+    border-radius: 10px;
 
-    border: 2px solid #7c3aed;
+    display: block;
+}
+
+.btn-quitar-imagen {
+    margin-top: 10px;
+    background: rgba(220, 38, 38, 0.15);
+    color: #f87171;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+    transition: .2s;
+}
+
+.btn-quitar-imagen:hover {
+    background: rgba(220, 38, 38, 0.25);
 }
 
 /* =========================
