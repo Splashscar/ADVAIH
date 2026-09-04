@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Auth } from '@angular/fire/auth';
@@ -6,10 +6,7 @@ import { Navbar } from '../../components/navbar/navbar';
 import { FooterComponent } from '../../components/footer/footer';
 import { EventosService } from '../../services/eventos';
 import { AsistentesService } from '../../services/asistentes';
-import { Subscription } from 'rxjs';
-import {
-  ChangeDetectorRef
-} from '@angular/core';
+import { Subscription, interval } from 'rxjs';
 
 @Component({
   selector: 'app-evento-detalle',
@@ -45,6 +42,12 @@ export class EventoDetalleComponent implements OnInit, OnDestroy {
   private estadoAsistenciaSubscription?: Subscription;
 
   private eventoSubscription?: Subscription;
+
+  // =========================================================
+  // NUEVO: ACTUALIZACIÓN AUTOMÁTICA DE ASISTENTES
+  // =========================================================
+
+  private asistentesRefreshSubscription?: Subscription;
 
 
   constructor(
@@ -170,121 +173,150 @@ export class EventoDetalleComponent implements OnInit, OnDestroy {
 
   private cargarAsistencia(): void {
 
-  if (!this.evento?.id) {
+    if (!this.evento?.id) {
 
-    console.warn(
-      '⚠️ No se puede cargar asistencia: evento sin ID'
+      console.warn(
+        '⚠️ No se puede cargar asistencia: evento sin ID'
+      );
+
+      return;
+    }
+
+    console.log(
+      '🚀 CARGANDO ASISTENCIA DESDE FIRESTORE:',
+      this.evento.id
     );
 
-    return;
+
+    // =====================================================
+    // ESCUCHAR LA CANTIDAD DE ASISTENTES
+    // =====================================================
+
+    this.asistenciaSubscription =
+      this.asistentesService
+        .obtenerCantidad(this.evento.id)
+        .subscribe({
+
+          next: (cantidad) => {
+
+            console.log(
+              '🔥 CANTIDAD RECIBIDA DESDE FIRESTORE:',
+              cantidad
+            );
+
+            this.cantidadAsistentes = cantidad;
+
+            console.log(
+              '🟢 VARIABLE DEL COMPONENTE:',
+              this.cantidadAsistentes
+            );
+
+            this.cdr.detectChanges();
+
+          },
+
+          error: (error) => {
+
+            console.error(
+              '❌ Error obteniendo cantidad:',
+              error
+            );
+
+          }
+
+        });
+
+
+    // =====================================================
+    // SABER SI EL USUARIO ASISTE
+    // =====================================================
+
+    this.estadoAsistenciaSubscription =
+      this.asistentesService
+        .estaAsistiendo(this.evento.id)
+        .subscribe({
+
+          next: (asistiendo) => {
+
+            console.log(
+              '🎟️ ¿Usuario está asistiendo?:',
+              asistiendo
+            );
+
+            this.estaAsistiendo = asistiendo;
+
+            this.cdr.detectChanges();
+
+          },
+
+          error: (error) => {
+
+            console.error(
+              '❌ Error comprobando asistencia:',
+              error
+            );
+
+          }
+
+        });
+
+
+    // =====================================================
+    // SABER SI ES EL CREADOR
+    // =====================================================
+
+    const usuario = this.auth.currentUser;
+
+    this.esCreador =
+      !!usuario &&
+      usuario.uid === this.evento.authorId;
+
+
+    console.log(
+      '👑 ¿Es creador?:',
+      this.esCreador
+    );
+
+
+    // =====================================================
+    // CARGAR LISTA SI ES CREADOR
+    // =====================================================
+
+    if (this.esCreador) {
+
+      // Carga inicial
+      this.cargarListaAsistentes();
+
+      // ===================================================
+      // NUEVO:
+      // ACTUALIZAR AUTOMÁTICAMENTE CADA 3 SEGUNDOS
+      // ===================================================
+
+      this.asistentesRefreshSubscription =
+        interval(3000).subscribe(() => {
+
+          // Seguridad:
+          // solamente actualizamos si sigue siendo
+          // el creador y existe el evento.
+
+          if (
+            this.esCreador &&
+            this.evento?.id
+          ) {
+
+            console.log(
+              '🔄 Actualizando automáticamente asistentes...'
+            );
+
+            this.cargarListaAsistentes();
+
+          }
+
+        });
+
+    }
+
   }
-
-  console.log(
-    '🚀 CARGANDO ASISTENCIA DESDE FIRESTORE:',
-    this.evento.id
-  );
-
-
-  // =====================================================
-  // ESCUCHAR EL EVENTO EN TIEMPO REAL
-  // =====================================================
-
-  this.asistentesService
-    .obtenerCantidad(this.evento.id)
-    .subscribe({
-
-      next: (cantidad) => {
-
-        console.log(
-          '🔥 CANTIDAD RECIBIDA DESDE FIRESTORE:',
-          cantidad
-        );
-
-        this.cantidadAsistentes = cantidad;
-
-        console.log(
-          '🟢 VARIABLE DEL COMPONENTE:',
-          this.cantidadAsistentes
-        );
-
-        // Forzar actualización visual
-        this.cdr.detectChanges();
-
-      },
-
-      error: (error) => {
-
-        console.error(
-          '❌ Error obteniendo cantidad:',
-          error
-        );
-
-      }
-
-    });
-
-
-  // =====================================================
-  // SABER SI EL USUARIO ASISTE
-  // =====================================================
-
-  this.asistentesService
-    .estaAsistiendo(this.evento.id)
-    .subscribe({
-
-      next: (asistiendo) => {
-
-        console.log(
-          '🎟️ ¿Usuario está asistiendo?:',
-          asistiendo
-        );
-
-        this.estaAsistiendo = asistiendo;
-
-        this.cdr.detectChanges();
-
-      },
-
-      error: (error) => {
-
-        console.error(
-          '❌ Error comprobando asistencia:',
-          error
-        );
-
-      }
-
-    });
-
-
-  // =====================================================
-  // SABER SI ES EL CREADOR
-  // =====================================================
-
-  const usuario = this.auth.currentUser;
-
-  this.esCreador =
-    !!usuario &&
-    usuario.uid === this.evento.authorId;
-
-
-  console.log(
-    '👑 ¿Es creador?:',
-    this.esCreador
-  );
-
-
-  // =====================================================
-  // CARGAR LISTA SI ES CREADOR
-  // =====================================================
-
-  if (this.esCreador) {
-
-    this.cargarListaAsistentes();
-
-  }
-
-}
 
 
   // =========================================================
@@ -293,55 +325,59 @@ export class EventoDetalleComponent implements OnInit, OnDestroy {
 
   private cargarListaAsistentes(): void {
 
-  if (!this.evento?.id) {
-    return;
+    if (!this.evento?.id) {
+      return;
+    }
+
+    console.log(
+      '👥 Cargando lista de asistentes:',
+      this.evento.id
+    );
+
+    this.asistentesCargados = false;
+
+    this.asistentesService
+      .obtenerAsistentes(this.evento.id)
+      .subscribe({
+
+        next: (asistentes) => {
+
+          console.log(
+            '🔥 ASISTENTES RECIBIDOS:',
+            asistentes
+          );
+
+          this.asistentes = asistentes || [];
+
+          console.log(
+            '🟢 ASISTENTES EN COMPONENTE:',
+            this.asistentes
+          );
+
+          this.asistentesCargados = true;
+
+          this.cdr.detectChanges();
+
+        },
+
+        error: (error) => {
+
+          console.error(
+            '❌ Error cargando asistentes:',
+            error
+          );
+
+          this.asistentes = [];
+
+          this.asistentesCargados = true;
+
+          this.cdr.detectChanges();
+
+        }
+
+      });
+
   }
-
-  console.log(
-    '👥 Cargando lista de asistentes:',
-    this.evento.id
-  );
-
-  this.asistentesCargados = false;
-
-  this.asistentesService
-    .obtenerAsistentes(this.evento.id)
-    .subscribe({
-
-      next: (asistentes) => {
-
-        console.log(
-          '🔥 ASISTENTES RECIBIDOS:',
-          asistentes
-        );
-
-        this.asistentes = asistentes || [];
-
-        console.log(
-          '🟢 ASISTENTES EN COMPONENTE:',
-          this.asistentes
-        );
-
-        this.asistentesCargados = true;
-
-      },
-
-      error: (error) => {
-
-        console.error(
-          '❌ Error cargando asistentes:',
-          error
-        );
-
-        this.asistentes = [];
-
-        this.asistentesCargados = true;
-
-      }
-
-    });
-
-}
 
 
   // =========================================================
@@ -414,21 +450,6 @@ export class EventoDetalleComponent implements OnInit, OnDestroy {
         );
 
       }
-
-
-      // ====================================
-      // IMPORTANTE
-      // ====================================
-      //
-      // Ya NO necesitamos volver a llamar
-      // obtenerCantidad() manualmente.
-      //
-      // obtenerCantidad() está escuchando
-      // Firestore en tiempo real.
-      //
-      // Cuando cambia "asistentes", el contador
-      // se actualiza automáticamente.
-      // ========================================
 
     }
 
@@ -526,6 +547,13 @@ export class EventoDetalleComponent implements OnInit, OnDestroy {
     this.estadoAsistenciaSubscription?.unsubscribe();
 
     this.eventoSubscription?.unsubscribe();
+
+    // =====================================================
+    // NUEVO:
+    // DETENER LA ACTUALIZACIÓN AUTOMÁTICA AL SALIR
+    // =====================================================
+
+    this.asistentesRefreshSubscription?.unsubscribe();
 
   }
 
