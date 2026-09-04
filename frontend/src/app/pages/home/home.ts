@@ -96,7 +96,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
 
-    // 🔥 Escuchar automáticamente los cambios de sesión
+    // Escuchar automáticamente los cambios de sesión
     this.authService.usuario$.subscribe(usuario => {
 
       if (usuario) {
@@ -116,7 +116,6 @@ export class HomeComponent implements OnInit {
 
       }
 
-      // 🔥 Actualizar la interfaz inmediatamente
       this.cdr.detectChanges();
 
     });
@@ -141,61 +140,51 @@ export class HomeComponent implements OnInit {
         const eventos =
           Array.isArray(res) ? res : [];
 
-
-        // -----------------------------------------------------
-        // FECHA Y HORA ACTUAL
-        // -----------------------------------------------------
-
-        const ahora = new Date();
+        const ahora = new Date().getTime();
 
 
         // -----------------------------------------------------
-        // FILTRAR EVENTOS PASADOS
-        // Y ORDENAR POR CREACIÓN (EL MÁS RECIENTE CREADO PRIMERO)
+        // 1. FILTRAR: Excluir eventos pasados
         // -----------------------------------------------------
 
-        this.todosLosEventos = eventos
+        const eventosVigentes = eventos.filter((evento: any) => {
 
-          .filter(evento => {
+          if (!evento.date) {
+            return false;
+          }
 
-            const fechaEvento =
-              new Date(
-                `${evento.date}T${evento.time || '00:00'}`
-              );
+          const fechaHoraEvento = new Date(
+            `${evento.date}T${evento.time || '23:59'}`
+          ).getTime();
 
-            return (
-              !isNaN(fechaEvento.getTime()) &&
-              fechaEvento >= ahora
-            );
+          return fechaHoraEvento >= ahora;
 
-          })
-
-          .sort((a, b) => {
-
-            // Se busca la propiedad de creación (createdAt / fechaCreacion / id)
-            const tiempoA = a.createdAt
-              ? new Date(a.createdAt).getTime()
-              : (a.id || 0);
-
-            const tiempoB = b.createdAt
-              ? new Date(b.createdAt).getTime()
-              : (b.id || 0);
-
-            return tiempoB - tiempoA;
-
-          });
+        });
 
 
         // -----------------------------------------------------
-        // APLICAR FILTROS
+        // 2. ORDENAR: El recién creado queda de PRIMERO
+        // -----------------------------------------------------
+
+        this.todosLosEventos = eventosVigentes.sort((a: any, b: any) => {
+
+          if (a.createdAt && b.createdAt) {
+            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          }
+
+          const idA = a.id || a._id || '';
+          const idB = b.id || b._id || '';
+
+          return idB.localeCompare(idA);
+
+        });
+
+
+        // -----------------------------------------------------
+        // APLICAR FILTROS Y PRÓXIMOS
         // -----------------------------------------------------
 
         this.aplicarFiltros();
-
-
-        // -----------------------------------------------------
-        // CALCULAR PRÓXIMOS EVENTOS
-        // -----------------------------------------------------
 
         this.calcularProximosEventos();
 
@@ -222,7 +211,7 @@ export class HomeComponent implements OnInit {
 
   aplicarFiltros(): void {
 
-    this.eventosFiltrados =
+    const resultado =
       this.todosLosEventos.filter(evento => {
 
         // -----------------------------------------------------
@@ -264,27 +253,10 @@ export class HomeComponent implements OnInit {
 
       });
 
-
-    // ---------------------------------------------------------
-    // MANTENER ORDEN POR CREACIÓN (MÁS RECIENTE CREADO PRIMERO)
-    // ---------------------------------------------------------
-
-    this.eventosFiltrados.sort((a, b) => {
-
-      const tiempoA = a.createdAt
-        ? new Date(a.createdAt).getTime()
-        : (a.id || 0);
-
-      const tiempoB = b.createdAt
-        ? new Date(b.createdAt).getTime()
-        : (b.id || 0);
-
-      return tiempoB - tiempoA;
-
-    });
+    // Mantiene el orden con los recién creados de primero
+    this.eventosFiltrados = resultado;
 
 
-    // 🔥 Actualizar vista
     this.cdr.detectChanges();
 
   }
@@ -363,7 +335,7 @@ export class HomeComponent implements OnInit {
 
 
   // =========================================================
-  // PRÓXIMOS EVENTOS
+  // PRÓXIMOS EVENTOS (Aparecen los 5 más recientemente creados)
   // =========================================================
 
   calcularProximosEventos(): void {
@@ -400,7 +372,7 @@ export class HomeComponent implements OnInit {
 
     this.eventosService
       .toggleLike(
-        evento.id,
+        evento.id || evento._id,
         usuario.uid
       )
       .subscribe({
@@ -456,7 +428,7 @@ export class HomeComponent implements OnInit {
 
     this.eventosService
       .toggleFavorito(
-        evento.id,
+        evento.id || evento._id,
         usuario.uid
       )
       .subscribe({
@@ -519,8 +491,10 @@ export class HomeComponent implements OnInit {
 
   verMas(evento: any): void {
 
+    const idEvento = evento.id || evento._id;
+
     this.router.navigate(
-      ['/eventos', evento.id],
+      ['/eventos', idEvento],
       {
         state: {
           evento: evento

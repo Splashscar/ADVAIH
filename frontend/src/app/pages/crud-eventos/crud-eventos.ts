@@ -329,7 +329,9 @@ export class CrudEventos implements OnInit {
               0,
 
             usuariosFavoritos:
-              []
+              [],
+
+            createdAt: new Date().toISOString()
 
           };
 
@@ -720,19 +722,46 @@ export class CrudEventos implements OnInit {
               ? data
               : [];
 
+          const ahora = new Date().getTime();
 
-          // Mostrar solamente los eventos
-          // creados por el usuario actualmente autenticado
-          this.eventos =
-            todosLosEventos.filter(
-              (evento: any) =>
-                evento.authorId ===
-                this.usuario?.uid
-            );
+
+          // 1. Filtrar eventos del usuario autenticado que aún no hayan pasado
+          const misEventos = todosLosEventos.filter(
+            (evento: any) => {
+
+              const esDeUsuario = evento.authorId === this.usuario?.uid;
+
+              if (!esDeUsuario || !evento.date) {
+                return false;
+              }
+
+              const fechaHoraEvento = new Date(
+                `${evento.date}T${evento.time || '23:59'}`
+              ).getTime();
+
+              return fechaHoraEvento >= ahora;
+
+            }
+          );
+
+
+          // 2. Ordenar para que los más recientes aparezcan al inicio
+          this.eventos = misEventos.sort((a: any, b: any) => {
+
+            if (a.createdAt && b.createdAt) {
+              return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+            }
+
+            const idA = a.id || a._id || '';
+            const idB = b.id || b._id || '';
+
+            return idB.localeCompare(idA);
+
+          });
 
 
           console.log(
-            '👤 Mis eventos:',
+            '👤 Mis eventos vigentes ordenados:',
             this.eventos
           );
 
