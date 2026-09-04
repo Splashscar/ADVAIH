@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { IaService, EventoIA } from '../../services/ia';
@@ -52,6 +52,7 @@ export class Ia implements OnInit {
   // =========================================================
 
   uidUsuario = '';
+  @ViewChild('scrollContainer') scrollContainer!: ElementRef;
 
   // =========================================================
   // CONSTRUCTOR
@@ -108,10 +109,17 @@ export class Ia implements OnInit {
 
         this.cargarHistorial();
 
+        this.cdr.detectChanges();
+
+        
+
+
       }
 
     });
 
+    this.cdr.detectChanges();
+    this.scrollPaginaAlFinal();
   }
 
   // =========================================================
@@ -154,6 +162,7 @@ export class Ia implements OnInit {
       }
 
       this.cdr.detectChanges();
+      this.scrollAlFinal();
 
     } catch (error) {
 
@@ -194,6 +203,35 @@ export class Ia implements OnInit {
       );
 
     }
+
+  }
+
+  // Scroll al final
+  private scrollAlFinal(): void {
+
+    setTimeout(() => {
+
+      try {
+        this.scrollContainer.nativeElement.scrollTop =
+          this.scrollContainer.nativeElement.scrollHeight;
+      } catch (error) {
+        // el contenedor puede no existir aún si el chat está vacío
+      }
+
+    }, 0);
+
+  }
+
+  private scrollPaginaAlFinal(): void {
+
+    setTimeout(() => {
+
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: 'smooth'
+      });
+
+    }, 100);
 
   }
 
@@ -239,6 +277,8 @@ export class Ia implements OnInit {
     this.guardarHistorial();
 
     this.cdr.detectChanges();
+
+    this.scrollAlFinal();
 
     // =======================================================
     // LLAMAR A DJANGO / GEMINI
@@ -309,6 +349,8 @@ export class Ia implements OnInit {
 
           this.cdr.detectChanges();
 
+          this.scrollAlFinal();
+
           console.log(
             '💬 Historial actualizado:',
             this.mensajesChat
@@ -348,6 +390,8 @@ export class Ia implements OnInit {
           this.guardarHistorial();
 
           this.cdr.detectChanges();
+
+          this.scrollAlFinal();
 
         }
 
