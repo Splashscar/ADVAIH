@@ -16,7 +16,9 @@ import {
   serverTimestamp,
   query,
   orderBy,
-  where
+  where,
+  limit,
+  getDocs
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { Usuario } from '../models/usuario';
@@ -54,27 +56,27 @@ export class FirebaseService {
 
   async crearEvento(evento: any) {
 
-  const eventosRef =
-    collection(this.firestore, 'events');
+    const eventosRef =
+      collection(this.firestore, 'events');
 
-  const nuevoEvento = {
+    const nuevoEvento = {
 
-    ...evento,
+      ...evento,
 
-    likes: 0,
+      likes: 0,
 
-    usuariosLike: [],
+      usuariosLike: [],
 
-    asistentes: []
+      asistentes: []
 
-  };
+    };
 
-  return await addDoc(
-    eventosRef,
-    nuevoEvento
-  );
+    return await addDoc(
+      eventosRef,
+      nuevoEvento
+    );
 
-}
+  }
 
   async eliminarEvento(id: string) {
     const eventoDoc = doc(this.firestore, `events/${id}`);
@@ -510,5 +512,73 @@ export class FirebaseService {
       await this.obtenerAsistentes(eventoId);
 
     return asistentes.length;
+  }
+
+  async obtenerChatsUsuario(uid: string): Promise<any[]> {
+    const chatsRef = collection(this.firestore, 'chats');
+
+    const q = query(
+      chatsRef,
+      where('participantes', 'array-contains', uid)
+    );
+
+    const snapshot = await getDocs(q);
+
+    const chats: any[] = [];
+
+    for (const documento of snapshot.docs) {
+      const chat = documento.data();
+
+      const mensajesRef = collection(
+        this.firestore,
+        `chats/${documento.id}/mensajes`
+      );
+
+      const mensajesQuery = query(
+        mensajesRef,
+        orderBy('fecha', 'desc'),
+        limit(1)
+      );
+
+      const mensajesSnapshot = await getDocs(mensajesQuery);
+
+      // 🚨 Si nunca hubo mensajes, NO es una conversación
+      if (mensajesSnapshot.empty) {
+        continue;
+      }
+
+      const mensajeDoc = mensajesSnapshot.docs[0];
+
+      const ultimoMensaje = {
+        id: mensajeDoc.id,
+        ...mensajeDoc.data()
+      };
+
+      chats.push({
+        id: documento.id,
+        ...chat,
+        ultimoMensaje
+      });
+    }
+
+    // Ordenar por mensaje más reciente
+    chats.sort((a, b) => {
+      const fechaA = a.ultimoMensaje?.fecha?.toMillis?.() || 0;
+      const fechaB = b.ultimoMensaje?.fecha?.toMillis?.() || 0;
+
+      return fechaB - fechaA;
+    });
+
+    return chats;
+  }
+  obtenerOtroParticipante(
+    participantes: string[],
+    uidActual: string
+  ): string | null {
+
+    return participantes.find(
+      uid => uid !== uidActual
+    ) || null;
+
   }
 }

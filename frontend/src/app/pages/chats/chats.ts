@@ -7,20 +7,24 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+
 import { Navbar } from '../../components/navbar/navbar';
 import { FooterComponent } from '../../components/footer/footer';
+
 import { FirebaseService } from '../../services/firebase';
 import { AuthServices } from '../../services/auth';
 
 @Component({
   selector: 'app-chats',
   standalone: true,
+
   imports: [
     CommonModule,
     FormsModule,
     Navbar,
     FooterComponent
   ],
+
   templateUrl: './chats.html',
   styleUrls: ['./chats.css']
 })
@@ -30,9 +34,13 @@ export class ChatsComponent implements OnInit {
 
   usuarios: any[] = [];
 
+  chatsRecientes: any[] = [];
+
   filtro: string = '';
 
   cargando = true;
+
+  cargandoChats = true;
 
 
   constructor(
@@ -45,69 +53,40 @@ export class ChatsComponent implements OnInit {
 
   ngOnInit(): void {
 
-    // =========================
-    // USUARIO ACTUAL
-    // =========================
-
     this.authService.usuario$
       .subscribe({
 
-        next: (usuario) => {
+        next: async (usuario) => {
 
           this.usuarioActual = usuario;
 
           console.log(
-            'Usuario actual:',
+            '👤 Usuario actual:',
             usuario
           );
 
-          this.cdr.detectChanges();
+          if (!usuario?.uid) {
+
+            this.cargando = false;
+
+            return;
+
+          }
+
+          await this.cargarChatsRecientes();
+
+          this.cargarUsuarios();
 
         },
 
         error: (err) => {
 
           console.error(
-            'Error obteniendo usuario:',
+            '❌ Error obteniendo usuario:',
             err
           );
 
-        }
-
-      });
-
-
-    // =========================
-    // CARGAR USUARIOS
-    // =========================
-
-    this.firebaseService
-      .obtenerUsuarios()
-      .subscribe({
-
-        next: (data: any) => {
-
-          this.usuarios = data;
-
           this.cargando = false;
-
-          console.log(
-            'Usuarios:',
-            data
-          );
-
-          this.cdr.detectChanges();
-
-        },
-
-        error: (err) => {
-
-          this.cargando = false;
-
-          console.error(
-            'Error cargando usuarios:',
-            err
-          );
 
         }
 
@@ -116,20 +95,136 @@ export class ChatsComponent implements OnInit {
   }
 
 
-  // =========================
-  // USUARIOS FILTRADOS
-  // =========================
+  // =====================================================
+  // CARGAR CHATS RECIENTES
+  // =====================================================
+
+  async cargarChatsRecientes(): Promise<void> {
+    if (!this.usuarioActual?.uid) {
+      return;
+    }
+
+    try {
+      this.cargandoChats = true;
+
+      const chats = await this.firebaseService.obtenerChatsUsuario(
+        this.usuarioActual.uid
+      );
+
+      console.log('💬 CHATS DEVUELTOS:', chats);
+
+      this.chatsRecientes = [];
+
+      for (const chat of chats) {
+
+        // 🚨 MUY IMPORTANTE:
+        // Si el chat nunca ha tenido mensajes, no es una conversación.
+        if (!chat.ultimoMensaje) {
+          continue;
+        }
+
+        const otroUid = this.firebaseService.obtenerOtroParticipante(
+          chat.participantes,
+          this.usuarioActual.uid
+        );
+
+        if (!otroUid) {
+          continue;
+        }
+
+        const usuario = this.usuarios.find(
+          u => u.uid === otroUid
+        );
+
+        // Si por alguna razón no encontramos al usuario,
+        // igual podemos mostrar el chat con datos básicos.
+        this.chatsRecientes.push({
+          ...chat,
+          usuario: usuario || {
+            uid: otroUid,
+            nombre: 'Usuario',
+            email: '',
+            fotoURL: ''
+          }
+        });
+      }
+
+      console.log(
+        '✅ CONVERSACIONES CON MENSAJES:',
+        this.chatsRecientes
+      );
+
+      this.cargandoChats = false;
+      this.cdr.detectChanges();
+
+    } catch (error) {
+
+      console.error(
+        '❌ Error cargando chats:',
+        error
+      );
+
+      this.chatsRecientes = [];
+      this.cargandoChats = false;
+    }
+  }
+
+
+  // =====================================================
+  // CARGAR USUARIOS
+  // =====================================================
+
+  cargarUsuarios(): void {
+    this.firebaseService.obtenerUsuarios().subscribe({
+      next: (data: any[]) => {
+
+        this.usuarios = data;
+
+        console.log(
+          '👥 Usuarios cargados:',
+          data
+        );
+
+        // Reconstruimos las conversaciones
+        // ahora que ya tenemos los usuarios.
+        this.cargarChatsRecientes();
+
+        this.cargando = false;
+        this.cdr.detectChanges();
+      },
+
+      error: (err) => {
+
+        this.cargando = false;
+
+        console.error(
+          '❌ Error cargando usuarios:',
+          err
+        );
+      }
+    });
+  }
+
+
+  // =====================================================
+  // BUSQUEDA DE USUARIOS
+  // =====================================================
 
   get usuariosFiltrados(): any[] {
 
-    const texto = this.filtro
-      .toLowerCase()
-      .trim();
+    const texto =
+      this.filtro
+        .toLowerCase()
+        .trim();
+
+
+    if (!texto) {
+      return [];
+    }
 
 
     return this.usuarios.filter(usuario => {
 
-      // No mostrar usuario actual
       if (
         this.usuarioActual &&
         usuario.uid === this.usuarioActual.uid
@@ -140,17 +235,10 @@ export class ChatsComponent implements OnInit {
       }
 
 
-      // Si no hay búsqueda
-      if (!texto) {
-
-        return true;
-
-      }
-
-
       const nombre =
         (usuario.nombre || '')
           .toLowerCase();
+
 
       const email =
         (usuario.email || '')
@@ -167,138 +255,120 @@ export class ChatsComponent implements OnInit {
   }
 
 
-  // =========================
-  // CREAR CHAT
-  // =========================
+  // =====================================================
+  // ABRIR CHAT EXISTENTE
+  // =====================================================
 
-  async crearChat(usuario: any) {
-
-  if (!this.usuarioActual) {
-
-    alert('Debes iniciar sesión para enviar mensajes');
-
-    return;
-
-  }
-
-
-  if (!this.usuarioActual.uid) {
-
-    console.error(
-      '❌ El usuario actual no tiene UID:',
-      this.usuarioActual
-    );
-
-    return;
-
-  }
-
-
-  if (!usuario?.uid) {
-
-    console.error(
-      '❌ El usuario seleccionado no tiene UID:',
-      usuario
-    );
-
-    return;
-
-  }
-
-
-  if (
-    usuario.uid ===
-    this.usuarioActual.uid
-  ) {
-
-    alert(
-      'No puedes enviarte mensajes a ti mismo'
-    );
-
-    return;
-
-  }
-
-
-  // =========================================================
-  // PARTICIPANTES
-  // =========================================================
-
-  const participantes = [
-
-    this.usuarioActual.uid,
-
-    usuario.uid
-
-  ].sort();
-
-
-  // =========================================================
-  // ID ÚNICO DEL CHAT
-  // =========================================================
-
-  const chatId =
-    participantes.join('_');
-
-
-  console.log(
-    '👤 Usuario actual:',
-    this.usuarioActual.uid
-  );
-
-  console.log(
-    '👤 Usuario destino:',
-    usuario.uid
-  );
-
-  console.log(
-    '👥 Participantes:',
-    participantes
-  );
-
-  console.log(
-    '💬 Chat ID:',
-    chatId
-  );
-
-
-  try {
-
-    // =======================================================
-    // CREAR O CONFIRMAR CHAT
-    // =======================================================
-
-    await this.firebaseService.crearChat(
-      chatId,
-      participantes
-    );
-
+  abrirChat(chat: any): void {
 
     console.log(
-      '✅ Chat listo:',
-      chatId
+      '💬 Abriendo chat:',
+      chat.id
     );
 
-
-    // =======================================================
-    // ABRIR CHAT
-    // =======================================================
-
-    await this.router.navigate([
+    this.router.navigate([
       '/chats',
-      chatId
+      chat.id
     ]);
-
-
-  } catch (error) {
-
-    console.error(
-      '❌ Error creando chat:',
-      error
-    );
 
   }
 
-}
+
+  // =====================================================
+  // CREAR CHAT
+  // =====================================================
+
+  async crearChat(usuario: any): Promise<void> {
+
+    if (!this.usuarioActual) {
+
+      alert(
+        'Debes iniciar sesión para enviar mensajes'
+      );
+
+      return;
+
+    }
+
+
+    if (!usuario?.uid) {
+
+      console.error(
+        '❌ Usuario sin UID:',
+        usuario
+      );
+
+      return;
+
+    }
+
+
+    if (
+      usuario.uid ===
+      this.usuarioActual.uid
+    ) {
+
+      alert(
+        'No puedes enviarte mensajes a ti mismo'
+      );
+
+      return;
+
+    }
+
+
+    const participantes = [
+
+      this.usuarioActual.uid,
+
+      usuario.uid
+
+    ].sort();
+
+
+    const chatId =
+      participantes.join('_');
+
+
+    try {
+
+      await this.firebaseService.crearChat(
+        chatId,
+        participantes
+      );
+
+
+      console.log(
+        '✅ Chat listo:',
+        chatId
+      );
+
+
+      await this.router.navigate([
+        '/chats',
+        chatId
+      ]);
+
+    } catch (error) {
+
+      console.error(
+        '❌ Error creando chat:',
+        error
+      );
+
+    }
+
+  }
+
+
+  // =====================================================
+  // LIMPIAR BUSQUEDA
+  // =====================================================
+
+  limpiarBusqueda(): void {
+
+    this.filtro = '';
+
+  }
 
 }
