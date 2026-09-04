@@ -43,7 +43,8 @@
     <input
       type="text"
       [(ngModel)]="mensaje"
-      placeholder="Escribe un mensaje...">
+      placeholder="Escribe un mensaje..."
+      (keydown.enter)="enviar()">
 
     <button
       (click)="enviar()">

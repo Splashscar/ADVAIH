@@ -261,8 +261,35 @@
         </div>
 
 
-        <div class="chat-flecha">
-          →
+        <!-- ========================================== -->
+        <!-- NOTIFICACIÓN + FLECHA -->
+        <!-- ========================================== -->
+
+        <div
+          class="chat-acciones"
+          (click)="abrirChat(chat)"
+        >
+
+          <span
+            *ngIf="chat.unreadMessages > 0"
+            class="notificacion-mensajes"
+          >
+
+            {{
+              chat.unreadMessages > 99
+                ? '99+'
+                : chat.unreadMessages
+            }}
+
+          </span>
+
+
+          <div class="chat-flecha">
+
+            →
+
+          </div>
+
         </div>
 
       </div>
