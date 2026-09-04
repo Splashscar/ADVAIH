@@ -151,7 +151,7 @@ export class HomeComponent implements OnInit {
 
         // -----------------------------------------------------
         // FILTRAR EVENTOS PASADOS
-        // Y ORDENAR DEL MÁS PRÓXIMO AL MÁS LEJANO
+        // Y ORDENAR POR CREACIÓN (EL MÁS RECIENTE CREADO PRIMERO)
         // -----------------------------------------------------
 
         this.todosLosEventos = eventos
@@ -172,17 +172,16 @@ export class HomeComponent implements OnInit {
 
           .sort((a, b) => {
 
-            const fechaA =
-              new Date(
-                `${a.date}T${a.time || '00:00'}`
-              ).getTime();
+            // Se busca la propiedad de creación (createdAt / fechaCreacion / id)
+            const tiempoA = a.createdAt
+              ? new Date(a.createdAt).getTime()
+              : (a.id || 0);
 
-            const fechaB =
-              new Date(
-                `${b.date}T${b.time || '00:00'}`
-              ).getTime();
+            const tiempoB = b.createdAt
+              ? new Date(b.createdAt).getTime()
+              : (b.id || 0);
 
-            return fechaA - fechaB;
+            return tiempoB - tiempoA;
 
           });
 
@@ -267,22 +266,20 @@ export class HomeComponent implements OnInit {
 
 
     // ---------------------------------------------------------
-    // MANTENER ORDEN POR FECHA Y HORA
+    // MANTENER ORDEN POR CREACIÓN (MÁS RECIENTE CREADO PRIMERO)
     // ---------------------------------------------------------
 
     this.eventosFiltrados.sort((a, b) => {
 
-      const fechaA =
-        new Date(
-          `${a.date}T${a.time || '00:00'}`
-        ).getTime();
+      const tiempoA = a.createdAt
+        ? new Date(a.createdAt).getTime()
+        : (a.id || 0);
 
-      const fechaB =
-        new Date(
-          `${b.date}T${b.time || '00:00'}`
-        ).getTime();
+      const tiempoB = b.createdAt
+        ? new Date(b.createdAt).getTime()
+        : (b.id || 0);
 
-      return fechaA - fechaB;
+      return tiempoB - tiempoA;
 
     });
 
