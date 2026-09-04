@@ -165,3 +165,8 @@ button:first-of-type {
     color: #8b5cf6;
     cursor: pointer;
 }
+
+/* ALERTAS DE CORREO Y CONTRASEÑA */
+.error-input {
+    color: red;
+}
