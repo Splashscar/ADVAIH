@@ -9,6 +9,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
 
 import { Navbar } from '../../components/navbar/navbar';
 import { AuthServices } from '../../services/auth';
@@ -45,7 +46,8 @@ export class ChatConversacion implements OnInit {
     private route: ActivatedRoute,
     private firebaseService: FirebaseService,
     private authService: AuthServices,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private location: Location
   ) { }
 
   ngOnInit(): void {
@@ -141,9 +143,8 @@ export class ChatConversacion implements OnInit {
           );
 
           this.cdr.detectChanges();
+
           this.scrollAlFinal();
-          this.scrollPaginaAlFinal(); 
-        
 
         },
 
@@ -160,7 +161,10 @@ export class ChatConversacion implements OnInit {
 
       });
 
+    this.scrollPaginaAlFinal();
+
   }
+
   private scrollAlFinal(): void {
 
     setTimeout(() => {
@@ -187,6 +191,10 @@ export class ChatConversacion implements OnInit {
 
     }, 100);
 
+  }
+
+  volver(): void {
+    this.location.back();
   }
 
   async enviar() {
