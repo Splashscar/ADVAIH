@@ -50,8 +50,8 @@ def listar_eventos(request):
                 "date": data.get("date"),
                 "description": data.get("description"),
                 "category": data.get("category"),
+                "time": data.get("time"),
                 "imageUrl": data.get("imageUrl"),
-
                 "authorId": data.get("authorId"),
                 "authorName": data.get("authorName"),
                 "authorEmail": data.get("authorEmail"),
