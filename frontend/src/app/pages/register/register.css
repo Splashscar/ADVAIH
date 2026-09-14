@@ -25,7 +25,6 @@
     overflow-x: hidden;
 }
 
-
 /* =========================================================
    PANEL IZQUIERDO
    ========================================================= */
@@ -52,8 +51,6 @@
     position: relative;
     overflow: hidden;
 }
-
-/* Brillo decorativo */
 
 .left-panel::before {
     content: "";
@@ -111,7 +108,6 @@
     font-weight: 700;
 }
 
-
 /* =========================================================
    PANEL DERECHO
    ========================================================= */
@@ -136,11 +132,9 @@
     position: relative;
 }
 
-
 /* =========================================================
    HEADER
-   "¿Ya tienes cuenta? Inicia sesión"
-   SIEMPRE ARRIBA
+   Siempre arriba
    ========================================================= */
 
 .header {
@@ -164,7 +158,6 @@
     color: #a78bfa;
     text-decoration: none;
     font-weight: 600;
-
     transition: 0.25s ease;
 }
 
@@ -173,18 +166,15 @@
     text-decoration: underline;
 }
 
-
 /* =========================================================
-   CONTENIDO DEL REGISTRO
+   CONTENIDO
    ========================================================= */
 
 .right-panel > h1 {
     font-size: clamp(2rem, 4vw, 3.3rem);
     line-height: 1.1;
     font-weight: 750;
-
     margin-bottom: 12px;
-
     color: #ffffff;
 }
 
@@ -192,15 +182,12 @@
     color: #9ca3af;
     font-size: 16px;
     line-height: 1.6;
-
     margin-bottom: 35px;
-
     max-width: 650px;
 }
 
-
 /* =========================================================
-   GRID DE INPUTS
+   GRID
    ========================================================= */
 
 .grid {
@@ -213,7 +200,6 @@
 
     margin-bottom: 30px;
 }
-
 
 /* =========================================================
    INPUTS
@@ -268,7 +254,6 @@ textarea:focus {
         0 0 0 3px rgba(139, 92, 246, 0.12);
 }
 
-
 /* =========================================================
    PASSWORD
    ========================================================= */
@@ -309,7 +294,6 @@ textarea:focus {
     transform: translateY(-50%) scale(1.08);
 }
 
-
 /* =========================================================
    TIPO DE USUARIO
    ========================================================= */
@@ -329,9 +313,6 @@ textarea:focus {
 
     margin-bottom: 16px;
 }
-
-
-/* Labels */
 
 .tipo-usuario label {
     display: inline-flex;
@@ -355,9 +336,6 @@ textarea:focus {
     color: #ffffff;
 }
 
-
-/* Radio */
-
 .tipo-usuario input[type="radio"] {
     width: 17px;
     height: 17px;
@@ -370,7 +348,6 @@ textarea:focus {
 
     box-shadow: none;
 }
-
 
 /* =========================================================
    TEXTAREA
@@ -386,9 +363,8 @@ textarea {
     line-height: 1.5;
 }
 
-
 /* =========================================================
-   BOTÓN CREAR CUENTA
+   BOTÓN
    ========================================================= */
 
 button {
@@ -442,7 +418,6 @@ button:disabled {
     transform: none;
 }
 
-
 /* =========================================================
    TABLET
    ========================================================= */
@@ -462,9 +437,7 @@ button:disabled {
     .left-panel h2 {
         font-size: 2.3rem;
     }
-
 }
-
 
 /* =========================================================
    TABLET PEQUEÑA
@@ -502,15 +475,10 @@ button:disabled {
         padding: 25px 40px 50px;
     }
 
-    /*
-       El header sigue arriba del contenido
-    */
     .header {
         margin-bottom: 35px;
     }
-
 }
-
 
 /* =========================================================
    CELULAR
@@ -532,7 +500,6 @@ button:disabled {
 
     .left-panel h1 {
         font-size: 3rem;
-
         margin-bottom: 10px;
     }
 
@@ -545,17 +512,10 @@ button:disabled {
         padding: 22px 22px 40px;
     }
 
-    /*
-       ARRIBA Y CENTRADO EN CELULAR
-    */
-
     .header {
         justify-content: center;
-
         margin-bottom: 32px;
-
         font-size: 14px;
-
         flex-wrap: wrap;
     }
 
@@ -568,15 +528,9 @@ button:disabled {
         margin-bottom: 28px;
     }
 
-    /*
-       Los inputs pasan a una sola columna
-    */
-
     .grid {
         grid-template-columns: 1fr;
-
         gap: 15px;
-
         margin-bottom: 28px;
     }
 
@@ -594,12 +548,9 @@ button:disabled {
 
     .tipo-usuario label {
         display: flex;
-
         width: 100%;
-
         margin-right: 0;
         margin-bottom: 13px;
-
         padding: 5px 0;
     }
 
@@ -612,7 +563,6 @@ button:disabled {
     }
 }
 
-
 /* =========================================================
    CELULARES PEQUEÑOS
    ========================================================= */
@@ -621,7 +571,6 @@ button:disabled {
 
     .left-panel {
         min-height: 185px;
-
         padding: 25px 18px;
     }
 
