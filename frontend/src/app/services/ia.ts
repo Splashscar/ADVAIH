@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface EventoIA {
   id: string;
@@ -25,7 +26,7 @@ export interface RespuestaIA {
 })
 export class IaService {
 
-  private apiUrl = 'http://127.0.0.1:8000/api/ia-recomendar/';
+  private apiUrl = `${environment.apiUrl}/ia-recomendar/`;
 
   constructor(
     private http: HttpClient
@@ -43,12 +44,10 @@ export class IaService {
         }
       )
       .pipe(
-
         map((res) => {
 
           console.log('📥 Respuesta recibida en IaService:', res);
 
-          // Validar que Django realmente respondió
           if (!res) {
             throw new Error('La respuesta del servidor está vacía');
           }
@@ -63,9 +62,6 @@ export class IaService {
           };
 
         })
-
       );
-
   }
-
 }
