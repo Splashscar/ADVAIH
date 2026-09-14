@@ -4,169 +4,592 @@
     box-sizing: border-box;
 }
 
-html, body {
+:host {
+    display: block;
+    min-height: 100vh;
+}
+
+html,
+body {
     width: 100%;
     height: 100%;
     font-family: 'Segoe UI', sans-serif;
 }
 
-/* CONTENEDOR PRINCIPAL */
+/* =========================
+   CONTENEDOR
+========================= */
+
 .login-container {
     display: flex;
     width: 100%;
-    height: 100vh;
+    min-height: 100vh;
+    background: #050816;
+    overflow: hidden;
 }
 
-/* PANEL IZQUIERDO */
+/* =========================
+   PANEL IZQUIERDO
+========================= */
+
 .left-panel {
-    width: 40%;
-    height: 100vh;
+    position: relative;
+    width: 44%;
+    min-height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 60px;
+
     background:
-        linear-gradient(rgba(5, 8, 25, .85),
-            rgba(5, 8, 25, .85)),
+        linear-gradient(
+            135deg,
+            rgba(5, 8, 25, 0.82),
+            rgba(30, 20, 70, 0.72)
+        ),
         url("https://images.unsplash.com/photo-1501386761578-eac5c94b800");
+
     background-size: cover;
     background-position: center;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    padding: 20px;
+    color: white;
+    overflow: hidden;
 }
 
-/* BRAND */
+/* brillo decorativo */
+
+.left-panel::before {
+    content: "";
+    position: absolute;
+    width: 420px;
+    height: 420px;
+
+    background: rgba(124, 58, 237, 0.25);
+    filter: blur(100px);
+
+    top: -150px;
+    left: -150px;
+
+    border-radius: 50%;
+}
+
+.left-panel::after {
+    content: "";
+    position: absolute;
+    width: 350px;
+    height: 350px;
+
+    background: rgba(79, 124, 255, 0.18);
+    filter: blur(100px);
+
+    bottom: -150px;
+    right: -100px;
+
+    border-radius: 50%;
+}
+
+/* =========================
+   BRAND
+========================= */
+
 .brand {
-    color: white;
+    position: relative;
+    z-index: 2;
+    max-width: 520px;
 }
 
 .brand h1 {
-    font-size: clamp(2.5rem, 4vw, 5rem); /* 🔥 responsive */
-    font-weight: 700;
+    font-size: clamp(3rem, 5vw, 5.5rem);
+    font-weight: 800;
+    letter-spacing: -3px;
+    margin-bottom: 5px;
 }
 
 .subtitle {
-    font-size: clamp(1rem, 2vw, 1.4rem);
+    font-size: 1.1rem;
+    color: #c8c9d6;
+    letter-spacing: 1px;
 }
 
 .line {
-    width: 80px;
-    height: 3px;
-    background: #8b5cf6;
-    margin: 20px 0;
+    width: 70px;
+    height: 4px;
+
+    margin: 28px 0;
+
+    border-radius: 20px;
+
+    background: linear-gradient(
+        90deg,
+        #8b5cf6,
+        #4f7cff
+    );
 }
 
 .brand h2 {
-    font-size: clamp(1.2rem, 2.5vw, 2rem);
-    line-height: 1.5;
+    font-size: clamp(1.7rem, 3vw, 2.8rem);
+    line-height: 1.25;
+    font-weight: 600;
+    max-width: 500px;
 }
 
 .brand span {
-    color: #7c4dff;
+    color: #a78bfa;
 }
 
-/* PANEL DERECHO */
+/* =========================
+   PANEL DERECHO
+========================= */
+
 .right-panel {
-    width: 60%;
-    height: 100vh;
-    background: #070b1d;
+    position: relative;
+
+    width: 56%;
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at 80% 10%,
+            rgba(124, 58, 237, 0.12),
+            transparent 35%
+        ),
+        #070b1d;
+
     color: white;
 
-    padding: 30px 60px;
+    padding: 45px 8%;
 
     display: flex;
     flex-direction: column;
-    justify-content: center; /* 🔥 centra todo verticalmente */
+    justify-content: center;
 }
 
-/* TOP LINKS */
+/* =========================
+   LINK SUPERIOR
+========================= */
+
 .top-link {
+    position: absolute;
+    top: 35px;
+    right: 8%;
+
     display: flex;
-    justify-content: flex-end;
-    gap: 20px;
     align-items: center;
+    gap: 10px;
+
+    color: #9ca3b8;
+    font-size: 14px;
 }
 
-/* FORM */
+.top-link a {
+    color: #a78bfa;
+    font-weight: 600;
+    text-decoration: none;
+
+    transition: 0.2s;
+}
+
+.top-link a:hover {
+    color: #c4b5fd;
+}
+
+/* =========================
+   FORMULARIO
+========================= */
+
 .form-box {
-    max-width: 550px;
     width: 100%;
-    margin: 0 auto;
+    max-width: 500px;
+    margin: 40px auto 0;
 }
 
-/* TEXTO */
 .form-box h1 {
     font-size: clamp(2rem, 3vw, 3rem);
-    margin-bottom: 10px;
+    line-height: 1.15;
+
+    margin-bottom: 12px;
+
+    letter-spacing: -1px;
 }
 
 .form-box p {
-    color: #cfcfcf;
-    margin-bottom: 20px;
-    line-height: 1.5;
-}
+    color: #9ca3b8;
 
-/* INPUTS */
-label {
-    display: block;
-    margin-top: 12px;
-    margin-bottom: 8px;
-    font-weight: 600;
-}
+    line-height: 1.6;
 
-input {
-    width: 100%;
-    padding: 14px;
-    border-radius: 14px;
-    border: 1px solid #303552;
-    background: #11152c;
-    color: white;
+    margin-bottom: 30px;
+
     font-size: 15px;
 }
 
-/* BOTONES */
-button {
-    width: 100%;
-    padding: 14px;
-    border: none;
-    border-radius: 14px;
-    margin-top: 15px;
-    font-size: 16px;
+/* =========================
+   LABELS
+========================= */
+
+label {
+    display: block;
+
+    margin-top: 18px;
+    margin-bottom: 8px;
+
+    color: #e5e7eb;
+
+    font-size: 14px;
     font-weight: 600;
-    cursor: pointer;
 }
 
-button:first-of-type {
-    background: linear-gradient(90deg, #7c3aed, #4f7cff);
+/* =========================
+   INPUTS
+========================= */
+
+input {
+    width: 100%;
+
+    padding: 15px 16px;
+
+    border-radius: 12px;
+
+    border: 1px solid #292f49;
+
+    background: rgba(17, 21, 44, 0.85);
+
     color: white;
+
+    font-size: 15px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s,
+        box-shadow 0.2s,
+        background 0.2s;
 }
 
-.google-btn {
-    background: white;
-    color: black;
+input::placeholder {
+    color: #626a82;
 }
 
-.facebook-btn {
-    background: #2563eb;
-    color: white;
+input:focus {
+    border-color: #7c3aed;
+
+    background: #11152c;
+
+    box-shadow:
+        0 0 0 3px rgba(124, 58, 237, 0.12);
 }
 
-/* SEPARADOR */
-.separator {
-    text-align: center;
-    margin: 15px 0;
-    color: #bdbdbd;
-}
+/* =========================
+   RECUPERAR CONTRASEÑA
+========================= */
 
 .forgot {
     display: block;
-    margin-top: 10px;
+
+    margin-top: 12px;
+
     text-align: right;
-    color: #8b5cf6;
+
+    color: #9f8cf7;
+
+    font-size: 13px;
+
     cursor: pointer;
+
+    text-decoration: none;
 }
 
-/* ALERTAS DE CORREO Y CONTRASEÑA */
+.forgot:hover {
+    color: #c4b5fd;
+}
+
+/* =========================
+   BOTONES
+========================= */
+
+button {
+    width: 100%;
+
+    padding: 15px;
+
+    border: none;
+    border-radius: 12px;
+
+    margin-top: 20px;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s,
+        box-shadow 0.2s,
+        opacity 0.2s;
+}
+
+button:first-of-type {
+    background: linear-gradient(
+        135deg,
+        #7c3aed,
+        #4f7cff
+    );
+
+    color: white;
+
+    box-shadow:
+        0 10px 25px rgba(79, 70, 229, 0.2);
+}
+
+button:first-of-type:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 14px 30px rgba(79, 70, 229, 0.3);
+}
+
+button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* =========================
+   SEPARADOR
+========================= */
+
+.separator {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    margin: 25px 0;
+
+    color: #646b82;
+
+    font-size: 13px;
+}
+
+.separator::before,
+.separator::after {
+    content: "";
+
+    flex: 1;
+
+    height: 1px;
+
+    background: #252b43;
+}
+
+/* =========================
+   GOOGLE
+========================= */
+
+.google-btn {
+    background: #ffffff;
+
+    color: #171717;
+
+    border: 1px solid #e5e7eb;
+
+    margin-top: 0;
+
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+}
+
+.google-btn:hover {
+    transform: translateY(-2px);
+
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* =========================
+   FACEBOOK
+========================= */
+
+.facebook-btn {
+    background: #1877f2;
+
+    color: white;
+}
+
+.facebook-btn:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 10px 20px rgba(24, 119, 242, 0.25);
+}
+
+/* =========================
+   ERRORES
+========================= */
+
 .error-input {
-    color: red;
+    margin-top: 6px;
+
+    color: #fb7185;
+
+    font-size: 12px;
+}
+
+.error-general {
+    margin-top: 15px;
+    padding: 12px;
+
+    border-radius: 10px;
+
+    background: rgba(239, 68, 68, 0.08);
+
+    border: 1px solid rgba(239, 68, 68, 0.25);
+
+    color: #fca5a5;
+
+    font-size: 13px;
+}
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 900px) {
+
+    .left-panel {
+        width: 38%;
+        padding: 35px;
+    }
+
+    .right-panel {
+        width: 62%;
+        padding: 35px;
+    }
+
+    .brand h1 {
+        font-size: 3.5rem;
+    }
+
+    .brand h2 {
+        font-size: 1.8rem;
+    }
+
+}
+
+/* =========================
+   CELULAR
+========================= */
+
+@media (max-width: 700px) {
+
+    .login-container {
+        display: block;
+        min-height: 100vh;
+    }
+
+    /* Ocultamos la imagen lateral */
+
+    .left-panel {
+        width: 100%;
+        min-height: 190px;
+
+        padding: 35px 25px;
+
+        align-items: flex-end;
+
+        background-position: center;
+    }
+
+    .brand {
+        width: 100%;
+    }
+
+    .brand h1 {
+        font-size: 2.8rem;
+        letter-spacing: -2px;
+    }
+
+    .subtitle {
+        font-size: 0.85rem;
+    }
+
+    .line {
+        margin: 15px 0;
+        width: 50px;
+        height: 3px;
+    }
+
+    .brand h2 {
+        font-size: 1.25rem;
+        max-width: 300px;
+    }
+
+    .right-panel {
+        width: 100%;
+        min-height: calc(100vh - 190px);
+
+        padding: 75px 22px 35px;
+
+        justify-content: flex-start;
+    }
+
+    .top-link {
+        top: 25px;
+        right: 22px;
+
+        font-size: 13px;
+    }
+
+    .form-box {
+        margin: 0 auto;
+        max-width: 100%;
+    }
+
+    .form-box h1 {
+        font-size: 2rem;
+    }
+
+    .form-box p {
+        font-size: 14px;
+        margin-bottom: 25px;
+    }
+
+    input {
+        padding: 14px;
+    }
+
+    button {
+        padding: 15px;
+    }
+}
+
+/* =========================
+   CELULAR PEQUEÑO
+========================= */
+
+@media (max-width: 400px) {
+
+    .left-panel {
+        min-height: 165px;
+        padding: 25px 20px;
+    }
+
+    .brand h1 {
+        font-size: 2.4rem;
+    }
+
+    .brand h2 {
+        font-size: 1.1rem;
+    }
+
+    .right-panel {
+        min-height: calc(100vh - 165px);
+        padding: 70px 18px 30px;
+    }
+
+    .top-link {
+        right: 18px;
+    }
+
+    .form-box h1 {
+        font-size: 1.75rem;
+    }
 }
