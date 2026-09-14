@@ -1,99 +1,277 @@
-.register-container {
-    display: flex;
-    min-height: 100vh;
-    font-family: 'Segoe UI', sans-serif;
+
+/* =========================================================
+   ADVAIH - REGISTER
+   Diseño profesional + Responsive
+   ========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
+:host {
+    display: block;
+    min-height: 100vh;
+}
+
+.register-container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    background: #050816;
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow-x: hidden;
+}
+
+
+/* =========================================================
+   PANEL IZQUIERDO
+   ========================================================= */
+
 .left-panel {
-    width: 35%;
+    width: 40%;
+    min-height: 100vh;
+    padding: 55px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
     background:
-        linear-gradient(rgba(5, 8, 25, .85),
-            rgba(5, 8, 25, .85)),
+        linear-gradient(
+            135deg,
+            rgba(5, 8, 25, 0.94),
+            rgba(31, 19, 70, 0.88)
+        ),
         url("https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f");
 
     background-size: cover;
     background-position: center;
 
-    color: white;
-    padding: 50px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Brillo decorativo */
+
+.left-panel::before {
+    content: "";
+    position: absolute;
+    width: 350px;
+    height: 350px;
+    background: #7c3aed;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.18;
+    top: -100px;
+    left: -100px;
+}
+
+.left-panel::after {
+    content: "";
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: #2563eb;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.15;
+    bottom: -100px;
+    right: -100px;
+}
+
+.left-panel h1,
+.left-panel h2 {
+    position: relative;
+    z-index: 2;
 }
 
 .left-panel h1 {
-    font-size: 4rem;
+    font-size: clamp(3rem, 5vw, 5rem);
+    font-weight: 800;
+    letter-spacing: -2px;
+    margin-bottom: 35px;
+
+    background: linear-gradient(
+        90deg,
+        #ffffff,
+        #a78bfa,
+        #60a5fa
+    );
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .left-panel h2 {
-    margin-top: 80px;
-    font-size: 2.5rem;
-    line-height: 1.4;
+    max-width: 520px;
+    font-size: clamp(2rem, 3.5vw, 3.4rem);
+    line-height: 1.15;
+    font-weight: 700;
 }
+
+
+/* =========================================================
+   PANEL DERECHO
+   ========================================================= */
 
 .right-panel {
-    width: 65%;
-    background: #070b1d;
-    color: white;
-    padding: 50px;
+    width: 60%;
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(124, 58, 237, 0.12),
+            transparent 35%
+        ),
+        #070b1d;
+
+    padding: 35px 65px 60px;
+
+    display: flex;
+    flex-direction: column;
+
+    position: relative;
 }
 
+
+/* =========================================================
+   HEADER
+   "¿Ya tienes cuenta? Inicia sesión"
+   SIEMPRE ARRIBA
+   ========================================================= */
+
 .header {
-    text-align: right;
+    width: 100%;
+
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    gap: 8px;
+
+    margin-bottom: 55px;
+
+    flex-shrink: 0;
+
+    font-size: 14px;
+    color: #9ca3af;
 }
 
 .header a {
-    color: #8b5cf6;
-    margin-left: 10px;
+    color: #a78bfa;
+    text-decoration: none;
+    font-weight: 600;
+
+    transition: 0.25s ease;
 }
 
-.right-panel h1 {
-    margin-top: 30px;
-    font-size: 3rem;
+.header a:hover {
+    color: #c4b5fd;
+    text-decoration: underline;
 }
 
-.right-panel p {
-    margin-bottom: 40px;
-    color: #cfcfcf;
+
+/* =========================================================
+   CONTENIDO DEL REGISTRO
+   ========================================================= */
+
+.right-panel > h1 {
+    font-size: clamp(2rem, 4vw, 3.3rem);
+    line-height: 1.1;
+    font-weight: 750;
+
+    margin-bottom: 12px;
+
+    color: #ffffff;
 }
+
+.right-panel > p {
+    color: #9ca3af;
+    font-size: 16px;
+    line-height: 1.6;
+
+    margin-bottom: 35px;
+
+    max-width: 650px;
+}
+
+
+/* =========================================================
+   GRID DE INPUTS
+   ========================================================= */
 
 .grid {
+    width: 100%;
+
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+
+    gap: 18px;
+
+    margin-bottom: 30px;
 }
+
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
 
 input,
 textarea {
     width: 100%;
-    background: #10152d;
-    border: 1px solid #313652;
-    color: white;
-    border-radius: 14px;
-    padding: 16px;
+
+    background: rgba(16, 21, 45, 0.85);
+
+    border: 1px solid #2d3453;
+
+    color: #ffffff;
+
+    border-radius: 13px;
+
+    padding: 16px 17px;
+
+    font-family: inherit;
+    font-size: 15px;
+
+    outline: none;
+
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease;
 }
 
-textarea {
-    margin-top: 25px;
-    height: 140px;
-    resize: none;
+input {
+    height: 54px;
 }
 
-button {
-    width: 100%;
-    margin-top: 30px;
-    padding: 18px;
-
-    border: none;
-    border-radius: 14px;
-
-    background:
-        linear-gradient(90deg,
-            #7c3aed,
-            #4f7cff);
-
-    color: white;
-    font-size: 18px;
-    font-weight: 600;
-    cursor: pointer;
+input::placeholder,
+textarea::placeholder {
+    color: #6b7280;
 }
+
+input:hover,
+textarea:hover {
+    border-color: #454d70;
+}
+
+input:focus,
+textarea:focus {
+    border-color: #8b5cf6;
+
+    background: rgba(18, 24, 52, 0.95);
+
+    box-shadow:
+        0 0 0 3px rgba(139, 92, 246, 0.12);
+}
+
+
+/* =========================================================
+   PASSWORD
+   ========================================================= */
 
 .password-container {
     position: relative;
@@ -102,14 +280,13 @@ button {
 
 .password-container input {
     width: 100%;
-    box-sizing: border-box;
-    padding-right: 45px;
+    padding-right: 50px;
 }
 
 .ojo-password {
     position: absolute;
 
-    right: 15px;
+    right: 16px;
     top: 50%;
 
     transform: translateY(-50%);
@@ -120,9 +297,366 @@ button {
 
     user-select: none;
 
-    z-index: 2;
+    z-index: 5;
+
+    opacity: 0.8;
+
+    transition: 0.2s ease;
 }
 
 .ojo-password:hover {
-    opacity: 0.7;
+    opacity: 1;
+    transform: translateY(-50%) scale(1.08);
+}
+
+
+/* =========================================================
+   TIPO DE USUARIO
+   ========================================================= */
+
+.tipo-usuario {
+    width: 100%;
+
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.tipo-usuario h3 {
+    font-size: 16px;
+    font-weight: 600;
+
+    color: #e5e7eb;
+
+    margin-bottom: 16px;
+}
+
+
+/* Labels */
+
+.tipo-usuario label {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-right: 25px;
+
+    color: #d1d5db;
+
+    font-size: 15px;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.tipo-usuario label:hover {
+    color: #ffffff;
+}
+
+
+/* Radio */
+
+.tipo-usuario input[type="radio"] {
+    width: 17px;
+    height: 17px;
+
+    padding: 0;
+
+    accent-color: #8b5cf6;
+
+    cursor: pointer;
+
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   TEXTAREA
+   ========================================================= */
+
+textarea {
+    min-height: 130px;
+
+    margin-top: 22px;
+
+    resize: vertical;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   BOTÓN CREAR CUENTA
+   ========================================================= */
+
+button {
+    width: 100%;
+
+    min-height: 56px;
+
+    margin-top: 28px;
+
+    border: none;
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #7c3aed,
+            #4f7cff
+        );
+
+    color: white;
+
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 650;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 10px 25px rgba(79, 70, 229, 0.18);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
+}
+
+button:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 14px 30px rgba(79, 70, 229, 0.28);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1000px) {
+
+    .left-panel {
+        width: 35%;
+        padding: 40px;
+    }
+
+    .right-panel {
+        width: 65%;
+        padding: 30px 40px 50px;
+    }
+
+    .left-panel h2 {
+        font-size: 2.3rem;
+    }
+
+}
+
+
+/* =========================================================
+   TABLET PEQUEÑA
+   ========================================================= */
+
+@media (max-width: 800px) {
+
+    .register-container {
+        flex-direction: column;
+    }
+
+    .left-panel {
+        width: 100%;
+        min-height: 260px;
+
+        padding: 40px;
+
+        justify-content: center;
+    }
+
+    .left-panel h1 {
+        font-size: 3.5rem;
+        margin-bottom: 15px;
+    }
+
+    .left-panel h2 {
+        font-size: 2rem;
+        max-width: 650px;
+    }
+
+    .right-panel {
+        width: 100%;
+        min-height: auto;
+
+        padding: 25px 40px 50px;
+    }
+
+    /*
+       El header sigue arriba del contenido
+    */
+    .header {
+        margin-bottom: 35px;
+    }
+
+}
+
+
+/* =========================================================
+   CELULAR
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .register-container {
+        min-height: 100vh;
+    }
+
+    .left-panel {
+        min-height: 210px;
+
+        padding: 30px 25px;
+
+        text-align: center;
+    }
+
+    .left-panel h1 {
+        font-size: 3rem;
+
+        margin-bottom: 10px;
+    }
+
+    .left-panel h2 {
+        font-size: 1.55rem;
+        line-height: 1.25;
+    }
+
+    .right-panel {
+        padding: 22px 22px 40px;
+    }
+
+    /*
+       ARRIBA Y CENTRADO EN CELULAR
+    */
+
+    .header {
+        justify-content: center;
+
+        margin-bottom: 32px;
+
+        font-size: 14px;
+
+        flex-wrap: wrap;
+    }
+
+    .right-panel > h1 {
+        font-size: 2.15rem;
+    }
+
+    .right-panel > p {
+        font-size: 14px;
+        margin-bottom: 28px;
+    }
+
+    /*
+       Los inputs pasan a una sola columna
+    */
+
+    .grid {
+        grid-template-columns: 1fr;
+
+        gap: 15px;
+
+        margin-bottom: 28px;
+    }
+
+    input {
+        height: 52px;
+    }
+
+    .tipo-usuario {
+        margin-top: 5px;
+    }
+
+    .tipo-usuario h3 {
+        font-size: 15px;
+    }
+
+    .tipo-usuario label {
+        display: flex;
+
+        width: 100%;
+
+        margin-right: 0;
+        margin-bottom: 13px;
+
+        padding: 5px 0;
+    }
+
+    textarea {
+        margin-top: 12px;
+    }
+
+    button {
+        margin-top: 24px;
+    }
+}
+
+
+/* =========================================================
+   CELULARES PEQUEÑOS
+   ========================================================= */
+
+@media (max-width: 400px) {
+
+    .left-panel {
+        min-height: 185px;
+
+        padding: 25px 18px;
+    }
+
+    .left-panel h1 {
+        font-size: 2.5rem;
+    }
+
+    .left-panel h2 {
+        font-size: 1.3rem;
+    }
+
+    .right-panel {
+        padding: 20px 16px 35px;
+    }
+
+    .header {
+        font-size: 13px;
+        margin-bottom: 28px;
+    }
+
+    .right-panel > h1 {
+        font-size: 1.9rem;
+    }
+
+    .right-panel > p {
+        font-size: 13px;
+    }
+
+    input,
+    textarea {
+        font-size: 14px;
+    }
+
+    button {
+        min-height: 52px;
+        font-size: 15px;
+    }
 }
