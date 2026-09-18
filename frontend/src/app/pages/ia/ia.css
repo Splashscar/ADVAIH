@@ -4,7 +4,11 @@
 
 .ia-page {
 
-  min-height: 100vh;
+  height: calc(100vh - 70px);
+  min-height: 0;
+
+  display: flex;
+  flex-direction: column;
 
   background:
     radial-gradient(
@@ -16,9 +20,11 @@
 
   color: white;
 
-  padding-bottom: 40px;
+  padding: 0 0 15px;
 
   box-sizing: border-box;
+
+  overflow: hidden;
 
 }
 
@@ -32,7 +38,9 @@
   width: 100%;
   max-width: 1100px;
 
-  margin: 25px auto 20px;
+  flex-shrink: 0;
+
+  margin: 15px auto 12px;
 
   padding: 18px 22px;
 
@@ -169,7 +177,11 @@
   width: 100%;
   max-width: 1100px;
 
-  min-height: 500px;
+  flex: 1 1 auto;
+
+  min-height: 0;
+
+  overflow-y: auto;
 
   margin: 0 auto;
 
@@ -900,7 +912,9 @@
   width: 100%;
   max-width: 1100px;
 
-  margin: 18px auto 0;
+  flex-shrink: 0;
+
+  margin: 12px auto 0;
 
 }
 
@@ -1043,14 +1057,20 @@
 
   .ia-page {
 
-    padding-bottom: 25px;
+    height: calc(100vh - 60px);
+
+    min-height: 0;
+
+    padding: 0 0 10px;
 
   }
 
 
   .ia-header {
 
-    margin-top: 15px;
+    margin: 10px 12px 10px;
+
+    width: calc(100% - 24px);
 
     padding: 15px;
 
@@ -1106,9 +1126,11 @@
 
   .chat-container {
 
+    width: calc(100% - 24px);
+
     padding: 17px;
 
-    min-height: 450px;
+    min-height: 0;
 
     border-radius: 14px;
 
@@ -1160,9 +1182,18 @@
 
   .input-wrapper {
 
-    padding: 0 12px;
+    width: calc(100% - 24px);
+
+    padding: 0;
 
     box-sizing: border-box;
+
+  }
+
+
+  .input-ayuda {
+
+    margin-bottom: 0;
 
   }
 
