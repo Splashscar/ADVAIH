@@ -223,65 +223,55 @@ export class HomeComponent implements OnInit {
   aplicarFiltros(): void {
 
     this.eventosFiltrados =
-      this.todosLosEventos.filter(evento => {
+      this.todosLosEventos
+        .filter(evento => {
 
-        // -----------------------------------------------------
-        // FILTRO POR CATEGORÍA
-        // -----------------------------------------------------
+          // -----------------------------------------------------
+          // FILTRO POR CATEGORÍA
+          // -----------------------------------------------------
 
-        const cumpleCategoria =
-          !this.filtroCategoria ||
-          this.filtroCategoria === 'Todos' ||
-          evento.category === this.filtroCategoria;
-
-
-        // -----------------------------------------------------
-        // FILTRO POR TEXTO
-        // -----------------------------------------------------
-
-        const texto =
-          this.filtroTexto.toLowerCase();
+          const cumpleCategoria =
+            !this.filtroCategoria ||
+            this.filtroCategoria === 'Todos' ||
+            evento.category === this.filtroCategoria;
 
 
-        const titulo =
-          (evento.title || '').toLowerCase();
+          // -----------------------------------------------------
+          // FILTRO POR TEXTO
+          // -----------------------------------------------------
+
+          const texto =
+            this.filtroTexto.toLowerCase();
 
 
-        const ubicacion =
-          (evento.location || '').toLowerCase();
+          const titulo =
+            (evento.title || '').toLowerCase();
 
 
-        const cumpleBusqueda =
-          !texto ||
-          titulo.includes(texto) ||
-          ubicacion.includes(texto);
+          const ubicacion =
+            (evento.location || '').toLowerCase();
 
 
-        return (
-          cumpleCategoria &&
-          cumpleBusqueda
-        );
-
-      });
+          const cumpleBusqueda =
+            !texto ||
+            titulo.includes(texto) ||
+            ubicacion.includes(texto);
 
 
-    // ---------------------------------------------------------
-    // MANTENER ORDEN POR CREACIÓN (MÁS RECIENTE CREADO PRIMERO)
-    // ---------------------------------------------------------
+          return (
+            cumpleCategoria &&
+            cumpleBusqueda
+          );
 
-    this.eventosFiltrados.sort((a, b) => {
+        })
+        .sort((a, b) => {
 
-      const tiempoA = a.createdAt
-        ? new Date(a.createdAt).getTime()
-        : (a.id || 0);
+          const fechaA = new Date(a.createdAt || 0).getTime();
+          const fechaB = new Date(b.createdAt || 0).getTime();
 
-      const tiempoB = b.createdAt
-        ? new Date(b.createdAt).getTime()
-        : (b.id || 0);
+          return fechaB - fechaA;   // más reciente primero
 
-      return tiempoB - tiempoA;
-
-    });
+        });
 
 
     // 🔥 Actualizar vista

@@ -57,6 +57,8 @@ def listar_eventos(request):
                 "authorEmail": data.get("authorEmail"),
                 "authorPhoto": data.get("authorPhoto"),
 
+                "createdAt": datetime.now().isoformat(),
+
                 # ❤️ Likes
                 "likes": 0,
                 "usuariosLike": [],
