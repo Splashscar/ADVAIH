@@ -1,75 +1,68 @@
-  import { Injectable } from '@angular/core';
-  import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class EventosService {
+@Injectable({
+  providedIn: 'root'
+})
+export class EventosService {
 
-    private apiUrl = 'http://127.0.0.1:8000/api';
+  private apiUrl = environment.apiUrl;
 
-    constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {}
 
-    obtenerEventos() {
-      return this.http.get(`${this.apiUrl}/eventos/`);
-    }
+  obtenerEventos() {
+    return this.http.get(`${this.apiUrl}/eventos/`);
+  }
 
-    crearEvento(evento: any) {
-      return this.http.post(
-        `${this.apiUrl}/eventos/`,
-        evento
-      );
-    }
+  crearEvento(evento: any) {
+    return this.http.post(
+      `${this.apiUrl}/eventos/`,
+      evento
+    );
+  }
 
-    eliminarEvento(id: string) {
-      return this.http.delete(
-        `${this.apiUrl}/eventos/${id}/`
-      );
-    }
+  eliminarEvento(id: string) {
+    return this.http.delete(
+      `${this.apiUrl}/eventos/${id}/`
+    );
+  }
 
-    actualizarEvento(id: string, evento: any) {
-      return this.http.put(
-        `${this.apiUrl}/eventos/${id}/`,
-        evento
-      );
-    }
+  actualizarEvento(id: string, evento: any) {
+    return this.http.put(
+      `${this.apiUrl}/eventos/${id}/`,
+      evento
+    );
+  }
 
-    subirImagen(formData: FormData) {
-      return this.http.post(
-        `${this.apiUrl}/upload-image/`,
-        formData
-      );
-    }
+  subirImagen(formData: FormData) {
+    return this.http.post(
+      `${this.apiUrl}/upload-image/`,
+      formData
+    );
+  }
 
-    toggleLike(eventoId: string, uid: string) {
+  toggleLike(eventoId: string, uid: string) {
+    return this.http.post(
+      `${this.apiUrl}/eventos/${eventoId}/like/`,
+      {
+        uid: uid
+      }
+    );
+  }
 
-      return this.http.post(
-
-        `${this.apiUrl}/eventos/${eventoId}/like/`,
-
-        {
-          uid: uid
-        }
-
-      );
-
-    }
-    obtenerEvento(id: string) {
+  obtenerEvento(id: string) {
     return this.http.get(
       `${this.apiUrl}/eventos/${id}/`
     );
   }
-    toggleFavorito(eventoId: string, uid: string) {
 
-      return this.http.post(
-
-        `${this.apiUrl}/eventos/${eventoId}/favorito/`,
-
-        {
-          uid
-        }
-
-      );
-
-    }
+  toggleFavorito(eventoId: string, uid: string) {
+    return this.http.post(
+      `${this.apiUrl}/eventos/${eventoId}/favorito/`,
+      {
+        uid
+      }
+    );
   }
+}

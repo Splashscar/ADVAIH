@@ -1,5 +1,5 @@
 export const environment = {
-    apiUrl: 'http://localhost:8000/api',
+    apiUrl: 'https://api-advaih.duckdns.org/api',
     firebase: {
         
         apiKey: "AIzaSyAf1l1vPwc_eL5ojmzvOP-jFQrn0OhnX4k",
