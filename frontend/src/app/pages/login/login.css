@@ -692,3 +692,43 @@
         font-size: 0.85rem;
     }
 }
+.password-container {
+    position: relative;
+    width: 100%;
+}
+
+.password-container input {
+    width: 100%;
+    box-sizing: border-box;
+    padding-right: 45px;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    width: 24px;
+    height: 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+    border: none;
+    background: transparent;
+
+    color: #777;
+    cursor: pointer;
+}
+
+.toggle-password svg {
+    width: 20px;
+    height: 20px;
+}
+
+.toggle-password:hover {
+    color: #333;
+}
