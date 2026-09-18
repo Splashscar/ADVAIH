@@ -52,6 +52,7 @@ export class Ia implements OnInit {
   // =========================================================
 
   uidUsuario = '';
+
   @ViewChild('scrollContainer') scrollContainer!: ElementRef;
 
   // =========================================================
@@ -110,9 +111,6 @@ export class Ia implements OnInit {
         this.cargarHistorial();
 
         this.cdr.detectChanges();
-
-        
-
 
       }
 
@@ -206,21 +204,40 @@ export class Ia implements OnInit {
 
   }
 
-  // Scroll al final
+  // =========================================================
+  // SCROLL AL FINAL DEL CHAT
+  // =========================================================
+
   private scrollAlFinal(): void {
 
     setTimeout(() => {
 
       try {
-        this.scrollContainer.nativeElement.scrollTop =
-          this.scrollContainer.nativeElement.scrollHeight;
+
+        const elemento =
+          this.scrollContainer.nativeElement;
+
+        elemento.scrollTo({
+          top: elemento.scrollHeight,
+          behavior: 'smooth'
+        });
+
       } catch (error) {
-        // el contenedor puede no existir aún si el chat está vacío
+
+        console.warn(
+          '⚠️ No se pudo hacer scroll:',
+          error
+        );
+
       }
 
-    }, 0);
+    }, 300);
 
   }
+
+  // =========================================================
+  // SCROLL DE TODA LA PÁGINA
+  // =========================================================
 
   private scrollPaginaAlFinal(): void {
 
