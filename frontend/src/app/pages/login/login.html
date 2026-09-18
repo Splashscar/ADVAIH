@@ -22,28 +22,49 @@
             <p>Inicia sesión para continuar disfrutando los mejores eventos y planes.</p>
 
             <label>Correo electrónico</label>
-            <input
-                type="email"
-                placeholder="ejemplo@correo.com"
-                [(ngModel)]="email"
-                name="email"
-                required
+            <input type="email" placeholder="ejemplo@correo.com" [(ngModel)]="email" name="email" required
                 #emailModel="ngModel">
-            
+
             <div *ngIf="(emailModel.invalid && emailModel.touched) || errorEmail" class="error-input">
                 {{ errorEmail || 'El correo electrónico es obligatorio.' }}
             </div>
 
 
             <label>Contraseña</label>
-            <input
-                type="password"
-                placeholder="••••••••"
-                [(ngModel)]="password"
-                name="password"
-                required
-                #passModel="ngModel">
-            
+
+            <div class="password-container">
+
+                <input [type]="mostrarPassword ? 'text' : 'password'" placeholder="••••••••" [(ngModel)]="password"
+                    name="password" required #passModel="ngModel">
+
+                <button type="button" class="toggle-password" (click)="mostrarPassword = !mostrarPassword"
+                    [attr.aria-label]="mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+
+                    <!-- Ojo abierto -->
+                    <svg *ngIf="!mostrarPassword" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+
+                        <path
+                            d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
+                        <circle cx="12" cy="12" r="3" />
+                    </svg>
+
+                    <!-- Ojo cerrado -->
+                    <svg *ngIf="mostrarPassword" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+
+                        <path
+                            d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.8 10.8 0 0 1-1.085 2.008" />
+                        <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" />
+                        <path
+                            d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.075 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 5.142-5.284" />
+                        <path d="m2 2 20 20" />
+                    </svg>
+
+                </button>
+
+            </div>
+
             <div *ngIf="(passModel.invalid && passModel.touched) || errorPassword" class="error-input">
                 {{ errorPassword || 'La contraseña es obligatoria.' }}
             </div>
@@ -71,8 +92,8 @@
                 Continuar con Facebook
             </button>
 
-        </div>  
+        </div>
 
     </div>
-    
+
 </div>
