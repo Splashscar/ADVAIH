@@ -45,14 +45,33 @@
 
 
 
-            
+
             <div class="password-container">
 
                 <input [type]="mostrarPassword ? 'text' : 'password'" placeholder="Contraseña" [(ngModel)]="password">
 
                 <span class="ojo-password" (click)="mostrarPassword = !mostrarPassword">
 
-                    {{ mostrarPassword ? '🙈' : '👁️' }}
+                    <!-- Ojo abierto -->
+                    <svg [style.display]="mostrarPassword ? 'none' : 'block'" xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path
+                            d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
+                        <circle cx="12" cy="12" r="3" />
+                    </svg>
+
+                    <!-- Ojo cerrado -->
+                    <svg [style.display]="mostrarPassword ? 'block' : 'none'" xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path
+                            d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.8 10.8 0 0 1-1.085 2.008" />
+                        <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" />
+                        <path
+                            d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.075 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 5.142-5.284" />
+                        <path d="m2 2 20 20" />
+                    </svg>
 
                 </span>
 
@@ -66,12 +85,31 @@
 
                 <span class="ojo-password" (click)="mostrarConfirmarPassword = !mostrarConfirmarPassword">
 
-                    {{ mostrarConfirmarPassword ? '🙈' : '👁️' }}
+                    <!-- Ojo abierto -->
+                    <svg [style.display]="mostrarConfirmarPassword ? 'none' : 'block'"
+                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
+                        <circle cx="12" cy="12" r="3" />
+                    </svg>
+
+                    <!-- Ojo cerrado -->
+                    <svg [style.display]="mostrarConfirmarPassword ? 'block' : 'none'"
+                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.8 10.8 0 0 1-1.085 2.008" />
+                        <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" />
+                        <path
+                            d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.075 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 5.142-5.284" />
+                        <path d="m2 2 20 20" />
+                    </svg>
 
                 </span>
 
             </div>
-         
+
 
 
 
@@ -94,7 +132,15 @@
 
                 <input type="radio" name="tipo_usuario" value="usuario" [(ngModel)]="tipo_usuario">
 
-                👤 Usuario
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+
+                    <path d="M20 21a8 8 0 0 0-16 0" />
+                    <circle cx="12" cy="7" r="4" />
+
+                </svg>
+
+                Usuario
 
             </label>
 
@@ -103,7 +149,17 @@
 
                 <input type="radio" name="tipo_usuario" value="organizador" [(ngModel)]="tipo_usuario">
 
-                🤝 Colaborador
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+
+                </svg>
+
+                Colaborador
 
             </label>
 
@@ -119,9 +175,9 @@
         </textarea>
 
 
-        <button type="button" (click)="registrar()">
+        <button type="button" (click)="registrar()" [disabled]="registrando">
 
-            Crear cuenta
+            {{ registrando ? 'Creando cuenta...' : 'Crear cuenta' }}
 
         </button>
 
