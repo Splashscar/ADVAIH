@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { RoleService } from '../../services/role';
 import { Subscription } from 'rxjs';
 import { FooterComponent } from '../../components/footer/footer';
@@ -153,8 +153,9 @@ export class PerfilComponent implements OnInit, OnDestroy {
     private eventosService: EventosService,
     private firebaseService: FirebaseService,
     private cdr: ChangeDetectorRef,
-    private roleService: RoleService
-  ) {}
+    private roleService: RoleService,
+    private router: Router
+  ) { }
 
   // =========================================================
   // INICIO
@@ -401,13 +402,20 @@ export class PerfilComponent implements OnInit, OnDestroy {
             this.eventosFavoritos
           );
 
-          this.cdr.detectChanges();
-
           // =================================================
           // ASISTIDOS
           // =================================================
 
-          this.eventosAsistidos = [];
+          this.eventosAsistidos =
+            todosLosEventos.filter(
+              (evento: any) =>
+                evento.asistentes?.includes(userId)
+            );
+
+          console.log(
+            '🎟️ Eventos a los que asiste el usuario:',
+            this.eventosAsistidos
+          );
 
           this.cdr.detectChanges();
 
@@ -495,6 +503,14 @@ export class PerfilComponent implements OnInit, OnDestroy {
     };
 
     reader.readAsDataURL(archivo);
+
+  }
+
+  verDetalleEvento(evento: any): void {
+
+    this.router.navigate(['/eventos', evento.id], {
+      state: { evento: evento }
+    });
 
   }
 
