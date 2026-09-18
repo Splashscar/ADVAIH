@@ -31,6 +31,9 @@ export class RegisterComponent {
   mostrarPassword = false;
   mostrarConfirmarPassword = false;
 
+  // Evita múltiples clics mientras se registra
+  registrando = false;
+
   constructor(
     private authService: AuthServices,
     private firebaseService: FirebaseService,
@@ -38,6 +41,16 @@ export class RegisterComponent {
   ) {}
 
   async registrar() {
+
+    // =====================================
+    // EVITAR DOBLE / TRIPLE CLIC
+    // =====================================
+
+    if (this.registrando) {
+      return;
+    }
+
+    this.registrando = true;
 
     try {
 
@@ -157,6 +170,13 @@ export class RegisterComponent {
         alert('Error al registrar usuario');
 
       }
+
+    } finally {
+
+      // Si hubo error, vuelve a permitir intentar.
+      // Si tuvo éxito, igualmente no importa porque
+      // se navega a /home.
+      this.registrando = false;
 
     }
 
